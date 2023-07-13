@@ -14,10 +14,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "USER_INFO")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTimeEntity{
+public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String email;
 	private String password;
+
+	public String getPassword() {
+		return password;
+	}
 }
