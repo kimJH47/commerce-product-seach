@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.dto.request.LoginRequest;
 import back.ecommerce.dto.response.token.TokenResponseDto;
+import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.AuthService;
 
@@ -100,7 +101,7 @@ class AuthControllerTest {
 	}
 
 	@Test
-	@DisplayName("//api/auth/token POST 로 존재하지 않은 이메일을 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
+	@DisplayName("/api/auth/token POST 로 존재하지 않은 이메일을 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
 	void login_userNotFoundException() throws Exception {
 	    //given
 		given(authService.createToken(anyString(), anyString()))
@@ -113,7 +114,22 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+	}
 
+	@Test
+	@DisplayName("/api/auth/token POST 로 일치하지않은 비밀번호를 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
+	void login_passwordNotMatchException() throws Exception {
+		//given
+		given(authService.createToken(anyString(), anyString()))
+			.willThrow(new PasswordNotMatchedException("비밀번호가 일치하지 않습니다."));
+
+		//expect
+		mockMvc.perform(post("/api/auth/token")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(new LoginRequest("dsldsalw42@email.com", "dsamkcmx#dsm"))))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.login").value("비밀번호가 일치하지 않습니다."));
 	}
 
 }
