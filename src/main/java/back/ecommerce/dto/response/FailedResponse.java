@@ -10,7 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import lombok.Getter;
 
 @Getter
-public class FailedResponse extends Response{
+public class FailedResponse extends Response {
 	private final Map<String, String> reasons = new HashMap<>();
 
 	public FailedResponse(String message, MethodArgumentNotValidException e) {
@@ -21,4 +21,8 @@ public class FailedResponse extends Response{
 		}
 	}
 
+	public FailedResponse(String message, String field, String reason) {
+		super(message);
+		reasons.put(field, reason);
+	}
 }
