@@ -2,6 +2,8 @@ package back.ecommerce.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.User;
@@ -19,6 +21,7 @@ public class AuthService {
 
 	private final TokenProvider tokenProvider;
 
+	@Transactional(readOnly = true)
 	public TokenResponseDto createToken(String email, String password) {
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
