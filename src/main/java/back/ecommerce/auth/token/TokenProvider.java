@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 
 import back.ecommerce.exception.TokenHasInvalidException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class TokenProvider {
 
 	private static final int EXPIRED_TIME = 1000 * 60 * 60;
 	private static final String TYPE = "Bearer";
+	private static final SignatureAlgorithm SIGNATURE_ALGORITHM = HS256;
 
 	@Value("${jwt.secretKey}")
 	private String securityKey;
@@ -27,7 +29,7 @@ public class TokenProvider {
 
 		String token = Jwts.builder()
 			.setHeaderParam("typ", "JWT")
-			.setHeaderParam("alg", "HS256")
+			.setHeaderParam("alg", SIGNATURE_ALGORITHM)
 			.setClaims(payload)
 			.setExpiration(getExpireTime())
 			.signWith(HS256, securityKey)
