@@ -10,7 +10,7 @@ public class TokenResponseDto {
 	private final int expireTime;
 	private final String type;
 
-	public TokenResponseDto create(String token, int expireTime, String type) {
+	public static TokenResponseDto create(String token, int expireTime, String type) {
 		return new TokenResponseDto(token, expireTime, type);
 	}
 }
