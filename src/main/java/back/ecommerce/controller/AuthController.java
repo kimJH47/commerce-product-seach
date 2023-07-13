@@ -1,5 +1,7 @@
 package back.ecommerce.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +22,7 @@ public class AuthController {
 
 
 	@PostMapping("/token")
-	public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<Response> login(@RequestBody @Valid LoginRequest loginRequest) {
 		return Response.createSuccessResponse("인증이 성공적으로 완료되었습니다.",
 			authService.createToken(loginRequest.getEmail(),loginRequest.getPassword()));
 	}
