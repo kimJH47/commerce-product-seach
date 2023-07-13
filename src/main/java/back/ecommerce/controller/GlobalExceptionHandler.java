@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import back.ecommerce.dto.response.Response;
+import back.ecommerce.exception.AuthHeaderInvalidException;
 import back.ecommerce.exception.PasswordNotMatchedException;
+import back.ecommerce.exception.TokenHasInvalidException;
 import back.ecommerce.exception.UserNotFoundException;
 
 @RestControllerAdvice
@@ -20,7 +22,18 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(value = {UserNotFoundException.class, PasswordNotMatchedException.class})
-	public ResponseEntity<Response> handle(RuntimeException e) {
+	public ResponseEntity<Response> handle(Exception e) {
 		return Response.createBadRequest(BAD_REQUEST, "login", e.getMessage());
 	}
+
+	@ExceptionHandler(AuthHeaderInvalidException.class)
+	public ResponseEntity<Response> handle(AuthHeaderInvalidException e) {
+		return Response.createBadRequest(BAD_REQUEST, "authorizationHeader", e.getMessage());
+	}
+
+	@ExceptionHandler(TokenHasInvalidException.class)
+	public ResponseEntity<Response> handle(TokenHasInvalidException e) {
+		return Response.createBadRequest(BAD_REQUEST, "accessToken", e.getMessage());
+	}
+
 }
