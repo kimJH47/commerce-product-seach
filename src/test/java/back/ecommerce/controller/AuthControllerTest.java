@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,9 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.dto.request.LoginRequest;
 import back.ecommerce.dto.response.token.TokenResponseDto;
+import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.AuthService;
 
 @WebMvcTest(AuthController.class)
+@Import(MockAuthProviderConfig.class)
 class AuthControllerTest {
 
 	@Autowired
@@ -94,6 +97,23 @@ class AuthControllerTest {
 			Arguments.of(new LoginRequest("", "asdmlsd2412"), "email", "이메일은 필수적으로 필요합니다."),
 			Arguments.of(new LoginRequest("123@naver.com", ""), "password", "비밀번호는 필수적으로 필요합니다.")
 		);
+	}
+
+	@Test
+	@DisplayName("//api/auth/token POST 로 존재하지 않은 이메일을 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
+	void login_userNotFoundException() throws Exception {
+	    //given
+		given(authService.createToken(anyString(), anyString()))
+			.willThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+
+	    //expect
+		mockMvc.perform(post("/api/auth/token")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(new LoginRequest("dsldsalw42@email.com", "dsamkcmx#dsm"))))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+
 	}
 
 }
