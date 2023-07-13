@@ -1,4 +1,4 @@
-package back.ecommerce.auth;
+package back.ecommerce.auth.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import back.ecommerce.auth.Token;
-import back.ecommerce.auth.TokenProvider;
+import back.ecommerce.auth.token.Token;
+import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.User;
 import back.ecommerce.dto.response.token.TokenResponseDto;
 import back.ecommerce.exception.PasswordNotMatchedException;

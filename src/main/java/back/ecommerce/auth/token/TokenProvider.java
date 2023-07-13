@@ -1,4 +1,4 @@
-package back.ecommerce.auth;
+package back.ecommerce.auth.token;
 
 import java.util.Date;
 import java.util.HashMap;
