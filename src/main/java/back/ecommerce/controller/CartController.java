@@ -22,7 +22,8 @@ public class CartController {
 
 	@PostMapping("/add-product")
 	public ResponseEntity<Response> addCart(@RequestBody @Valid AddCartRequest request) {
+		cartService.addProduct(request.getEmail(), request.getProductId(), request.getQuantity());
 		return Response.createSuccessResponse("상품이 카트에 성공적으로 추가 되었습니다.",
-			cartService.addProduct(request.getEmail(), request.getProductId(), request.getQuantity()));
+			cartService.findCartByUserEmail(request.getEmail()));
 	}
 }
