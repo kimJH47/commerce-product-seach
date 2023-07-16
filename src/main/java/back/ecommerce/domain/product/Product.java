@@ -10,11 +10,13 @@ import javax.persistence.Id;
 import back.ecommerce.domain.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Product extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +26,4 @@ public class Product extends BaseTimeEntity {
 	private Long price;
 	@Enumerated(EnumType.STRING)
 	private Category category;
-
 }
