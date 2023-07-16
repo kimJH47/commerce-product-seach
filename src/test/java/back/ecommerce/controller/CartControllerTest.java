@@ -55,7 +55,7 @@ class CartControllerTest {
 		cartProducts.add(createDto(2L, "블랙진", "모드나인", Category.TOP, 1, 500000L));
 		cartProducts.add(createDto(3L, "코트", "커버낫", Category.ONEPIECE, 1, 1000000L));
 
-		given(cartService.addProduct(anyString(), anyLong(), anyInt()))
+		given(cartService.findCartByUserEmail(anyString()))
 			.willReturn(new CartListResponse(email, cartProducts.size(), 1700000L, cartProducts));
 
 		//expect
@@ -65,6 +65,7 @@ class CartControllerTest {
 			.andExpect(status().isOk());
 
 		then(cartService).should(times(1)).addProduct(anyString(), anyLong(), anyInt());
+		then(cartService).should(times(1)).findCartByUserEmail(anyString());
 	}
 
 	@ParameterizedTest
