@@ -32,4 +32,13 @@ public class Cart extends BaseTimeEntity {
 	private Product product;
 	private int quantity;
 	private long price;
+
+	public static Cart create(User user, Product product, int quantity) {
+		return Cart.builder()
+			.user(user)
+			.product(product)
+			.price(quantity * product.getPrice())
+			.quantity(quantity)
+			.build();
+	}
 }
