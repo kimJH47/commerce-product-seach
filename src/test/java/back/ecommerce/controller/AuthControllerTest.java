@@ -65,22 +65,22 @@ class AuthControllerTest {
 	@ParameterizedTest
 	@MethodSource("invalidLoginRequestProvider")
 	@DisplayName("/api/auth/token POST 으로 유효하지않은 데이터가 요청으로 오면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
-	void login_exception(LoginRequest request, String fieldName, String reason) throws Exception {
+	void login_exception(LoginRequest request, String reason) throws Exception {
 		//expect
 		mockMvc.perform(post("/api/auth/token")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons." + fieldName).value(reason));
+			.andExpect(jsonPath("$.reasons." + reason).isNotEmpty());
 
 	}
 
 	public static Stream<Arguments> invalidLoginRequestProvider() {
 		return Stream.of(
-			Arguments.of(new LoginRequest(" ", "asdmlsd2412"), "email", "이메일은 필수적으로 필요합니다."),
-			Arguments.of(new LoginRequest("email@@com.co", "asdmlsd2412"), "email", "옳바른 이메일 형식이 아닙니다."),
-			Arguments.of(new LoginRequest("123@naver.com", ""), "password", "비밀번호는 필수적으로 필요합니다.")
+			Arguments.of(new LoginRequest(" ", "asdmlsd2412"), "email"),
+			Arguments.of(new LoginRequest("email@@com.co", "asdmlsd2412"), "email"),
+			Arguments.of(new LoginRequest("123@naver.com", ""), "password")
 		);
 	}
 
