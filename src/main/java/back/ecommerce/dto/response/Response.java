@@ -5,8 +5,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class Response {
 	private String message;

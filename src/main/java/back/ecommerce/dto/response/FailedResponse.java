@@ -8,8 +8,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class FailedResponse extends Response {
 	private final Map<String, String> reasons = new HashMap<>();
 
