@@ -68,6 +68,9 @@ class JwtAuthenticationInterceptorTest {
 		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
 			.isInstanceOf(AuthHeaderInvalidException.class)
 			.hasMessage("인증 헤더타입이 일치하지 않습니다.");
+
+		then(request).should(times(1)).getHeader(anyString());
+		then(tokenProvider).should(times(0)).validate(anyString());
 	}
 
 	@Test
@@ -82,5 +85,23 @@ class JwtAuthenticationInterceptorTest {
 			.isInstanceOf(AuthHeaderInvalidException.class)
 			.hasMessage("인증 헤더가 비어있습니다.");
 
+		then(request).should(times(1)).getHeader(anyString());
+		then(tokenProvider).should(times(0)).validate(anyString());
+	}
+
+	@Test
+	@DisplayName("authorization Header 가 비어있을 시 AuthHeaderInvalidException 가 발생한다.")
+	void authentication_nullHeader() {
+		//given
+		given(request.getHeader(anyString()))
+			.willReturn(null);
+
+		//expect
+		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
+			.isInstanceOf(AuthHeaderInvalidException.class)
+			.hasMessage("인증 헤더가 비어있습니다.");
+
+		then(request).should(times(1)).getHeader(anyString());
+		then(tokenProvider).should(times(0)).validate(anyString());
 	}
 }
