@@ -8,7 +8,9 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import back.ecommerce.exception.TokenHasExpiredException;
 import back.ecommerce.exception.TokenHasInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -44,12 +46,14 @@ public class TokenProvider {
 	}
 
 	public void validate(String token) {
-		if (token.isEmpty()) {
+		if (token.isBlank()) {
 			throw new TokenHasInvalidException("토큰이 존재하지 않습니다.");
 		}
 		try {
 			Jwts.parser().setSigningKey(securityKey)
 				.parseClaimsJws(token);
+		} catch (ExpiredJwtException e) {
+			throw new TokenHasExpiredException("토큰이 만료 되었습니다.");
 		} catch (Exception e) {
 			throw new TokenHasInvalidException("토큰이 유효하지 않습니다.");
 		}
