@@ -28,8 +28,7 @@ public class AuthService {
 	public TokenResponseDto createToken(String email, String password) {
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
-
-		if (!passwordEncoder.matches(user.getPassword(), password)) {
+		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new PasswordNotMatchedException("비밀번호가 일치하지 않습니다.");
 		}
 		Token token = tokenProvider.create(email, EXPIRED_TIME);
