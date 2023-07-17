@@ -15,14 +15,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class TokenProvider {
 
-	private static final int EXPIRED_TIME = 1000 * 60 * 60;
 	private static final String TYPE = "Bearer";
 	private static final SignatureAlgorithm SIGNATURE_ALGORITHM = HS256;
 
 	@Value("${jwt.secretKey}")
 	private String securityKey;
 
-	public Token create(String email) {
+	public Token create(String email, int expireTime) {
 
 		HashMap<String, Object> payload = new HashMap<>();
 		payload.put("email", email);
@@ -31,17 +30,17 @@ public class TokenProvider {
 			.setHeaderParam("typ", "JWT")
 			.setHeaderParam("alg", SIGNATURE_ALGORITHM)
 			.setClaims(payload)
-			.setExpiration(getExpireTime())
+			.setExpiration(createExpireTime(expireTime))
 			.signWith(HS256, securityKey)
 			.compact();
 
-		return new Token(token, EXPIRED_TIME, TYPE);
+		return new Token(token, expireTime, TYPE);
 	}
 
-	private Date getExpireTime() {
-		Date expireTime = new Date();
-		expireTime.setTime(expireTime.getTime() + EXPIRED_TIME);
-		return expireTime;
+	private Date createExpireTime(int expireTime) {
+		Date expireDate = new Date();
+		expireDate.setTime(expireDate.getTime() + expireTime);
+		return expireDate;
 	}
 
 	public void validate(String token) {

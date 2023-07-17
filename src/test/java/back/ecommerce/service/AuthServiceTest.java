@@ -48,7 +48,7 @@ class AuthServiceTest {
 			.willReturn(Optional.of(user));
 		given(passwordEncoder.matches(anyString(), anyString()))
 			.willReturn(true);
-		given(tokenProvider.create(anyString())).willReturn(expected);
+		given(tokenProvider.create(anyString(), anyInt())).willReturn(expected);
 
 		//when
 		TokenResponseDto actual = authService.createToken("dmdasdlm@email.com", "ddmlasMKL#sla@");
@@ -60,31 +60,31 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(1)).create(anyString());
+		then(tokenProvider).should(times(1)).create(anyString(), anyInt());
 	}
 
 	@Test
 	@DisplayName("토큰 생성시 일치하는 이메일이 없으면 UserNotFoundException 이 발생해야한다.")
 	void create_userNotFoundException() throws Exception {
-	    //given
+		//given
 		given(userRepository.findByEmail(anyString()))
 			.willReturn(Optional.empty());
 
-	    //expect
+		//expect
 		assertThatThrownBy(() -> authService.createToken("edsjl23@email.com", "dmaslkd@#mfd"))
 			.isInstanceOf(UserNotFoundException.class)
 			.hasMessage("해당하는 유저가 존재하지 않습니다.");
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(0)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).create(anyString());
+		then(tokenProvider).should(times(0)).create(anyString(), anyInt());
 
 	}
 
 	@Test
 	@DisplayName("토큰 생성시 비밀번호가 일치하지 않으면 PasswordNotMatchedException 이 발생해야한다.")
 	void create_passwordNotMatchedException() throws Exception {
-	    //given
+		//given
 		User user = new User(10L, "dmdasdlm@email.com", "ddmlasMKL#sla@");
 
 		given(userRepository.findByEmail(anyString()))
@@ -99,6 +99,6 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).create(anyString());
+		then(tokenProvider).should(times(0)).create(anyString(), anyInt());
 	}
 }

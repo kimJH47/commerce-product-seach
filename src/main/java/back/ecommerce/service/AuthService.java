@@ -16,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+	private static final int EXPIRED_TIME = 1000 * 60 * 60;
+
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
@@ -29,7 +32,7 @@ public class AuthService {
 		if (!passwordEncoder.matches(user.getPassword(), password)) {
 			throw new PasswordNotMatchedException("비밀번호가 일치하지 않습니다.");
 		}
-		Token token = tokenProvider.create(email);
+		Token token = tokenProvider.create(email, EXPIRED_TIME);
 		return TokenResponseDto.create(token.getValue(), token.getExpireTime(), token.getType());
 	}
 }
