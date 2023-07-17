@@ -76,6 +76,14 @@ class AuthControllerTest {
 
 	}
 
+	public static Stream<Arguments> invalidLoginRequestProvider() {
+		return Stream.of(
+			Arguments.of(new LoginRequest(" ", "asdmlsd2412"), "email", "이메일은 필수적으로 필요합니다."),
+			Arguments.of(new LoginRequest("email@@com.co", "asdmlsd2412"), "email", "옳바른 이메일 형식이 아닙니다."),
+			Arguments.of(new LoginRequest("123@naver.com", ""), "password", "비밀번호는 필수적으로 필요합니다.")
+		);
+	}
+
 	@Test
 	@DisplayName("/api/auth/token POST 로 유효하지않은 데이터가 여러개 일 때 응답코드 404 와 함께 실패이유가 전부 응답 되어야한다. ")
 	void login_exception_all() throws Exception {
@@ -93,21 +101,14 @@ class AuthControllerTest {
 
 	}
 
-	public static Stream<Arguments> invalidLoginRequestProvider() {
-		return Stream.of(
-			Arguments.of(new LoginRequest("", "asdmlsd2412"), "email", "이메일은 필수적으로 필요합니다."),
-			Arguments.of(new LoginRequest("123@naver.com", ""), "password", "비밀번호는 필수적으로 필요합니다.")
-		);
-	}
-
 	@Test
 	@DisplayName("/api/auth/token POST 로 존재하지 않은 이메일을 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
 	void login_userNotFoundException() throws Exception {
-	    //given
+		//given
 		given(authService.createToken(anyString(), anyString()))
 			.willThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
 
-	    //expect
+		//expect
 		mockMvc.perform(post("/api/auth/token")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(new LoginRequest("dsldsalw42@email.com", "dsamkcmx#dsm"))))
