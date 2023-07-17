@@ -29,7 +29,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 	}
 
 	private String parseHeaderToToken(String header) {
-		if (header.isBlank()) {
+		if (header == null || header.isBlank()) {
 			throw new AuthHeaderInvalidException("인증 헤더가 비어있습니다.");
 		}
 		if (!header.startsWith(AUTHORIZATION_TYPE)) {
