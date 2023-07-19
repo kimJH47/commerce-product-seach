@@ -31,6 +31,8 @@ import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.CartProductDto;
 import back.ecommerce.dto.request.AddCartRequest;
 import back.ecommerce.dto.response.cart.CartListResponse;
+import back.ecommerce.exception.ProductNotFoundException;
+import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.CartService;
 
 @WebMvcTest(value = CartController.class, excludeFilters = {
@@ -70,7 +72,7 @@ class CartControllerTest {
 
 	@ParameterizedTest
 	@MethodSource("invalidAddProductRequestProvider")
-	@DisplayName("/api/cart/add-product POST 로 유효하지 않은 데이터를 요청으로 보낼시 응답코드 404와 함께 실패이유가 응답되어야 한다.")
+	@DisplayName("/api/cart/add-product POST 로 유효하지 않은 데이터를 요청으로 보낼시 응답코드 400와 함께 실패이유가 응답되어야 한다.")
 	void add_product_invalid_request(AddCartRequest request, String fieldName) throws Exception {
 		//expect
 		mockMvc.perform(post("/api/cart/add-product")
@@ -91,7 +93,7 @@ class CartControllerTest {
 	}
 
 	@Test
-	@DisplayName("/api/cart/add-product POST 로 여러개의 유효하지 않은 데이터를 요청으로 보낼시 응답코드 404와 함께 실패이유가 전부 응답되어야 한다.")
+	@DisplayName("/api/cart/add-product POST 로 여러개의 유효하지 않은 데이터를 요청으로 보낼시 응답코드 400와 함께 실패이유가 전부 응답되어야 한다.")
 	void add_product_invalid_request_all() throws Exception {
 		AddCartRequest request = new AddCartRequest("  ", null, -1);
 		//expect
@@ -103,6 +105,37 @@ class CartControllerTest {
 			.andExpect(jsonPath("$.reasons.productId").isNotEmpty())
 			.andExpect(jsonPath("$.reasons.quantity").isNotEmpty())
 			.andDo(print());
+
+	}
+
+	@Test
+	@DisplayName("/api/cart/add-product POST 로 존재하지 않는 사용자 이메일을 요청으로 보내면 응답코드 400")
+	void add_product_userNotFoundException() throws Exception {
+		//given
+		doThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."))
+			.when(cartService).addProduct(anyString(), anyLong(), anyInt());
+
+		//expect
+		mockMvc.perform(post("/api/cart/add-product")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(new AddCartRequest("email@email.com", 100L, 10))))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+	}
+
+	@Test
+	@DisplayName("")
+	void add_product_productNotFoundException() throws Exception {
+		//given
+		doThrow(new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."))
+			.when(cartService).addProduct(anyString(), anyLong(), anyInt());
+
+		//expect
+		mockMvc.perform(post("/api/cart/add-product")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(new AddCartRequest("email@email.com", 100L, 10))))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.reasons.product").value("해당하는 상품이 존재하지 않습니다."));
 
 	}
 
