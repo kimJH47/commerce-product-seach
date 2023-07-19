@@ -23,19 +23,16 @@ public class Cart extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "email")
-	private User user;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "productId")
+	@JoinColumn(name = "product_id")
 	private Product product;
+	private String userEmail;
 	private int quantity;
 	private long price;
 
-	public static Cart create(User user, Product product, int quantity) {
+	public static Cart create(String userEmail, Product product, int quantity) {
 		return Cart.builder()
-			.user(user)
+			.userEmail(userEmail)
 			.product(product)
 			.price(quantity * product.getPrice())
 			.quantity(quantity)
