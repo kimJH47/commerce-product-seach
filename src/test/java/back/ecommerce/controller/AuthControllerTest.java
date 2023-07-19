@@ -64,7 +64,7 @@ class AuthControllerTest {
 
 	@ParameterizedTest
 	@MethodSource("invalidLoginRequestProvider")
-	@DisplayName("/api/auth/token POST 으로 유효하지않은 데이터가 요청으로 오면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
+	@DisplayName("/api/auth/token POST 으로 유효하지않은 데이터가 요청으로 오면 응답코드 400 와 함께 실패이유가 응답 되어야한다.")
 	void login_exception(LoginRequest request, String reason) throws Exception {
 		//expect
 		mockMvc.perform(post("/api/auth/token")
@@ -85,7 +85,7 @@ class AuthControllerTest {
 	}
 
 	@Test
-	@DisplayName("/api/auth/token POST 로 유효하지않은 데이터가 여러개 일 때 응답코드 404 와 함께 실패이유가 전부 응답 되어야한다. ")
+	@DisplayName("/api/auth/token POST 로 유효하지않은 데이터가 여러개 일 때 응답코드 400 와 함께 실패이유가 전부 응답 되어야한다. ")
 	void login_exception_all() throws Exception {
 		//given
 		LoginRequest request = new LoginRequest("  ", "  ");
@@ -102,7 +102,7 @@ class AuthControllerTest {
 	}
 
 	@Test
-	@DisplayName("/api/auth/token POST 로 존재하지 않은 이메일을 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
+	@DisplayName("/api/auth/token POST 로 존재하지 않은 이메일을 보내면 응답코드 400 와 함께 실패이유가 응답 되어야한다.")
 	void login_userNotFoundException() throws Exception {
 		//given
 		given(authService.createToken(anyString(), anyString()))
@@ -118,7 +118,7 @@ class AuthControllerTest {
 	}
 
 	@Test
-	@DisplayName("/api/auth/token POST 로 일치하지않은 비밀번호를 보내면 응답코드 404 와 함께 실패이유가 응답 되어야한다.")
+	@DisplayName("/api/auth/token POST 로 일치하지않은 비밀번호를 보내면 응답코드 400 와 함께 실패이유가 응답 되어야한다.")
 	void login_passwordNotMatchException() throws Exception {
 		//given
 		given(authService.createToken(anyString(), anyString()))
