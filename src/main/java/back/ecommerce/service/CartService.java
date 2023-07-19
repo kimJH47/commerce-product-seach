@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import back.ecommerce.domain.Cart;
-import back.ecommerce.domain.User;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.exception.ProductNotFoundException;
@@ -24,14 +23,18 @@ public class CartService {
 
 	@Transactional
 	public void addProduct(String email, long productId, int quantity) {
-
-		User user = userRepository.findByEmail(email)
-			.orElseThrow(() -> new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+		validateUserEmail(email);
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."));
 
-		Cart userCart = Cart.create(user, product, quantity);
+		Cart userCart = Cart.create(email, product, quantity);
 		cartRepository.save(userCart);
+	}
+
+	private void validateUserEmail(String email) {
+		if (!userRepository.existsByEmail(email)) {
+			throw new UserNotFoundException("해당하는 유저가 존재하지 않습니다.");
+		}
 	}
 
 	@Transactional(readOnly = true)
