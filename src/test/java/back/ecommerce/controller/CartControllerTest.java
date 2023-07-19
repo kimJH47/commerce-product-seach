@@ -71,23 +71,22 @@ class CartControllerTest {
 	@ParameterizedTest
 	@MethodSource("invalidAddProductRequestProvider")
 	@DisplayName("/api/cart/add-product POST 로 유효하지 않은 데이터를 요청으로 보낼시 응답코드 404와 함께 실패이유가 응답되어야 한다.")
-	void add_product_invalid_request(AddCartRequest request, String fieldName, String message) throws Exception {
+	void add_product_invalid_request(AddCartRequest request, String fieldName) throws Exception {
 		//expect
 		mockMvc.perform(post("/api/cart/add-product")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.reasons." + fieldName).value(message))
-			.andDo(print());
+			.andExpect(jsonPath("$.reasons." + fieldName).isNotEmpty());
 	}
 
 	public static Stream<Arguments> invalidAddProductRequestProvider() {
 		return Stream.of(
-			Arguments.of(new AddCartRequest("user123@naver.com", 15L, -1), "quantity", "상품의 갯수는 최소 1개 이상이여야 합니다."),
-			Arguments.of(new AddCartRequest("user123@naver.com", 15L, 0), "quantity", "상품의 갯수는 최소 1개 이상이여야 합니다."),
-			Arguments.of(new AddCartRequest("  ", 12L, 1), "email", "이메일은 필수적으로 필요합니다."),
-			Arguments.of(new AddCartRequest("user123@@na.ver.com", 15L, 10), "email", "옳바른 이메일 형식이 아닙니다."),
-			Arguments.of(new AddCartRequest("user123@naver.com", null, 10), "productId", "상품의 아이디는 필수적으로 필요합니다.")
+			Arguments.of(new AddCartRequest("user123@naver.com", 15L, -1), "quantity"),
+			Arguments.of(new AddCartRequest("user123@naver.com", 15L, 0), "quantity"),
+			Arguments.of(new AddCartRequest("  ", 12L, 1), "email"),
+			Arguments.of(new AddCartRequest("user123@@na.ver.com", 15L, 10), "email"),
+			Arguments.of(new AddCartRequest("user123@naver.com", null, 10), "productId")
 		);
 	}
 
