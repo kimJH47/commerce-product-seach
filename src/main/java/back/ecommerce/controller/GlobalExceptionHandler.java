@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import back.ecommerce.dto.response.Response;
 import back.ecommerce.exception.AuthHeaderInvalidException;
 import back.ecommerce.exception.PasswordNotMatchedException;
+import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.TokenHasExpiredException;
 import back.ecommerce.exception.TokenHasInvalidException;
 import back.ecommerce.exception.UserNotFoundException;
@@ -35,6 +36,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler({TokenHasInvalidException.class, TokenHasExpiredException.class})
 	public ResponseEntity<Response> handleTokenException(Exception e) {
 		return Response.createBadRequest(BAD_REQUEST, "accessToken", e.getMessage());
+	}
+
+	@ExceptionHandler(ProductNotFoundException.class)
+	public ResponseEntity<Response> handle(ProductNotFoundException e) {
+		return Response.createBadRequest(BAD_REQUEST, "product", e.getMessage());
 	}
 
 }
