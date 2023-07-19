@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import back.ecommerce.domain.Cart;
-import back.ecommerce.domain.User;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.exception.ProductNotFoundException;
@@ -44,11 +43,10 @@ class CartServiceTest {
 		String email = "ImUser@email.com";
 		long productId = 1L;
 		int quantity = 10;
-		User user = new User(10L, email, "sadmklasdmkl2KMEMKL#");
 		Product product = new Product(2L, "티셔츠", "커버낫", 35000L, Category.TOP);
 
-		given(userRepository.findByEmail(anyString()))
-			.willReturn(Optional.of(user));
+		given(userRepository.existsByEmail(anyString()))
+			.willReturn(true);
 		given(productRepository.findById(anyLong()))
 			.willReturn(Optional.of(product));
 
@@ -57,7 +55,7 @@ class CartServiceTest {
 			cartService.addProduct(email, productId, quantity))
 			.doesNotThrowAnyException();
 
-		then(userRepository).should(times(1)).findByEmail(anyString());
+		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(1)).findById(anyLong());
 		then(cartRepository).should(times(1)).save(any(Cart.class));
 	}
@@ -70,14 +68,14 @@ class CartServiceTest {
 		long productId = 1L;
 		int quantity = 10;
 
-		given(userRepository.findByEmail(anyString()))
-			.willThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+		given(userRepository.existsByEmail(anyString()))
+			.willReturn(false);
 
 		//expect
 		assertThatThrownBy(() -> cartService.addProduct(email, productId, quantity))
 			.isInstanceOf(UserNotFoundException.class);
 
-		then(userRepository).should(times(1)).findByEmail(anyString());
+		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(0)).findById(anyLong());
 		then(cartRepository).should(times(0)).save(any(Cart.class));
 	}
@@ -89,10 +87,9 @@ class CartServiceTest {
 		String email = "ImUser@email.com";
 		long productId = 1L;
 		int quantity = 10;
-		User user = new User(10L, email, "sadmklasdmkl2KMEMKL#");
 
-		given(userRepository.findByEmail(anyString()))
-			.willReturn(Optional.of(user));
+		given(userRepository.existsByEmail(anyString()))
+			.willReturn(true);
 		given(productRepository.findById(anyLong()))
 			.willThrow(new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."));
 
@@ -100,7 +97,7 @@ class CartServiceTest {
 		assertThatThrownBy(() -> cartService.addProduct(email, productId, quantity))
 			.isInstanceOf(ProductNotFoundException.class);
 
-		then(userRepository).should(times(1)).findByEmail(anyString());
+		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(1)).findById(anyLong());
 		then(cartRepository).should(times(0)).save(any(Cart.class));
 
