@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import back.ecommerce.domain.product.Product;
+import back.ecommerce.dto.response.cart.CartProductDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,16 @@ public class Cart extends BaseTimeEntity {
 	private int quantity;
 	private long price;
 
+	public CartProductDto toDto() {
+		return CartProductDto.builder()
+			.id(id)
+			.name(product.getName())
+			.category(product.getCategory())
+			.brandName(product.getBrandName())
+			.price(price)
+			.quantity(quantity)
+			.build();
+	}
 	public static Cart create(String userEmail, Product product, int quantity) {
 		return Cart.builder()
 			.userEmail(userEmail)
