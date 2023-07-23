@@ -35,9 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.CartProductDto;
+import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.request.AddCartRequest;
 import back.ecommerce.dto.response.cart.CartListResponse;
+import back.ecommerce.dto.response.cart.CartProducts;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.CartService;
@@ -72,7 +73,7 @@ class CartControllerTest {
 		cartProducts.add(createDto(3L, "코트", "커버낫", Category.ONEPIECE, 1, 1000000L));
 
 		given(cartService.findCartByUserEmail(anyString()))
-			.willReturn(new CartListResponse(email, cartProducts.size(), 1700000L, cartProducts));
+			.willReturn(new CartListResponse(email, CartProducts.create(cartProducts)));
 
 		//expect
 		mockMvc.perform(post("/api/cart/add-product")
@@ -162,36 +163,37 @@ class CartControllerTest {
 		cartProductDtos.add(createDto(23, "cap", "carHartt", Category.HEAD_WEAR, 1, 8000L));
 		cartProductDtos.add(createDto(35, "ring", "carHartt", Category.ACCESSORY, 1, 150000L));
 		given(cartService.findCartByUserEmail(anyString()))
-			.willReturn(new CartListResponse("user@email.com", cartProductDtos.size(), 1780000L, cartProductDtos));
+			.willReturn(new CartListResponse("user@email.com", CartProducts.create(cartProductDtos)));
 		//expect
 		mockMvc.perform(get("/api/cart")
 				.param("email", "user@email.com"))
 			.andExpect(status().isOk())
+			.andDo(print())
 			.andExpect(jsonPath("$.message").value("장바구니가 성곡적으로 조회 되었습니다."))
 			.andExpect(jsonPath("$.entity.email").value("user@email.com"))
-			.andExpect(jsonPath("$.entity.count").value(3))
-			.andExpect(jsonPath("$.entity.totalPrice").value(1780000))
+			.andExpect(jsonPath("$.entity.cartProducts.count").value(3))
+			.andExpect(jsonPath("$.entity.cartProducts.totalPrice").value(168000))
 
-			.andExpect(jsonPath("$.entity.cartProducts[0].id").value(10))
-			.andExpect(jsonPath("$.entity.cartProducts[0].name").value("shirts"))
-			.andExpect(jsonPath("$.entity.cartProducts[0].brandName").value("coverNat"))
-			.andExpect(jsonPath("$.entity.cartProducts[0].category").value(Category.TOP.toString()))
-			.andExpect(jsonPath("$.entity.cartProducts[0].quantity").value(2))
-			.andExpect(jsonPath("$.entity.cartProducts[0].price").value(10000L))
+			.andExpect(jsonPath("$.entity.cartProducts.value[0].id").value(10))
+			.andExpect(jsonPath("$.entity.cartProducts.value[0].name").value("shirts"))
+			.andExpect(jsonPath("$.entity.cartProducts.value[0].brandName").value("coverNat"))
+			.andExpect(jsonPath("$.entity.cartProducts.value[0].category").value(Category.TOP.toString()))
+			.andExpect(jsonPath("$.entity.cartProducts.value[0].quantity").value(2))
+			.andExpect(jsonPath("$.entity.cartProducts.value[0].price").value(10000L))
 
-			.andExpect(jsonPath("$.entity.cartProducts[1].id").value(23))
-			.andExpect(jsonPath("$.entity.cartProducts[1].name").value("cap"))
-			.andExpect(jsonPath("$.entity.cartProducts[1].brandName").value("carHartt"))
-			.andExpect(jsonPath("$.entity.cartProducts[1].category").value(Category.HEAD_WEAR.toString()))
-			.andExpect(jsonPath("$.entity.cartProducts[1].quantity").value(1))
-			.andExpect(jsonPath("$.entity.cartProducts[1].price").value(8000L))
+			.andExpect(jsonPath("$.entity.cartProducts.value[1].id").value(23))
+			.andExpect(jsonPath("$.entity.cartProducts.value[1].name").value("cap"))
+			.andExpect(jsonPath("$.entity.cartProducts.value[1].brandName").value("carHartt"))
+			.andExpect(jsonPath("$.entity.cartProducts.value[1].category").value(Category.HEAD_WEAR.toString()))
+			.andExpect(jsonPath("$.entity.cartProducts.value[1].quantity").value(1))
+			.andExpect(jsonPath("$.entity.cartProducts.value[1].price").value(8000L))
 
-			.andExpect(jsonPath("$.entity.cartProducts[2].id").value(35))
-			.andExpect(jsonPath("$.entity.cartProducts[2].name").value("ring"))
-			.andExpect(jsonPath("$.entity.cartProducts[2].brandName").value("carHartt"))
-			.andExpect(jsonPath("$.entity.cartProducts[2].category").value(Category.ACCESSORY.toString()))
-			.andExpect(jsonPath("$.entity.cartProducts[2].quantity").value(1))
-			.andExpect(jsonPath("$.entity.cartProducts[2].price").value(150000L));
+			.andExpect(jsonPath("$.entity.cartProducts.value[2].id").value(35))
+			.andExpect(jsonPath("$.entity.cartProducts.value[2].name").value("ring"))
+			.andExpect(jsonPath("$.entity.cartProducts.value[2].brandName").value("carHartt"))
+			.andExpect(jsonPath("$.entity.cartProducts.value[2].category").value(Category.ACCESSORY.toString()))
+			.andExpect(jsonPath("$.entity.cartProducts.value[2].quantity").value(1))
+			.andExpect(jsonPath("$.entity.cartProducts.value[2].price").value(150000L));
 	}
 
 	@Test
