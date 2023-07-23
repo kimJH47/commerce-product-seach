@@ -10,8 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.exception.AuthHeaderInvalidException;
@@ -103,5 +105,38 @@ class JwtAuthenticationInterceptorTest {
 
 		then(request).should(times(1)).getHeader(anyString());
 		then(tokenProvider).should(times(0)).validate(anyString());
+	}
+
+	@Test
+	@DisplayName("검증이 끝나면 페이로드에 존재하는 사용자의 이메일이 attribute 에 담겨야한다.")
+	void authentication_setAttribute() throws Exception {
+	    //given
+		String header = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+			+ ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+			+ ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4";
+		String email = "userEmail@email.com";
+
+		given(request.getHeader(HttpHeaders.AUTHORIZATION))
+			.willReturn(header);
+		given(tokenProvider.parsePayload(anyString(), anyString()))
+			.willReturn(email);
+
+	    //when
+		boolean actual = jwtAuthenticationInterceptor.preHandle(request, response, handle);
+
+		//then
+		assertThat(actual).isTrue();
+
+		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<String> ignore = ArgumentCaptor.forClass(String.class);
+		verify(request).setAttribute(anyString(), captor.capture());
+
+		assertThat(email).isEqualTo(captor.getValue());
+		then(request).should(times(1)).getHeader(anyString());
+		then(tokenProvider).should(times(1)).validate(anyString());
+		then(tokenProvider).should(times(1)).parsePayload(anyString(), anyString());
+		then(request).should(times(1)).setAttribute(anyString(), anyString());
+
+
 	}
 }
