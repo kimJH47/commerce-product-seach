@@ -3,6 +3,8 @@ package back.ecommerce.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import back.ecommerce.domain.Cart;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.Product;
+import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.repository.CartRepository;
@@ -43,7 +46,7 @@ class CartServiceTest {
 		String email = "ImUser@email.com";
 		long productId = 1L;
 		int quantity = 10;
-		Product product = new Product(2L, "티셔츠", "커버낫", 35000L, Category.TOP);
+		Product product = createProduct(2L, "티셔츠", "커버낫", 35000L, Category.TOP);
 
 		given(userRepository.existsByEmail(anyString()))
 			.willReturn(true);
@@ -82,7 +85,7 @@ class CartServiceTest {
 
 	@Test
 	@DisplayName("카트에 상품 추가시 상품정보가 존재하지 않으면 ProductNotFoundException 이 발생한다.")
-	void cart_addProduct_productNotFoundException() throws Exception {
+	void cart_addProduct_productNotFoundException() {
 		//given
 		String email = "ImUser@email.com";
 		long productId = 1L;
@@ -100,7 +103,62 @@ class CartServiceTest {
 		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(1)).findById(anyLong());
 		then(cartRepository).should(times(0)).save(any(Cart.class));
+	}
 
+	@Test
+	@DisplayName("사용자 이메일에 해당하는 장바구니 정보들을 반환해야한다.")
+	void cart_findByUserEmail() {
+		//given
+		List<Cart> carts = new ArrayList<>();
+		String userEmail = "user@email.com";
+
+		Product productA = createProduct(1, "productA", "brandA", 100000L, Category.TOP);
+		Product productB = createProduct(2, "productB", "brandB", 30000L, Category.PANTS);
+		Product productC = createProduct(3, "productC", "brandC", 50000L, Category.ACCESSORY);
+
+		carts.add(new Cart(1L, productA, userEmail, 1, 100000L));
+		carts.add(new Cart(2L, productB, userEmail, 2, 60000L));
+		carts.add(new Cart(3L, productC, userEmail, 1, 50000L));
+
+		given(userRepository.existsByEmail(anyString()))
+			.willReturn(true);
+		given(cartRepository.findByUserEmail(anyString()))
+			.willReturn(carts);
+
+		//when
+		CartListResponse response = cartService.findCartByUserEmail(userEmail);
+
+		//then
+		assertThat(response.getEmail()).isEqualTo(userEmail);
+		assertThat(response.getCartProducts().getCount()).isEqualTo(3);
+		assertThat(response.getCartProducts().getTotalPrice()).isEqualTo(210000L);
+		assertThat(response.getCartProducts().getValue()).hasSize(3)
+			.extracting("id", "name", "brandName", "price", "category", "quantity")
+			.containsExactlyInAnyOrder(
+				tuple(1L, "productA", "brandA", 100000L, Category.TOP, 1),
+				tuple(2L, "productB", "brandB", 60000L, Category.PANTS, 2),
+				tuple(3L, "productC", "brandC", 50000L, Category.ACCESSORY, 1)
+			);
+
+		then(userRepository).should(times(1)).existsByEmail(anyString());
+		then(cartRepository).should(times(1)).findByUserEmail(anyString());
+	}
+
+	@Test
+	@DisplayName("사용자가 존재하지 않으면 UserNotFoundException 이 발생한다.")
+	void cart_findByUserEmail_UserNotFoundException() {
+		//given
+		given(userRepository.existsByEmail(anyString()))
+			.willReturn(false);
+
+		//expect
+		assertThatThrownBy(() -> cartService.findCartByUserEmail("none@email.com"))
+			.isInstanceOf(UserNotFoundException.class)
+			.hasMessage("해당하는 유저가 존재하지 않습니다.");
+	}
+
+	private Product createProduct(long id, String name, String brandName, long price, Category category) {
+		return new Product(id, name, brandName, price, category);
 	}
 
 }
