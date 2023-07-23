@@ -207,6 +207,21 @@ class CartControllerTest {
 			.andExpect(jsonPath("$.reasons.accessToken").value("토큰정보와 요청정보가 일치하지 않습니다."));
 	}
 
+	@Test
+	@DisplayName("/api/cart?email={email} GET 으로 존재하지 않은 사용자의 이메일을 보내면 응답코드 400 과 함께 실패이유가 응답되어야한다.")
+	void find_userNotFoundException() throws Exception {
+	    //given
+		given(cartService.findCartByUserEmail(anyString()))
+			.willThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+
+		//expect
+		mockMvc.perform(get("/api/cart")
+				.param("email", "user@email.com"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+	}
+
 	private CartProductDto createDto(long id, String name, String brandName, Category category, int quantity,
 		long price) {
 		return new CartProductDto(id, name, brandName, price, category, quantity);
