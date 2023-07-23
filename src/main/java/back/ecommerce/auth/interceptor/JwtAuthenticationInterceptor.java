@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import back.ecommerce.auth.token.TokenProvider;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
 	private static final String AUTHORIZATION_TYPE = "Bearer ";
+	private static final String EMAIL_ATTRIBUTE = "email";
 
 	private final TokenProvider tokenProvider;
 
@@ -25,11 +27,13 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 		String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String token = parseHeaderToToken(header);
 		tokenProvider.validate(token);
+		String email = tokenProvider.parsePayload(token, EMAIL_ATTRIBUTE);
+		request.setAttribute(EMAIL_ATTRIBUTE, email);
 		return HandlerInterceptor.super.preHandle(request, response, handler);
 	}
 
 	private String parseHeaderToToken(String header) {
-		if (header == null || header.isBlank()) {
+		if (!StringUtils.hasText(header)) {
 			throw new AuthHeaderInvalidException("인증 헤더가 비어있습니다.");
 		}
 		if (!header.startsWith(AUTHORIZATION_TYPE)) {
