@@ -88,6 +88,35 @@ class TokenProviderTest {
 		assertThatThrownBy(() -> tokenProvider.validate(invalidToken))
 			.isInstanceOf(TokenHasInvalidException.class)
 			.hasMessage("토큰이 유효하지 않습니다.");
+	}
+
+	@Test
+	@DisplayName("토큰의 페이로드가 정상적으로 파싱되어야한다.")
+	void parse_payload() {
+		//given
+		String expected = "dmkl1s@gmail.com";
+		int expireTime = 1000 * 60 * 60;
+		Token token = tokenProvider.create(expected, expireTime);
+
+		//when
+		String actual = tokenProvider.parsePayload(token.getValue(), "email");
+
+		//then
+		assertThat(actual).isEqualTo(expected);
+	}
+
+	@Test
+	@DisplayName("토큰의 페이로드에 요청한 값이 존재하지 않으면 TokenHasInvalidException 이 발생한다.")
+	void parse_payload_tokenHasInvalidException() {
+		//given
+		String expected = "dmkl1s@gmail.com";
+		int expireTime = 1000 * 60 * 60;
+		Token token = tokenProvider.create(expected, expireTime);
+
+		//expect
+		assertThatThrownBy(() -> tokenProvider.parsePayload(token.getValue(), "email@@"))
+			.isInstanceOf(TokenHasInvalidException.class)
+			.hasMessage("토큰이 유효하지 않습니다.");
 
 	}
 
