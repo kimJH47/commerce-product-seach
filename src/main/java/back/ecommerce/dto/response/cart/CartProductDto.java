@@ -1,4 +1,4 @@
-package back.ecommerce.dto;
+package back.ecommerce.dto.response.cart;
 
 import back.ecommerce.domain.product.Category;
 import lombok.AllArgsConstructor;
