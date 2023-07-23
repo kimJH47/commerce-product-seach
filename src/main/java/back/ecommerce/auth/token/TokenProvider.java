@@ -4,9 +4,11 @@ import static io.jsonwebtoken.SignatureAlgorithm.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import back.ecommerce.exception.TokenHasExpiredException;
 import back.ecommerce.exception.TokenHasInvalidException;
@@ -49,9 +51,24 @@ public class TokenProvider {
 		if (token.isBlank()) {
 			throw new TokenHasInvalidException("토큰이 존재하지 않습니다.");
 		}
+		execute(() -> Jwts.parser().setSigningKey(securityKey)
+			.parseClaimsJws(token));
+	}
+
+	public String parsePayload(String token, String claimName) {
+		return execute(() -> Jwts.parser().setSigningKey(securityKey)
+			.parseClaimsJws(token)
+			.getBody()
+			.get(claimName, String.class));
+	}
+
+	private <T> T execute(Supplier<T> supplier) {
 		try {
-			Jwts.parser().setSigningKey(securityKey)
-				.parseClaimsJws(token);
+			T data = supplier.get();
+			if (ObjectUtils.isEmpty(data)) {
+				throw new RuntimeException();
+			}
+			return data;
 		} catch (ExpiredJwtException e) {
 			throw new TokenHasExpiredException("토큰이 만료 되었습니다.");
 		} catch (Exception e) {
