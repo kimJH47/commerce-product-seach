@@ -43,4 +43,8 @@ public class GlobalExceptionHandler {
 		return Response.createBadRequest(BAD_REQUEST, "product", e.getMessage());
 	}
 
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<Response> handle(IllegalArgumentException e) {
+		return Response.createBadRequest(BAD_REQUEST, "argument", e.getMessage());
+	}
 }
