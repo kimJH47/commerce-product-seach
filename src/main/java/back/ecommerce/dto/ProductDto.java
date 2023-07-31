@@ -1,15 +1,17 @@
 package back.ecommerce.dto;
 
 import back.ecommerce.domain.product.Category;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class ProductDto {
-	private final Long id;
-	private final String name;
-	private final String brandName;
-	private final Long price;
-	private final Category category;
+	private Long id;
+	private String name;
+	private String brandName;
+	private Long price;
+	private Category category;
 }
