@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.ProductDto;
+import back.ecommerce.dto.ProductSearchCondition;
 import back.ecommerce.dto.response.ProductListResponse;
 import back.ecommerce.service.ProductService;
 
@@ -73,6 +74,53 @@ class ProductSearchControllerTest {
 		mockMvc.perform(get("/api/categories/to3p"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.reasons.argument").value("일치하는 카테고리가 없습니다."));
+	}
+
+	@Test
+	@DisplayName("api/categories/{category}/detail GET 에 쿼리스트링으로 검색 상세조건을 포함해서 요청하면 조건에 해당하는 상품이 페이징되어 응답되어야한다.")
+	void findProductWithPagination() throws Exception {
+		//given
+		ArrayList<ProductDto> products = new ArrayList<>();
+		products.add(createDto(10L, "바지A", "브랜드A", 15000L, Category.PANTS));
+		products.add(createDto(13L, "바지B", "브랜드B", 13000L, Category.PANTS));
+		products.add(createDto(15L, "바지C", "브랜드C", 18000L, Category.PANTS));
+		products.add(createDto(20L, "바지D", "브랜드D", 10000L, Category.PANTS));
+		products.add(createDto(25L, "바지E", "브랜드E", 5000L, Category.PANTS));
+		ProductListResponse productListResponse = new ProductListResponse(products.size(), products);
+
+		given(productService.findWithSearchCondition(any(ProductSearchCondition.class)))
+			.willReturn(productListResponse);
+
+		//expect
+		mockMvc.perform(get("/api/categories/TOP/detail")
+				.param("category", "PANTS")
+				.param("page", "1")
+				.param("name", "")
+				.param("brandName", "")
+				.param("minPrice", "100")
+				.param("maxPrice", "1000")
+				.param("sort", "new")
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("상품이 성공적으로 조회 되었습니다."))
+			.andExpect(jsonPath("$.entity.totalCount").value(5))
+
+			.andExpect(jsonPath("$.entity.products[0].name").value("바지A"))
+			.andExpect(jsonPath("$.entity.products[0].brandName").value("브랜드A"))
+			.andExpect(jsonPath("$.entity.products[0].price").value(15000L))
+			.andExpect(jsonPath("$.entity.products[0].category").value("PANTS")
+			)
+			.andExpect(jsonPath("$.entity.products[1].name").value("바지B"))
+			.andExpect(jsonPath("$.entity.products[1].brandName").value("브랜드B"))
+			.andExpect(jsonPath("$.entity.products[1].price").value(13000L))
+			.andExpect(jsonPath("$.entity.products[1].category").value("PANTS"))
+
+			.andExpect(jsonPath("$.entity.products[2].name").value("바지C"))
+			.andExpect(jsonPath("$.entity.products[2].brandName").value("브랜드C"))
+			.andExpect(jsonPath("$.entity.products[2].price").value(18000L))
+			.andExpect(jsonPath("$.entity.products[2].category").value("PANTS"));
+
+		then(productService).should(times(1)).findWithSearchCondition(any(ProductSearchCondition.class));
 	}
 
 	private ProductDto createDto(long id, String name, String brandName, long price, Category category) {
