@@ -27,6 +27,7 @@ public class ProductService {
 	}
 
 	public ProductListResponse findWithSearchCondition(ProductSearchCondition productSearchCondition) {
-		return null;
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(productSearchCondition);
+		return new ProductListResponse(products.size(), products);
 	}
 }
