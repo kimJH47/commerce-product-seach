@@ -36,4 +36,12 @@ public class ProductSearchCondition {
 			PageRequest.of(Integer.parseInt(params.get("page")), DEFAULT_PAGE_SIZE)
 		);
 	}
+
+	public long getOffset() {
+		return pageable.getOffset();
+	}
+
+	public long getPageSize() {
+		return pageable.getPageSize();
+	}
 }
