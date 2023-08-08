@@ -4,6 +4,7 @@ import static back.ecommerce.domain.product.QProduct.*;
 import static back.ecommerce.dto.ProductSortCondition.*;
 import static com.querydsl.core.types.dsl.Expressions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -28,11 +28,21 @@ public class ProductQueryDslRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	public List<ProductDto> findByCategoryWithPaginationOrderByBrandNew(Category category, Pageable pageable) {
-		return jpaQueryFactory.select(projectedProductDto())
+		List<Long> ids = jpaQueryFactory.select(product.id)
 			.from(product)
-			.limit(pageable.getPageSize())
+			.where(eqCategory(category))
+			.orderBy(product.createdDate.desc())
 			.offset(pageable.getOffset())
-			.where(product.category.eq(category))
+			.limit(pageable.getPageSize())
+			.fetch();
+		if (ids.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return jpaQueryFactory.select(Projections.fields(ProductDto.class,
+				product.id, product.name, product.brandName, product.price,
+				asEnum(category).as(product.category)))
+			.from(product)
+			.where(product.id.in(ids))
 			.orderBy(product.createdDate.desc())
 			.fetch();
 	}
@@ -52,6 +62,11 @@ public class ProductQueryDslRepository {
 			.offset(productSearchCondition.getOffset())
 			.orderBy(orderBy)
 			.fetch();
+
+		if (ids.isEmpty()) {
+			return new ArrayList<>();
+		}
+
 		return jpaQueryFactory.select(
 				Projections.fields(ProductDto.class,
 					product.id,
@@ -104,10 +119,5 @@ public class ProductQueryDslRepository {
 			return product.price.asc();
 		}
 		return product.createdDate.desc();
-	}
-
-	private QBean<ProductDto> projectedProductDto() {
-		return Projections.fields(ProductDto.class,
-			product.id, product.name, product.brandName, product.price, product.category);
 	}
 }
