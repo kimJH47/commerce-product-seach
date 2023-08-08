@@ -33,7 +33,7 @@ public class ProductSearchCondition {
 			Long.parseLong(params.get("minPrice")),
 			Long.parseLong(params.get("maxPrice")),
 			ProductSortCondition.createWithSortQuery((params.get("sort"))),
-			PageRequest.of(Integer.parseInt(params.get("page")), DEFAULT_PAGE_SIZE)
+			PageRequest.of(Integer.parseInt(params.get("page")) - 1, DEFAULT_PAGE_SIZE)
 		);
 	}
 
