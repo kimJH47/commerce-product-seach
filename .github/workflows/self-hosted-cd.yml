@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master
 
 permission:
   contents: read
@@ -20,7 +21,7 @@ jobs:
     runs-on: macOS
     steps:
       - name: set auth yaml file for env
-        uses:
+        uses: microsoft/variable-substitution@v1
         with:
           files: ${{ env.AUTH_PATH }}
         env:
