@@ -20,7 +20,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'Zulu'
+          distribution: 'zulu'
           java-version: 11
 
       - name: set auth yaml file for env
