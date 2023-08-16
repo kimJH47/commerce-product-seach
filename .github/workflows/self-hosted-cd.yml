@@ -1,0 +1,70 @@
+name: ecommerce-deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permission:
+  contents: read
+
+env:
+  S3_BUCKET_NAME: ecommerce-buckets
+  RESOURCE_PATH: ./src/main/resources/application.yaml
+  AUTH_PATH: ./src/main/resources/application-auth.yaml
+  CODE_DEPLOY_APPLICATION_NAME: ecommerce-code-deploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ecommerce-api-server
+
+jobs:
+  build:
+    runs-on: macOS
+    steps:
+      - name: set auth yaml file for env
+        uses:
+        with:
+          files: ${{ env.AUTH_PATH }}
+        env:
+          jwt.secretKey: ${{secrets.JWT_SECRET_KEY}}
+
+      - name: set application yaml file for env
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          spring.datasource.username: ${{ secrets.USER }}
+          spring.datasource.password: ${{ secrets.PASSWORD }}
+          spring.datasource.url: ${{ secrets.URL }}
+
+
+      - name: Checkout repository
+        uses: actions/checkout@v2  # 리포지토리 체크아웃
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11  # Java 버전 설정
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar  # Gradle 빌드 실행
+
+      - name: Copy artifact to EC2
+        uses: appleboy/scp-action@master  # SCP 액션 사용
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PRIVATE__KEY }}
+          source: "path/to/your/*.jar"
+          target: "/"
+
+      - name: Execute Server Init Script
+        uses: appleboy/ssh-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script_stop: true
+          script: chmod +x /home/ubuntu/deploy/deploy.sh && sh /home/ubuntu/deploy/deploy.sh
+
