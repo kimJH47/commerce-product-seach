@@ -17,6 +17,14 @@ jobs:
   build:
     runs-on: macOS
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+
       - name: set auth yaml file for env
         uses: microsoft/variable-substitution@v1
         with:
@@ -32,15 +40,6 @@ jobs:
           spring.datasource.username: ${{ secrets.USER }}
           spring.datasource.password: ${{ secrets.PASSWORD }}
           spring.datasource.url: ${{ secrets.URL }}
-
-
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
