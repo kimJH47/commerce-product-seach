@@ -7,11 +7,8 @@ on:
       - master
 
 env:
-  S3_BUCKET_NAME: ecommerce-buckets
   RESOURCE_PATH: ./src/main/resources/application.yaml
   AUTH_PATH: ./src/main/resources/application-auth.yaml
-  CODE_DEPLOY_APPLICATION_NAME: ecommerce-code-deploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ecommerce-api-server
 
 jobs:
   build:
@@ -23,6 +20,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
+          distribution: 'Zulu'
           java-version: 11
 
       - name: set auth yaml file for env
