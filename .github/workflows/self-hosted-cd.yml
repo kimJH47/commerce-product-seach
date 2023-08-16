@@ -6,9 +6,6 @@ on:
       - main
       - master
 
-permission:
-  contents: read
-
 env:
   S3_BUCKET_NAME: ecommerce-buckets
   RESOURCE_PATH: ./src/main/resources/application.yaml
