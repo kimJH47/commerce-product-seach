@@ -37,27 +37,27 @@ jobs:
 
 
       - name: Checkout repository
-        uses: actions/checkout@v2  # 리포지토리 체크아웃
+        uses: actions/checkout@v2
 
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: 11  # Java 버전 설정
+          java-version: 11
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew bootJar  # Gradle 빌드 실행
+        run: ./gradlew bootJar
 
       - name: Copy artifact to EC2
-        uses: appleboy/scp-action@master  # SCP 액션 사용
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_PRIVATE__KEY }}
-          source: "path/to/your/*.jar"
-          target: "/"
+          source: "./ecommerce/build/libs/*.jar"
+          target: "/home/ubuntu/application"
 
       - name: Execute Server Init Script
         uses: appleboy/ssh-action@master
