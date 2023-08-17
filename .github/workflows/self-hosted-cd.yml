@@ -62,5 +62,5 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script_stop: true
-          script: nohup sh /home/ubuntu/deploy/deploy_jar.sh &
+          script: sh /home/ubuntu/deploy/deploy_jar.sh
 
