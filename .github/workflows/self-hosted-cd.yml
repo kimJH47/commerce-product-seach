@@ -47,8 +47,11 @@ jobs:
 
       - name: Copy artifact to EC2
         run: |
+          pwd
           echo ${{ secrets.AWS_PRIVATE_KEY }} > private_key.pem
+          pwd
           chmod 400 private_key.pem
+          pwd
           scp -i private_key.pem ./build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
           rm private_key.pem
 
