@@ -47,7 +47,10 @@ jobs:
 
       - name: Copy artifact to EC2
         run: |
-          scp -i ${{ secrets.AWS_PRIVATE_KEY }} ./ecommerce/build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
+          echo ${{ secrets.AWS_PRIVATE_KEY }} > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem ./ecommerce/build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
+          rm private_key.pem
 
       - name: Execute Server Init Script
         uses: appleboy/ssh-action@master
