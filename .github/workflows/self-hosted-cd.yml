@@ -50,7 +50,7 @@ jobs:
           echo ${{ secrets.AWS_PRIVATE_KEY }} > private_key.pem
           chmod 400 private_key.pem
           pwd
-          scp -i private_key.pem zerobase-ecommerce/build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
+          scp -i private_key.pem ./build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
           rm private_key.pem
 
       - name: Execute Server Init Script
