@@ -51,7 +51,7 @@ jobs:
           username: ubuntu
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
-          source: "./build/libs"
+          source: "./build/libs/"
           target: "/home/ubuntu/application"
           strip_components: 3
 
