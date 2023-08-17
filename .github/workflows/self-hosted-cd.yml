@@ -48,8 +48,8 @@ jobs:
       - name: Copy artifact to EC2
         run: |
           echo ${{ secrets.AWS_PRIVATE_KEY }} > private_key.pem
-          chmod 600 private_key.pem
-          scp -i private_key.pem ./ecommerce/build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
+          chmod 400 private_key.pem
+          scp -i private_key.pem ./build/libs/*.jar ubuntu@${{ secrets.AWS_HOST }}:/home/ubuntu/application/
           rm private_key.pem
 
       - name: Execute Server Init Script
