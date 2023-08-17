@@ -51,8 +51,9 @@ jobs:
           username: ubuntu
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
-          source: "./build/libs/*.jar"
+          source: "./build/libs"
           target: "/home/ubuntu/application"
+          strip_components: 3
 
       - name: Execute Server Init Script
         uses: appleboy/ssh-action@master
