@@ -57,7 +57,7 @@ class CartRepositoryTest {
 		//when
 		List<Cart> actual = cartRepository.findByUserEmail("user@naver.com");
 		Cart cart = actual.get(0);
-		CartProductDto cartProductDto = cart.toDto();
+		CartProductDto cartProductDto = CartProductDto.create(cart);
 
 		//then
 		assertThat(actual).hasSize(3);
