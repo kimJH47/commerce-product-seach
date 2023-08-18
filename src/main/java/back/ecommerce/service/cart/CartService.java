@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import back.ecommerce.domain.cart.Cart;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.cart.CartListResponse;
+import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.response.cart.CartProducts;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
@@ -38,7 +39,7 @@ public class CartService {
 	public CartListResponse findCartByUserEmail(String email) {
 		validateUserEmail(email);
 		CartProducts cartProducts = cartRepository.findByUserEmail(email).stream()
-			.map(Cart::toDto)
+			.map(CartProductDto::create)
 			.collect(collectingAndThen(toList(), CartProducts::create));
 		return new CartListResponse(email, cartProducts);
 	}

@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 
 import back.ecommerce.domain.common.BaseTimeEntity;
 import back.ecommerce.domain.product.Product;
-import back.ecommerce.dto.response.cart.CartProductDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,16 +31,22 @@ public class Cart extends BaseTimeEntity {
 	private int quantity;
 	private long price;
 
-	public CartProductDto toDto() {
-		return CartProductDto.builder()
-			.id(id)
-			.name(product.getName())
-			.category(product.getCategory())
-			.brandName(product.getBrandName())
-			.price(price)
-			.quantity(quantity)
-			.build();
+	public long getPrice() {
+		return price;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
 	public static Cart create(String userEmail, Product product, int quantity) {
 		return Cart.builder()
 			.userEmail(userEmail)
