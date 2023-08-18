@@ -1,4 +1,4 @@
-package back.ecommerce.controller;
+package back.ecommerce.controller.common;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

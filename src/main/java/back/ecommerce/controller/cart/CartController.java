@@ -1,4 +1,4 @@
-package back.ecommerce.controller;
+package back.ecommerce.controller.cart;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;

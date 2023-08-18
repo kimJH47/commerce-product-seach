@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import back.ecommerce.controller.auth.AuthController;
 import back.ecommerce.dto.request.user.LoginRequest;
 import back.ecommerce.dto.response.auth.TokenResponseDto;
 import back.ecommerce.exception.PasswordNotMatchedException;
