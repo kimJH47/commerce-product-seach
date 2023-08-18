@@ -1,4 +1,4 @@
-package back.ecommerce.dto;
+package back.ecommerce.dto.request.product;
 
 import java.util.Arrays;
 

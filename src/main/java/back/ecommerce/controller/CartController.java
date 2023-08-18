@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import back.ecommerce.auth.annotaion.UserEmail;
-import back.ecommerce.dto.request.AddCartRequest;
-import back.ecommerce.dto.response.Response;
+import back.ecommerce.dto.request.cart.AddCartRequest;
+import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.TokenHasInvalidException;
-import back.ecommerce.service.CartService;
+import back.ecommerce.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 
 @RestController

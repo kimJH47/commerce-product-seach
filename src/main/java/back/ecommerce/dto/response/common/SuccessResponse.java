@@ -1,4 +1,4 @@
-package back.ecommerce.dto.response;
+package back.ecommerce.dto.response.common;
 
 import lombok.Getter;
 

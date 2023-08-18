@@ -1,4 +1,4 @@
-package back.ecommerce.domain;
+package back.ecommerce.domain.cart;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import back.ecommerce.domain.common.BaseTimeEntity;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.cart.CartProductDto;
 import lombok.AccessLevel;

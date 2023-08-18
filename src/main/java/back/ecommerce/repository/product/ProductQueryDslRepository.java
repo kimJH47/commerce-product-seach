@@ -1,7 +1,7 @@
-package back.ecommerce.repository;
+package back.ecommerce.repository.product;
 
 import static back.ecommerce.domain.product.QProduct.*;
-import static back.ecommerce.dto.ProductSortCondition.*;
+import static back.ecommerce.dto.request.product.ProductSortCondition.*;
 import static com.querydsl.core.types.dsl.Expressions.*;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.ProductDto;
-import back.ecommerce.dto.ProductSearchCondition;
-import back.ecommerce.dto.ProductSortCondition;
+import back.ecommerce.dto.response.product.ProductDto;
+import back.ecommerce.dto.request.product.ProductSearchCondition;
+import back.ecommerce.dto.request.product.ProductSortCondition;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package back.ecommerce.dto.response.token;
+package back.ecommerce.dto.response.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

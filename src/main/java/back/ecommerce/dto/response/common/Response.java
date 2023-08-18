@@ -1,4 +1,4 @@
-package back.ecommerce.dto.response;
+package back.ecommerce.dto.response.common;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

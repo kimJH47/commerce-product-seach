@@ -1,4 +1,4 @@
-package back.ecommerce.repository;
+package back.ecommerce.repository.product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

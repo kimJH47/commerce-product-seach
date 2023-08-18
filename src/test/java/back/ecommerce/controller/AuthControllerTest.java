@@ -20,11 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.dto.request.LoginRequest;
-import back.ecommerce.dto.response.token.TokenResponseDto;
+import back.ecommerce.dto.request.user.LoginRequest;
+import back.ecommerce.dto.response.auth.TokenResponseDto;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.service.AuthService;
+import back.ecommerce.service.auth.AuthService;
 
 @WebMvcTest(AuthController.class)
 @Import(MockAuthProviderConfig.class)

@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import back.ecommerce.domain.User;
+import back.ecommerce.domain.user.User;
+import back.ecommerce.repository.user.UserRepository;
 
 @DataJpaTest
 class UserRepositoryTest {

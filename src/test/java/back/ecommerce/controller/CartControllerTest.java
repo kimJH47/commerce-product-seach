@@ -36,12 +36,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.response.cart.CartProductDto;
-import back.ecommerce.dto.request.AddCartRequest;
+import back.ecommerce.dto.request.cart.AddCartRequest;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.dto.response.cart.CartProducts;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.service.CartService;
+import back.ecommerce.service.cart.CartService;
 
 @WebMvcTest(value = CartController.class, excludeFilters = {
 	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)}

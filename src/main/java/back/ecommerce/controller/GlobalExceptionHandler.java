@@ -5,7 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import back.ecommerce.dto.response.Response;
+import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.AuthHeaderInvalidException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.ProductNotFoundException;

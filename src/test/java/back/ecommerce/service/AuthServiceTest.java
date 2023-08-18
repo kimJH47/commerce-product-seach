@@ -15,11 +15,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.domain.User;
-import back.ecommerce.dto.response.token.TokenResponseDto;
+import back.ecommerce.domain.user.User;
+import back.ecommerce.dto.response.auth.TokenResponseDto;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.repository.UserRepository;
+import back.ecommerce.repository.user.UserRepository;
+import back.ecommerce.service.auth.AuthService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
