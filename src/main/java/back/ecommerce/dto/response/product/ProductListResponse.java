@@ -1,8 +1,7 @@
-package back.ecommerce.dto.response;
+package back.ecommerce.dto.response.product;
 
 import java.util.List;
 
-import back.ecommerce.dto.ProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import back.ecommerce.repository.product.ProductQueryDslRepository;
+
 @TestConfiguration
 public class QueryDSLRepoConfig {
 

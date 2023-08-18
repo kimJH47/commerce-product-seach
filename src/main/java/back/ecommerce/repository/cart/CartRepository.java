@@ -1,4 +1,4 @@
-package back.ecommerce.repository;
+package back.ecommerce.repository.cart;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import back.ecommerce.domain.Cart;
+import back.ecommerce.domain.cart.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
 

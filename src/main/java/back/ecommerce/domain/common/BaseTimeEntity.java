@@ -1,4 +1,4 @@
-package back.ecommerce.domain;
+package back.ecommerce.domain.common;
 
 import java.time.LocalDateTime;
 

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import back.ecommerce.dto.request.LoginRequest;
-import back.ecommerce.dto.response.Response;
-import back.ecommerce.service.AuthService;
+import back.ecommerce.dto.request.user.LoginRequest;
+import back.ecommerce.dto.response.common.Response;
+import back.ecommerce.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 
 @RestController

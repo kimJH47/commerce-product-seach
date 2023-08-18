@@ -1,19 +1,19 @@
-package back.ecommerce.service;
+package back.ecommerce.service.cart;
 
 import static java.util.stream.Collectors.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import back.ecommerce.domain.Cart;
+import back.ecommerce.domain.cart.Cart;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.dto.response.cart.CartProducts;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.repository.CartRepository;
-import back.ecommerce.repository.ProductRepository;
-import back.ecommerce.repository.UserRepository;
+import back.ecommerce.repository.cart.CartRepository;
+import back.ecommerce.repository.product.ProductRepository;
+import back.ecommerce.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

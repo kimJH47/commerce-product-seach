@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.ProductSearchCondition;
-import back.ecommerce.dto.response.Response;
-import back.ecommerce.service.ProductService;
+import back.ecommerce.dto.request.product.ProductSearchCondition;
+import back.ecommerce.dto.response.common.Response;
+import back.ecommerce.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 
 @RestController

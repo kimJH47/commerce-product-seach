@@ -1,4 +1,4 @@
-package back.ecommerce.domain;
+package back.ecommerce.domain.user;
 
 import java.util.Objects;
 
@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import back.ecommerce.domain.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
