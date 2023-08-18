@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import back.ecommerce.controller.product.ProductSearchController;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.request.product.ProductSearchCondition;

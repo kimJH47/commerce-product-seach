@@ -1,4 +1,4 @@
-package back.ecommerce.controller;
+package back.ecommerce.controller.product;
 
 import java.util.Map;
 
