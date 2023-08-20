@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import back.ecommerce.domain.common.BaseTimeEntity;
 import back.ecommerce.domain.product.Product;
@@ -16,6 +17,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "CART")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
