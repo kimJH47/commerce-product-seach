@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import back.ecommerce.dto.response.common.FailedResponse;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.AuthHeaderInvalidException;
 import back.ecommerce.exception.PasswordNotMatchedException;
@@ -17,6 +18,7 @@ import back.ecommerce.exception.UserNotFoundException;
 public class GlobalExceptionHandler {
 
 	private static final String BAD_REQUEST = "잘못된 요청입니다.";
+	private static final String INTERNAL_SERVER_ERROR = "서버에서 에러가 발생 했습니다.";
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Response> handle(MethodArgumentNotValidException e) {
@@ -46,5 +48,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<Response> handle(IllegalArgumentException e) {
 		return Response.createBadRequest(BAD_REQUEST, "argument", e.getMessage());
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Response> handleInternalServerError(Exception e) {
+		return ResponseEntity.internalServerError()
+			.body(new FailedResponse(INTERNAL_SERVER_ERROR, "server",e.getMessage()));
 	}
 }
