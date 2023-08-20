@@ -157,7 +157,7 @@ class CartControllerTest {
 	}
 
 	@Test
-	@DisplayName("/api/cart?email={email} GET 로 요청을 보내면 사용자의 장바구니를 응답코드 200과 함께 응답한다.")
+	@DisplayName("/api/cart GET 로 요청을 보내면 사용자의 장바구니를 응답코드 200과 함께 응답한다.")
 	void find() throws Exception {
 		//given
 		ArrayList<CartProductDto> cartProductDtos = new ArrayList<>();
@@ -167,8 +167,7 @@ class CartControllerTest {
 		given(cartService.findCartByUserEmail(anyString()))
 			.willReturn(new CartListResponse("user@email.com", CartProducts.create(cartProductDtos)));
 		//expect
-		mockMvc.perform(get("/api/cart")
-				.param("email", "user@email.com"))
+		mockMvc.perform(get("/api/cart"))
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andExpect(jsonPath("$.message").value("장바구니가 성곡적으로 조회 되었습니다."))
@@ -196,17 +195,6 @@ class CartControllerTest {
 			.andExpect(jsonPath("$.entity.cartProducts.value[2].category").value(Category.ACCESSORY.toString()))
 			.andExpect(jsonPath("$.entity.cartProducts.value[2].quantity").value(1))
 			.andExpect(jsonPath("$.entity.cartProducts.value[2].price").value(150000L));
-	}
-
-	@Test
-	@DisplayName("토큰 페이로드 이메일정보와 요청 request 에 들어오는 이메일이 일치하지 않으면 응답코드 400과 함께 실피애유가 응답 되어야한다.")
-	void find_exception() throws Exception {
-		//expect
-		mockMvc.perform(get("/api/cart")
-				.param("email", "otherUser@email.com"))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.accessToken").value("토큰정보와 요청정보가 일치하지 않습니다."));
 	}
 
 	@Test
