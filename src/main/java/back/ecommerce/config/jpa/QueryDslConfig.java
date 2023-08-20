@@ -1,4 +1,4 @@
-package back.ecommerce.config;
+package back.ecommerce.config.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

@@ -1,4 +1,4 @@
-package back.ecommerce.config;
+package back.ecommerce.config.web;
 
 import java.util.List;
 
