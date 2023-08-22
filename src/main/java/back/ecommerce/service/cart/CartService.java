@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import back.ecommerce.domain.cart.Cart;
 import back.ecommerce.domain.product.Product;
+import back.ecommerce.dto.response.cart.AddCartResponse;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.response.cart.CartProducts;
@@ -26,13 +27,12 @@ public class CartService {
 	private final ProductRepository productRepository;
 
 	@Transactional
-	public void addProduct(String email, long productId, int quantity) {
+	public AddCartResponse addProduct(String email, long productId, int quantity) {
 		validateUserEmail(email);
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."));
-
 		Cart userCart = Cart.create(email, product, quantity);
-		cartRepository.save(userCart);
+		return  AddCartResponse.create(cartRepository.save(userCart));
 	}
 
 	@Transactional(readOnly = true)

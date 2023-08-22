@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -37,9 +36,10 @@ import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.controller.cart.CartController;
 import back.ecommerce.controller.common.GlobalExceptionHandler;
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.request.cart.AddCartRequest;
+import back.ecommerce.dto.response.cart.AddCartResponse;
 import back.ecommerce.dto.response.cart.CartListResponse;
+import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.response.cart.CartProducts;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
@@ -69,22 +69,18 @@ class CartControllerTest {
 	void add_product() throws Exception {
 		//given
 		String email = "user@email.com";
-		List<CartProductDto> cartProducts = new ArrayList<>();
-		cartProducts.add(createDto(1L, "맨투맨", "커버낫", Category.TOP, 2, 100000L));
-		cartProducts.add(createDto(2L, "블랙진", "모드나인", Category.TOP, 1, 500000L));
-		cartProducts.add(createDto(3L, "코트", "커버낫", Category.ONEPIECE, 1, 1000000L));
-
-		given(cartService.findCartByUserEmail(anyString()))
-			.willReturn(new CartListResponse(email, CartProducts.create(cartProducts)));
-
+		given(cartService.addProduct(anyString(), anyLong(), anyInt()))
+			.willReturn(new AddCartResponse(10L,1,10000L));
 		//expect
 		mockMvc.perform(post("/api/cart/add-product")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(new AddCartRequest(email, 3L, 1))))
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(10))
+			.andExpect(jsonPath("$.quantity").value(1))
+			.andExpect(jsonPath("$.price").value(10000));
 
 		then(cartService).should(times(1)).addProduct(anyString(), anyLong(), anyInt());
-		then(cartService).should(times(1)).findCartByUserEmail(anyString());
 	}
 
 	@ParameterizedTest

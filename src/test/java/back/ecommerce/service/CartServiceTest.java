@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import back.ecommerce.domain.cart.Cart;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.Product;
+import back.ecommerce.dto.response.cart.AddCartResponse;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.UserNotFoundException;
@@ -53,11 +54,15 @@ class CartServiceTest {
 			.willReturn(true);
 		given(productRepository.findById(anyLong()))
 			.willReturn(Optional.of(product));
+		given(cartRepository.save(any(Cart.class)))
+			.willReturn(new Cart(10L, product, email, quantity, 350000L));
 
 		//expect
-		assertThatCode(() ->
-			cartService.addProduct(email, productId, quantity))
-			.doesNotThrowAnyException();
+		AddCartResponse addCartResponse = cartService.addProduct(email, productId, quantity);
+
+		assertThat(addCartResponse.getId()).isEqualTo(10);
+		assertThat(addCartResponse.getPrice()).isEqualTo(350000L);
+		assertThat(addCartResponse.getQuantity()).isEqualTo(quantity);
 
 		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(1)).findById(anyLong());
