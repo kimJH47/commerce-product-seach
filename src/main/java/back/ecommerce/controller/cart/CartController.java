@@ -31,7 +31,7 @@ public class CartController {
 	@GetMapping
 	public ResponseEntity<Response> findByEmail(
 		@UserEmail String tokenEmail) {
-		return Response.createSuccessResponse("장바구니가 성곡적으로 조회 되었습니다.",
+		return Response.createSuccessResponse("장바구니가 성공적으로 조회 되었습니다.",
 			cartService.findCartByUserEmail(tokenEmail));
 	}
 }

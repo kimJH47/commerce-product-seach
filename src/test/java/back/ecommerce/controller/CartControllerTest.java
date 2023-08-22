@@ -166,7 +166,7 @@ class CartControllerTest {
 		mockMvc.perform(get("/api/cart"))
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andExpect(jsonPath("$.message").value("장바구니가 성곡적으로 조회 되었습니다."))
+			.andExpect(jsonPath("$.message").value("장바구니가 성공적으로 조회 되었습니다."))
 			.andExpect(jsonPath("$.entity.email").value("user@email.com"))
 			.andExpect(jsonPath("$.entity.cartProducts.count").value(3))
 			.andExpect(jsonPath("$.entity.cartProducts.totalPrice").value(168000))
