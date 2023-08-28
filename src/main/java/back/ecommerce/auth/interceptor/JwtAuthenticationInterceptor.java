@@ -24,15 +24,13 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
 		Exception {
-		String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-		String token = parseHeaderToToken(header);
-		tokenProvider.validate(token);
-		String email = tokenProvider.parsePayload(token, EMAIL_ATTRIBUTE);
+		String token = extractHeaderToToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+		String email = tokenProvider.extractClaim(token, EMAIL_ATTRIBUTE);
 		request.setAttribute(EMAIL_ATTRIBUTE, email);
-		return HandlerInterceptor.super.preHandle(request, response, handler);
+		return true;
 	}
 
-	private String parseHeaderToToken(String header) {
+	private String extractHeaderToToken(String header) {
 		if (!StringUtils.hasText(header)) {
 			throw new AuthHeaderInvalidException("인증 헤더가 비어있습니다.");
 		}

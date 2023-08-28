@@ -41,19 +41,6 @@ class TokenProviderTest {
 	}
 
 	@Test
-	@DisplayName("토큰 검증 성공 테스트")
-	void validate() {
-		//given
-		String expected = "dmkl1s@gmail.com";
-		int expireTime = 1000 * 60 * 60;
-		Token token = tokenProvider.create(expected, expireTime);
-
-		//expect
-		assertThatCode(() -> tokenProvider.validate(token.getValue()))
-			.doesNotThrowAnyException();
-	}
-
-	@Test
 	@DisplayName("토큰에 유효기간이 만료되면 TokenHasExpiredException 이 발생한다.")
 	void validate_expireDate() {
 		//given
@@ -62,18 +49,20 @@ class TokenProviderTest {
 		Token token = tokenProvider.create(expected, expireTime);
 
 		//expect
-		assertThatThrownBy(() -> tokenProvider.validate(token.getValue()))
+		assertThatThrownBy(() -> tokenProvider.extractClaim(token.getValue(), "email"))
 			.isInstanceOf(TokenHasExpiredException.class)
 			.hasMessage("토큰이 만료 되었습니다.");
 	}
 
 	@Test
-	@DisplayName("토큰이 비어있으면 TokenHasInvalidException 이 발생한다.")
+	@DisplayName("토큰이 비어있으면 TokenHasInvalidException 발생 한다")
 	void validate_empty_token() {
 		//expect
-		assertThatThrownBy(() -> tokenProvider.validate(" "))
-			.isInstanceOf(TokenHasInvalidException.class)
-			.hasMessage("토큰이 존재하지 않습니다.");
+		assertThatThrownBy(() ->
+			tokenProvider.extractClaim(null, "email")
+		).isInstanceOf(TokenHasInvalidException.class);
+
+
 	}
 
 	@Test
@@ -85,28 +74,32 @@ class TokenProviderTest {
 			+ ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 		//expect
-		assertThatThrownBy(() -> tokenProvider.validate(invalidToken))
+		assertThatThrownBy(() -> tokenProvider.extractClaim(invalidToken,"email"))
 			.isInstanceOf(TokenHasInvalidException.class)
 			.hasMessage("토큰이 유효하지 않습니다.");
 	}
 
 	@Test
-	@DisplayName("토큰의 페이로드가 정상적으로 파싱되어야한다.")
+	@DisplayName("토큰 페이로드의 클레임이 정상적으로 파싱되어야한다.")
 	void parse_payload() {
 		//given
-		String expected = "dmkl1s@gmail.com";
+		String expected1 = "dmkl1s@gmail.com";
+		String expected2 = "ontfasdmkl1s@gmail.co.kr";
 		int expireTime = 1000 * 60 * 60;
-		Token token = tokenProvider.create(expected, expireTime);
+		Token token1 = tokenProvider.create(expected1, expireTime);
+		Token token2 = tokenProvider.create(expected2, expireTime);
 
 		//when
-		String actual = tokenProvider.parsePayload(token.getValue(), "email");
+		String actual1 = tokenProvider.extractClaim(token1.getValue(), "email");
+		String actual2 = tokenProvider.extractClaim(token2.getValue(), "email");
 
 		//then
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual1).isEqualTo(expected1);
+		assertThat(actual2).isEqualTo(expected2);
 	}
 
 	@Test
-	@DisplayName("토큰의 페이로드에 요청한 값이 존재하지 않으면 TokenHasInvalidException 이 발생한다.")
+	@DisplayName("토큰의 페이로드에 요청한 값이 존재하지 않으면 빈 문자열이 발생한다.")
 	void parse_payload_tokenHasInvalidException() {
 		//given
 		String expected = "dmkl1s@gmail.com";
@@ -114,10 +107,7 @@ class TokenProviderTest {
 		Token token = tokenProvider.create(expected, expireTime);
 
 		//expect
-		assertThatThrownBy(() -> tokenProvider.parsePayload(token.getValue(), "email@@"))
-			.isInstanceOf(TokenHasInvalidException.class)
-			.hasMessage("토큰이 유효하지 않습니다.");
-
+		String actual = tokenProvider.extractClaim(token.getValue(), "email@@");
+		assertThat(actual).isEmpty();
 	}
-
 }

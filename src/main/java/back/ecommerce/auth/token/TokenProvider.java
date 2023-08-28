@@ -4,17 +4,19 @@ import static io.jsonwebtoken.SignatureAlgorithm.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import back.ecommerce.exception.TokenHasExpiredException;
 import back.ecommerce.exception.TokenHasInvalidException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 @Component
 public class TokenProvider {
@@ -24,6 +26,7 @@ public class TokenProvider {
 
 	@Value("${jwt.secretKey}")
 	private String securityKey;
+	private final JwtParser parser = Jwts.parser();
 
 	public Token create(String email, int expireTime) {
 
@@ -47,32 +50,23 @@ public class TokenProvider {
 		return expireDate;
 	}
 
-	public void validate(String token) {
-		if (token.isBlank()) {
-			throw new TokenHasInvalidException("토큰이 존재하지 않습니다.");
-		}
-		execute(() -> Jwts.parser().setSigningKey(securityKey)
-			.parseClaimsJws(token));
-	}
-
-	public String parsePayload(String token, String claimName) {
-		return execute(() -> Jwts.parser().setSigningKey(securityKey)
-			.parseClaimsJws(token)
-			.getBody()
-			.get(claimName, String.class));
-	}
-
-	private <T> T execute(Supplier<T> supplier) {
+	public String extractClaim(String token, String claimName) {
 		try {
-			T data = supplier.get();
-			if (ObjectUtils.isEmpty(data)) {
-				throw new RuntimeException();
+			String claim = parser.setSigningKey(securityKey)
+				.parseClaimsJws(token)
+				.getBody()
+				.get(claimName, String.class);
+
+			if (claim == null) {
+				return "";
 			}
-			return data;
+			return claim;
+		} catch (IllegalArgumentException e) {
+			throw new TokenHasInvalidException("토큰이 비어있습니다.");
+		} catch (SignatureException | UnsupportedJwtException | MalformedJwtException e) {
+			throw new TokenHasInvalidException("토큰이 유효하지 않습니다.");
 		} catch (ExpiredJwtException e) {
 			throw new TokenHasExpiredException("토큰이 만료 되었습니다.");
-		} catch (Exception e) {
-			throw new TokenHasInvalidException("토큰이 유효하지 않습니다.");
 		}
 	}
 }

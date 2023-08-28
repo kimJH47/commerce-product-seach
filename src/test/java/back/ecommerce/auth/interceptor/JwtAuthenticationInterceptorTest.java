@@ -52,7 +52,7 @@ class JwtAuthenticationInterceptorTest {
 		//then
 		assertThat(actual).isTrue();
 		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(1)).validate(anyString());
+		then(tokenProvider).should(times(1)).extractClaim(anyString(),anyString());
 	}
 
 	@Test
@@ -72,7 +72,7 @@ class JwtAuthenticationInterceptorTest {
 			.hasMessage("인증 헤더타입이 일치하지 않습니다.");
 
 		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(0)).validate(anyString());
+		then(tokenProvider).should(times(0)).extractClaim(anyString(),anyString());
 	}
 
 	@Test
@@ -88,7 +88,7 @@ class JwtAuthenticationInterceptorTest {
 			.hasMessage("인증 헤더가 비어있습니다.");
 
 		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(0)).validate(anyString());
+		then(tokenProvider).should(times(0)).extractClaim(anyString(),anyString());
 	}
 
 	@Test
@@ -104,7 +104,7 @@ class JwtAuthenticationInterceptorTest {
 			.hasMessage("인증 헤더가 비어있습니다.");
 
 		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(0)).validate(anyString());
+		then(tokenProvider).should(times(0)).extractClaim(anyString(),anyString());
 	}
 
 	@Test
@@ -118,7 +118,7 @@ class JwtAuthenticationInterceptorTest {
 
 		given(request.getHeader(HttpHeaders.AUTHORIZATION))
 			.willReturn(header);
-		given(tokenProvider.parsePayload(anyString(), anyString()))
+		given(tokenProvider.extractClaim(anyString(), anyString()))
 			.willReturn(email);
 
 	    //when
@@ -133,8 +133,7 @@ class JwtAuthenticationInterceptorTest {
 
 		assertThat(email).isEqualTo(captor.getValue());
 		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(1)).validate(anyString());
-		then(tokenProvider).should(times(1)).parsePayload(anyString(), anyString());
+		then(tokenProvider).should(times(1)).extractClaim(anyString(), anyString());
 		then(request).should(times(1)).setAttribute(anyString(), anyString());
 
 
