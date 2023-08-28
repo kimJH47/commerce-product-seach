@@ -25,8 +25,8 @@ public class UserEmailArgumentResolver implements HandlerMethodArgumentResolver 
 	@Override
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-		Object email = webRequest.getAttribute(TOKEN_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
-		if (email == null) {
+		String email = (String)webRequest.getAttribute(TOKEN_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
+		if (email == null || email.isEmpty()) {
 			throw new TokenHasInvalidException("인증이 성공적으로 되지 않았습니다.");
 		}
 		return email;
