@@ -39,3 +39,4 @@ out/
 
 ### LOG ###
 !**/src/main/resources/logs/**
+**/*.log
