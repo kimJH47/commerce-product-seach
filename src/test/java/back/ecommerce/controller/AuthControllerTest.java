@@ -28,7 +28,7 @@ import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.auth.AuthService;
 
 @WebMvcTest(AuthController.class)
-@Import(MockAuthProviderConfig.class)
+@Import(MockMvcTestConfig.class)
 class AuthControllerTest {
 
 	@Autowired

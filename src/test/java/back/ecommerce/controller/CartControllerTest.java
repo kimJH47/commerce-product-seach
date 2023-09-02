@@ -49,7 +49,7 @@ import back.ecommerce.service.cart.CartService;
 @WebMvcTest(value = CartController.class, excludeFilters = {
 	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)}
 )
-@Import(MockAuthProviderConfig.class)
+@Import(MockMvcTestConfig.class)
 class CartControllerTest {
 
 	MockMvc mockMvc;
