@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import back.ecommerce.aop.annotation.Logging;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.request.product.ProductSearchCondition;
 import back.ecommerce.dto.response.common.Response;
@@ -28,6 +29,7 @@ public class ProductSearchController {
 			, productService.findWithCategoryAndPagination(Category.fromString(value)));
 	}
 
+	@Logging
 	@GetMapping("/categories/{category}/detail")
 	public ResponseEntity<Response> findProductWithPagination(@PathVariable String category,
 		@RequestParam Map<String, String> params) {
