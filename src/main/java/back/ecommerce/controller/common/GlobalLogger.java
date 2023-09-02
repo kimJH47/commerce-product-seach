@@ -7,9 +7,9 @@ import org.slf4j.event.Level;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class GlobalLogger {
+public class GlobalLogger implements CustomLogger {
 
-	private final EnumMap<Level, Logger> functionEnumMap = new EnumMap<>(Level.class);
+	private final EnumMap<Level, LoggingFunction> functionEnumMap = new EnumMap<>(Level.class);
 
 	public GlobalLogger() {
 		functionEnumMap.put(Level.INFO, log::info);
@@ -17,13 +17,9 @@ public class GlobalLogger {
 		functionEnumMap.put(Level.ERROR, log::error);
 	}
 
+	@Override
 	public void log(Level level, String format, Object... arguments) {
-		Logger logger = functionEnumMap.get(level);
+		LoggingFunction logger = functionEnumMap.get(level);
 		logger.log(format, arguments);
-	}
-
-	@FunctionalInterface
-	interface Logger {
-		void log(String format, Object... arguments);
 	}
 }
