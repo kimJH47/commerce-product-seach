@@ -13,3 +13,7 @@ spring:
     password: ${DB_PASSWORD}
   config:
     import: application-auth.yml
+logging:
+  discord:
+    webhook-uri: ${DISCORD_WEBHOOK_URI}
+  config: classpath:logback-spring.xml
