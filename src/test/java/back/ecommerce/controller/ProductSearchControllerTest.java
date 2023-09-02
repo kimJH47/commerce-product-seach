@@ -22,7 +22,7 @@ import back.ecommerce.dto.response.product.ProductListResponse;
 import back.ecommerce.service.product.ProductService;
 
 @WebMvcTest(ProductSearchController.class)
-@Import(MockAuthProviderConfig.class)
+@Import(MockMvcTestConfig.class)
 class ProductSearchControllerTest {
 
 	@Autowired
