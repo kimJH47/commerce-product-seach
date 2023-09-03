@@ -23,10 +23,10 @@ public class ProductSearchController {
 
 	private final ProductService productService;
 
-	@GetMapping("/categories/{value}")
-	public ResponseEntity<Response> findProductWithCategory(@PathVariable String value) {
+	@GetMapping("/categories/{category}")
+	public ResponseEntity<Response> findProductWithCategory(@PathVariable String category) {
 		return Response.createSuccessResponse("상품이 성공적으로 조회 되었습니다."
-			, productService.findWithCategoryAndPagination(Category.fromString(value)));
+			, productService.findWithCategoryAndPagination(Category.from(category)));
 	}
 
 	@Logging
@@ -34,7 +34,7 @@ public class ProductSearchController {
 	public ResponseEntity<Response> findProductWithPagination(@PathVariable String category,
 		@RequestParam Map<String, String> params) {
 		ProductSearchCondition productSearchCondition = ProductSearchCondition.fromQueryParameter(
-			Category.fromString(category), params);
+			Category.from(category), params);
 		return Response.createSuccessResponse("상품이 성공적으로 조회 되었습니다.",
 			productService.findWithSearchCondition(productSearchCondition));
 	}
