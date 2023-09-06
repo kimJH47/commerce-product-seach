@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import back.ecommerce.domain.condition.PageCondition;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.request.product.ProductSearchCondition;
@@ -72,6 +73,7 @@ class ProductServiceTest {
 		products.add(new ProductDto(15L, "productB", "brandA", 153000L, Category.HEAD_WEAR));
 		products.add(new ProductDto(17L, "productC", "brandB", 156000L, Category.HEAD_WEAR));
 		products.add(new ProductDto(19L, "productD", "brandC", 80000L, Category.HEAD_WEAR));
+		PageCondition pageCondition = new PageCondition(PageRequest.of(1, 20));
 
 		given(productQueryDslRepository.findBySearchCondition(any(ProductSearchCondition.class)))
 			.willReturn(products);
@@ -79,7 +81,7 @@ class ProductServiceTest {
 		//when
 		ProductListResponse actual = productService.findWithSearchCondition(
 			new ProductSearchCondition(Category.HEAD_WEAR, "product", "brand", null, null,
-				ProductSortCondition.NONE, PageRequest.of(1, 20)));
+				ProductSortCondition.NEW, pageCondition));
 		//then
 
 		assertThat(actual.getProducts())

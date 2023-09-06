@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 import back.ecommerce.constant.PageConstant;
+import back.ecommerce.domain.condition.PageCondition;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.product.ProductDto;
@@ -59,7 +60,7 @@ class ProductRepositoryTest {
 
 	@Test
 	@DisplayName("상세검색 이용 시 상세검색 조건에 해당하는 상품결과들이 페이징되어(20개) 조회되어야 한다.")
-	void find_detail(){
+	void find_detail() {
 
 		//given
 		for (int i = 1; i <= 50; i++) {
@@ -69,16 +70,14 @@ class ProductRepositoryTest {
 		for (int i = 0; i < 50; i++) {
 			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 10000L + i, Category.TOP));
 		}
-
-		ProductSearchCondition productSearchCondition1 = new ProductSearchCondition(Category.TOP, "am", "an",
-			500L,
-			20000L, ProductSortCondition.PRICE_LOW,
-			PageRequest.of(0, 20));
+		PageCondition pageCondition = new PageCondition(PageRequest.of(0, 20));
+		ProductSearchCondition productSearchCondition1 = new ProductSearchCondition(Category.TOP, "am", "an", 500L,
+			20000L, ProductSortCondition.PRICE_LOW, pageCondition);
 
 		ProductSearchCondition productSearchCondition2 = new ProductSearchCondition(Category.TOP, "therN", "B",
 			1000L,
 			20000L, ProductSortCondition.PRICE_HIGH,
-			PageRequest.of(0, 20));
+			pageCondition);
 
 		//when
 		List<ProductDto> products1 = productQueryDslRepository.findBySearchCondition(productSearchCondition1);
@@ -86,7 +85,7 @@ class ProductRepositoryTest {
 
 		//then
 		assertThat(products1).hasSize(20)
-			.extracting("price",Long.class)
+			.extracting("price", Long.class)
 			.isSorted();
 		assertThat(products2).hasSize(20)
 			.extracting("price", Long.class)
