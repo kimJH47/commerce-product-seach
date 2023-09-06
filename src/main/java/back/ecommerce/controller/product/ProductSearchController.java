@@ -32,6 +32,6 @@ public class ProductSearchController {
 	public ResponseEntity<Response> findProductWithPagination(
 		@ProductSearchRequestMapping ProductSearchConditionRequest request) {
 		return Response.createSuccessResponse("상품이 성공적으로 조회 되었습니다.",
-			productService.findWithSearchCondition(request.toCondition()));
+			productService.findWithSearchCondition(request.getCategory(), request.getParameters()));
 	}
 }

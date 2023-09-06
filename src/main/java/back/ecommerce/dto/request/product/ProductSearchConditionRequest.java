@@ -28,9 +28,4 @@ public class ProductSearchConditionRequest {
 		parameters.putIfAbsent("sort", "new");
 		parameters.putIfAbsent("page", "");
 	}
-
-	public ProductSearchCondition toCondition() {
-		return ProductSearchCondition.createWithCategoryAndAttributes(category, parameters);
-	}
-
 }

@@ -3,6 +3,7 @@ package back.ecommerce.service.product;
 import static back.ecommerce.constant.PageConstant.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,10 @@ public class ProductService {
 		return new ProductListResponse(products.size(), products);
 	}
 
-	public ProductListResponse findWithSearchCondition(ProductSearchCondition productSearchCondition) {
-		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(productSearchCondition);
+	public ProductListResponse findWithSearchCondition(Category category, Map<String, String> parameters) {
+		ProductSearchCondition searchCondition = ProductSearchCondition.createWithCategoryAndAttributes(
+			category, parameters);
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(searchCondition);
 		return new ProductListResponse(products.size(), products);
 	}
 }
