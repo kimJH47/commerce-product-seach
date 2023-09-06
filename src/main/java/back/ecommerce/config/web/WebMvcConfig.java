@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import back.ecommerce.auth.interceptor.JwtAuthenticationInterceptor;
 import back.ecommerce.auth.resolver.UserEmailArgumentResolver;
+import back.ecommerce.controller.resolver.SearchConditionRequestResolver;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -28,5 +29,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(new UserEmailArgumentResolver());
+		resolvers.add(new SearchConditionRequestResolver());
 	}
 }
