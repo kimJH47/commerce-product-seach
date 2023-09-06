@@ -1,7 +1,5 @@
 package back.ecommerce.dto.request.product;
 
-import java.util.Arrays;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,15 +7,16 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum ProductSortCondition {
 	PRICE_LOW("price_low"), PRICE_HIGH("price_high"),
-	NEW("new"), NONE("");
+	NEW("new");
 
 	private final String value;
 
 	public static ProductSortCondition createWithSortQuery(String queryString) {
-		return Arrays.stream(ProductSortCondition.values())
-			.filter(productSortCondition -> productSortCondition.getValue().equalsIgnoreCase(queryString))
-			.findAny()
-			.orElse(NEW);
+		try {
+			return ProductSortCondition.valueOf(queryString);
+		} catch (NullPointerException | IllegalArgumentException exception) {
+			return NEW;
+		}
 	}
 }
 
