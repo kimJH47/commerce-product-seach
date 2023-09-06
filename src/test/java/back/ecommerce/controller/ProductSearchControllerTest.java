@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import back.ecommerce.controller.product.ProductSearchController;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.response.product.ProductDto;
-import back.ecommerce.dto.request.product.ProductSearchCondition;
 import back.ecommerce.dto.response.product.ProductListResponse;
 import back.ecommerce.service.product.ProductService;
 
@@ -88,7 +87,7 @@ class ProductSearchControllerTest {
 		products.add(createDto(25L, "바지E", "브랜드E", 5000L, Category.PANTS));
 		ProductListResponse productListResponse = new ProductListResponse(products.size(), products);
 
-		given(productService.findWithSearchCondition(any(ProductSearchCondition.class)))
+		given(productService.findWithSearchCondition(any(Category.class), any()))
 			.willReturn(productListResponse);
 
 		//expect
@@ -119,7 +118,7 @@ class ProductSearchControllerTest {
 			.andExpect(jsonPath("$.entity.products[2].price").value(18000L))
 			.andExpect(jsonPath("$.entity.products[2].category").value("PANTS"));
 
-		then(productService).should(times(1)).findWithSearchCondition(any(ProductSearchCondition.class));
+		then(productService).should(times(1)).findWithSearchCondition(any(Category.class), any());
 	}
 
 	@Test
