@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import back.ecommerce.dto.response.common.FailedResponse;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.AuthHeaderInvalidException;
+import back.ecommerce.exception.InvalidCategoryNameException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.ProductNotFoundException;
 import back.ecommerce.exception.TokenHasExpiredException;
@@ -70,6 +71,12 @@ public class GlobalExceptionHandler {
 		return Response.createBadRequest(BAD_REQUEST, "argument", e.getMessage());
 	}
 
+	@ExceptionHandler(InvalidCategoryNameException.class)
+	public ResponseEntity<Response> handle(InvalidCategoryNameException e, HttpServletRequest request) {
+		logging(INFO, request, "category", e);
+		return Response.createBadRequest(BAD_REQUEST, "category", e.getMessage());
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Response> handleInternalServerError(Exception e, HttpServletRequest request) {
 		logging(ERROR, request, "server", e);
@@ -78,6 +85,6 @@ public class GlobalExceptionHandler {
 	}
 
 	private void logging(Level level, HttpServletRequest request, String field, Exception e) {
-		globalLogger.log(level, ERROR_FORMAT, request.getRequestURI(), request.getMethod(), e.getMessage());
+		globalLogger.log(level, ERROR_FORMAT, request.getRequestURI(), request.getMethod(), field, e.getMessage());
 	}
 }
