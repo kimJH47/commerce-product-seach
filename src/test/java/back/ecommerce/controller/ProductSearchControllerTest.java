@@ -70,11 +70,10 @@ class ProductSearchControllerTest {
 	@Test
 	@DisplayName("api/categories/{value} GET 로 유효하지 않는 카테고리 value 를 보내면 응답코드 404와 함께 실패이유가 응답되어야한다.")
 	void find_category_invalid_value() throws Exception {
-		//then
 		//expect
 		mockMvc.perform(get("/api/categories/to3p"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.reasons.argument").value("일치하는 카테고리가 없습니다."));
+			.andExpect(jsonPath("$.reasons.category").value("유효하지 않은 카테고리명 입니다."));
 	}
 
 	@Test
@@ -93,8 +92,7 @@ class ProductSearchControllerTest {
 			.willReturn(productListResponse);
 
 		//expect
-		mockMvc.perform(get("/api/categories/TOP/detail")
-				.param("category", "PANTS")
+		mockMvc.perform(get("/api/categories/PANTS/detail")
 				.param("page", "1")
 				.param("name", "")
 				.param("brandName", "")
@@ -122,6 +120,21 @@ class ProductSearchControllerTest {
 			.andExpect(jsonPath("$.entity.products[2].category").value("PANTS"));
 
 		then(productService).should(times(1)).findWithSearchCondition(any(ProductSearchCondition.class));
+	}
+
+	@Test
+	@DisplayName("상품상세 검색시 유효하지 않는 카테고리가 uri 에 포함되면 404 응답코드와 함께 실패이유가 응답되어야 한다.")
+	void find_product_detail_invalid_category() throws Exception {
+		//expect
+		mockMvc.perform(get("/api/categories/seamkl2/detail")
+				.param("page", "1")
+				.param("name", "")
+				.param("brandName", "")
+				.param("minPrice", "100")
+				.param("maxPrice", "1000")
+				.param("sort", "NEW"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.reasons.category").value("유효하지 않은 카테고리명 입니다."));
 	}
 
 	private ProductDto createDto(long id, String name, String brandName, long price, Category category) {
