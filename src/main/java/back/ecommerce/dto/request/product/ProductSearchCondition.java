@@ -1,21 +1,19 @@
 package back.ecommerce.dto.request.product;
 
-import static back.ecommerce.constant.PageConstant.*;
-
 import java.util.Map;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
+import back.ecommerce.domain.condition.PageCondition;
 import back.ecommerce.domain.product.Category;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
-@ToString
+@RequiredArgsConstructor
 @Getter
 public class ProductSearchCondition {
+
+	private static final int EMPTY_PRICE = -1;
+	private static final String MIN_PRICE = "minPrice";
+	private static final String MAX_PRICE = "maxPrice";
 
 	private final Category category;
 	private final String name;
@@ -23,25 +21,45 @@ public class ProductSearchCondition {
 	private final Long minPrice;
 	private final Long MaxPrice;
 	private final ProductSortCondition sortCondition;
-	private final Pageable pageable;
-
-	public static ProductSearchCondition fromQueryParameter(Category category, Map<String, String> params) {
-		return new ProductSearchCondition(
-			category,
-			params.get("name"),
-			params.get("brandName"),
-			Long.parseLong(params.get("minPrice")),
-			Long.parseLong(params.get("maxPrice")),
-			ProductSortCondition.createWithSortQuery((params.get("sort"))),
-			PageRequest.of(Integer.parseInt(params.get("page")) - 1, DEFAULT_PAGE_SIZE)
-		);
-	}
+	private final PageCondition pageCondition;
 
 	public long getOffset() {
-		return pageable.getOffset();
+		return pageCondition.getOffset();
 	}
 
 	public long getPageSize() {
-		return pageable.getPageSize();
+		return pageCondition.getPageSize();
+	}
+
+	public static ProductSearchCondition createWithCategoryAndAttributes(Category category,
+		Map<String, String> attributes) {
+		return new ProductSearchCondition(category,
+			attributes.getOrDefault("name", null),
+			attributes.getOrDefault("brandName", null),
+			getMinPrice(attributes),
+			getMaxPrice(attributes),
+			getSortCondition(attributes),
+			PageCondition.create(attributes.getOrDefault("page", ""))
+		);
+	}
+
+	private static Long getMaxPrice(final Map<String, String> attributes) {
+		String maxPrice = attributes.get("maxPrice");
+		if (maxPrice == null || maxPrice.isEmpty()) {
+			return null;
+		}
+		return Long.parseLong(maxPrice);
+	}
+
+	private static Long getMinPrice(final Map<String, String> attributes) {
+		String minPrice = attributes.get("minPrice");
+		if (minPrice == null) {
+			return null;
+		}
+		return Long.parseLong(minPrice);
+	}
+
+	private static ProductSortCondition getSortCondition(Map<String, String> attributes) {
+		return ProductSortCondition.createWithSortQuery(attributes.get("sort"));
 	}
 }
