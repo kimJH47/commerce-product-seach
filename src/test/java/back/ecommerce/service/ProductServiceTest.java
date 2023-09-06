@@ -4,22 +4,24 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import back.ecommerce.domain.condition.PageCondition;
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.request.product.ProductSearchCondition;
-import back.ecommerce.dto.request.product.ProductSortCondition;
+import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.response.product.ProductListResponse;
+import back.ecommerce.exception.InvalidPageNumberException;
 import back.ecommerce.repository.product.ProductQueryDslRepository;
 import back.ecommerce.service.product.ProductService;
 
@@ -73,17 +75,20 @@ class ProductServiceTest {
 		products.add(new ProductDto(15L, "productB", "brandA", 153000L, Category.HEAD_WEAR));
 		products.add(new ProductDto(17L, "productC", "brandB", 156000L, Category.HEAD_WEAR));
 		products.add(new ProductDto(19L, "productD", "brandC", 80000L, Category.HEAD_WEAR));
-		PageCondition pageCondition = new PageCondition(PageRequest.of(1, 20));
+
+		HashMap<String, String> parameters = new HashMap<>();
+		parameters.put("name", "product");
+		parameters.put("brandName", "brand");
+		parameters.put("page", "1");
+		parameters.put("sort", "NEW");
 
 		given(productQueryDslRepository.findBySearchCondition(any(ProductSearchCondition.class)))
 			.willReturn(products);
 
 		//when
-		ProductListResponse actual = productService.findWithSearchCondition(
-			new ProductSearchCondition(Category.HEAD_WEAR, "product", "brand", null, null,
-				ProductSortCondition.NEW, pageCondition));
-		//then
+		ProductListResponse actual = productService.findWithSearchCondition(Category.HEAD_WEAR, parameters);
 
+		//then
 		assertThat(actual.getProducts())
 			.hasSize(4)
 			.extracting(ProductDto::getId, ProductDto::getName)
@@ -93,6 +98,25 @@ class ProductServiceTest {
 				tuple(17L, "productC"),
 				tuple(19L, "productD")
 			);
+		then(productQueryDslRepository).should(times(1))
+			.findBySearchCondition(any(ProductSearchCondition.class));
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"", "0", "-1", "gh"})
+	@NullAndEmptySource
+	@DisplayName("파라미터 중 page 값이 유효하지 않으면 InvalidPageNumberException 발생한다.")
+	void findWithSearchCondition_invalidPage(String page) {
+		//given
+		HashMap<String, String> parameters = new HashMap<>();
+		parameters.put("name", "product");
+		parameters.put("brandName", "brand");
+		parameters.put("page", page);
+		parameters.put("sort", "NEW");
+
+		//expect
+		assertThatThrownBy(() -> productService.findWithSearchCondition(Category.ACCESSORY, parameters))
+			.isInstanceOf(InvalidPageNumberException.class);
 
 	}
 }
