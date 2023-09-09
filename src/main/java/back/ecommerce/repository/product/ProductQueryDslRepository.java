@@ -54,8 +54,8 @@ public class ProductQueryDslRepository {
 			.from(product)
 			.where(
 				eqCategory(productSearchCondition.getCategory()),
-				minPrice(productSearchCondition.getMinPrice())
-					.and(maxPrice(productSearchCondition.getMaxPrice())),
+				minPrice(productSearchCondition.getMinPrice()),
+				maxPrice(productSearchCondition.getMaxPrice()),
 				likeBrandName(productSearchCondition.getBranName()),
 				likeName(productSearchCondition.getName()))
 			.limit(productSearchCondition.getPageSize())
