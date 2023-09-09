@@ -53,7 +53,7 @@ public class ProductSearchCondition {
 
 	private static Long getMinPrice(final Map<String, String> attributes) {
 		String minPrice = attributes.get("minPrice");
-		if (minPrice == null) {
+		if (minPrice == null|| minPrice.isEmpty()) {
 			return null;
 		}
 		return Long.parseLong(minPrice);
