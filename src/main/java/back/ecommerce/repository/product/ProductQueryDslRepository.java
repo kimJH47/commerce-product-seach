@@ -17,9 +17,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.request.product.ProductSearchCondition;
 import back.ecommerce.dto.request.product.ProductSortCondition;
+import back.ecommerce.dto.response.product.ProductDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -35,21 +35,15 @@ public class ProductQueryDslRepository {
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
+
 		if (ids.isEmpty()) {
 			return new ArrayList<>();
 		}
-		return jpaQueryFactory.select(Projections.fields(ProductDto.class,
-				product.id, product.name, product.brandName, product.price,
-				asEnum(category).as(product.category)))
-			.from(product)
-			.where(product.id.in(ids))
-			.orderBy(product.createdDate.desc())
-			.fetch();
+		return findProductWithIdsAndOrderSpec(ids, category, product.createdDate.desc());
 	}
 
 	public List<ProductDto> findBySearchCondition(ProductSearchCondition productSearchCondition) {
-		OrderSpecifier<?> orderBy = defineOrderBy(productSearchCondition.getSortCondition());
-
+		OrderSpecifier<?> orderSpec = defineOrderBy(productSearchCondition.getSortCondition());
 		List<Long> ids = jpaQueryFactory.select(product.id)
 			.from(product)
 			.where(
@@ -60,23 +54,12 @@ public class ProductQueryDslRepository {
 				likeName(productSearchCondition.getName()))
 			.limit(productSearchCondition.getPageSize())
 			.offset(productSearchCondition.getOffset())
-			.orderBy(orderBy)
+			.orderBy(orderSpec)
 			.fetch();
-
 		if (ids.isEmpty()) {
 			return new ArrayList<>();
 		}
-
-		return jpaQueryFactory.select(
-				Projections.fields(ProductDto.class,
-					product.id,
-					product.name, product.brandName, product.price,
-					asEnum(productSearchCondition.getCategory()).as(product.category)))
-			.from(product)
-			.where(product.id.in(ids))
-			.orderBy(orderBy)
-			.fetch();
-
+		return findProductWithIdsAndOrderSpec(ids, productSearchCondition.getCategory(), orderSpec);
 	}
 
 	private BooleanExpression eqCategory(Category category) {
@@ -119,5 +102,18 @@ public class ProductQueryDslRepository {
 			return product.price.asc();
 		}
 		return product.createdDate.desc();
+	}
+
+	private List<ProductDto> findProductWithIdsAndOrderSpec(List<Long> ids, Category category,
+		OrderSpecifier<?> orderSpecifier) {
+		return jpaQueryFactory.select(
+				Projections.fields(ProductDto.class,
+					product.id,
+					product.name, product.brandName, product.price,
+					asEnum(category).as(product.category)))
+			.from(product)
+			.where(product.id.in(ids))
+			.orderBy(orderSpecifier)
+			.fetch();
 	}
 }
