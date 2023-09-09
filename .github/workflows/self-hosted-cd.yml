@@ -7,7 +7,7 @@ on:
       - master
 
 env:
-  RESOURCE_PATH: ./src/main/resources/application.yml
+  RESOURCE_PATH: ./src/main/resources/application-prod.yml
   AUTH_PATH: ./src/main/resources/application-auth.yml
 
 jobs:
