@@ -11,9 +11,9 @@ public enum ProductSortCondition {
 
 	private final String value;
 
-	public static ProductSortCondition createWithSortQuery(String queryString) {
+	public static ProductSortCondition createWithSortQuery(String value) {
 		try {
-			return ProductSortCondition.valueOf(queryString);
+			return ProductSortCondition.valueOf(value.toUpperCase());
 		} catch (NullPointerException | IllegalArgumentException exception) {
 			return NEW;
 		}
