@@ -40,5 +40,8 @@ out/
 ### LOG ###
 !**/src/main/resources/logs/**
 **/*.log
-
+**/*.log.gz
 .DS_Store
+
+### dev yml ###
+src/main/resources/application-dev.yml
