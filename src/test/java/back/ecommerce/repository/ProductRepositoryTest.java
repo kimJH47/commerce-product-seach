@@ -1,9 +1,13 @@
 package back.ecommerce.repository;
 
+import static back.ecommerce.domain.product.Category.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,18 +17,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
+import back.ecommerce.config.jpa.JpaAuditingConfig;
 import back.ecommerce.constant.PageConstant;
-import back.ecommerce.domain.condition.PageCondition;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.Product;
-import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.request.product.ProductSearchCondition;
-import back.ecommerce.dto.request.product.ProductSortCondition;
+import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.repository.product.ProductQueryDslRepository;
 import back.ecommerce.repository.product.ProductRepository;
 
 @DataJpaTest
-@Import(QueryDSLRepoConfig.class)
+@Import(value = {QueryDSLRepoConfig.class, JpaAuditingConfig.class})
 class ProductRepositoryTest {
 
 	@Autowired
@@ -40,56 +43,238 @@ class ProductRepositoryTest {
 	void find_categories_pagination() {
 		//given
 		for (int i = 0; i < 50; i++) {
-			productRepository.save(new Product(null, "name" + i, "brandA" + i, 10000L * i, Category.TOP));
+			productRepository.save(new Product(null, "name" + i, "brandA" + i, 10000L * i, TOP));
 		}
 		for (int i = 0; i < 50; i++) {
-			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 10000L * i, Category.ONEPIECE));
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 10000L * i, ONEPIECE));
 		}
 
 		//when
 		List<ProductDto> products = productQueryDslRepository.findByCategoryWithPaginationOrderByBrandNew(
-			Category.TOP, PageRequest.of(PageConstant.DEFAULT__PAGE, PageConstant.DEFAULT_PAGE_SIZE));
+			TOP, PageRequest.of(PageConstant.DEFAULT__PAGE, PageConstant.DEFAULT_PAGE_SIZE));
 
 		//then
 		assertThat(products).hasSize(20);
 		assertThat(products).extracting(ProductDto::getId)
 			.allMatch(id -> id <= 50 && id >= 20);
 		assertThat(products).extracting(ProductDto::getCategory)
-			.containsOnly(Category.TOP);
+			.containsOnly(TOP);
 	}
 
 	@Test
-	@DisplayName("상세검색 이용 시 상세검색 조건에 해당하는 상품결과들이 페이징되어(20개) 조회되어야 한다.")
-	void find_detail() {
+	@DisplayName("상세 검색 시 정렬조건이 높은 가격 순 이면 해당하는 상품들이  페이징되어 조회되어야 한다.")
+	void find_detail_price_high_sorted() {
 
 		//given
-		for (int i = 1; i <= 50; i++) {
-			productRepository.save(new Product(null, "name" + i, "brandA" + i, 20000L + i, Category.TOP));
+		for (int i = 0; i < 5; i++) {
+			productRepository.save(new Product(null, "name" + i, "brandA" + i, 20000L, TOP));
 		}
 
-		for (int i = 0; i < 50; i++) {
-			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 10000L + i, Category.TOP));
+		for (int i = 0; i < 15; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 100L, TOP));
 		}
-		PageCondition pageCondition = new PageCondition(PageRequest.of(0, 20));
-		ProductSearchCondition productSearchCondition1 = new ProductSearchCondition(Category.TOP, "am", "an", 500L,
-			20000L, ProductSortCondition.PRICE_LOW, pageCondition);
 
-		ProductSearchCondition productSearchCondition2 = new ProductSearchCondition(Category.TOP, "therN", "B",
-			1000L,
-			20000L, ProductSortCondition.PRICE_HIGH,
-			pageCondition);
+		for (int i = 0; i < 10; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 50L + i, TOP));
+		}
+
+		ProductSearchCondition condition = createCondition(TOP, "", "", null, null, "price_high", "1");
 
 		//when
-		List<ProductDto> products1 = productQueryDslRepository.findBySearchCondition(productSearchCondition1);
-		List<ProductDto> products2 = productQueryDslRepository.findBySearchCondition(productSearchCondition2);
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
 
 		//then
-		assertThat(products1).hasSize(20)
-			.extracting("price", Long.class)
-			.isSorted();
-		assertThat(products2).hasSize(20)
+		assertThat(products).hasSize(20)
 			.extracting("price", Long.class)
 			.isSortedAccordingTo(Comparator.reverseOrder());
 
+		long sumPrice = products.stream()
+			.mapToLong(ProductDto::getPrice)
+			.sum();
+		assertThat(sumPrice).isEqualTo(101500L);
+	}
+
+	@Test
+	@DisplayName("상세 검색 시 정렬조건이 낮은 가격 순 이면 해당하는 상품들이  페이징되어 조회되어야 한다.")
+	void find_detail_price_low_sorted() {
+		//given
+		for (int i = 1; i <= 5; i++) {
+			productRepository.save(new Product(null, "name" + i, "brandA" + i, 5000L, SKIRT));
+		}
+
+		for (int i = 0; i < 10; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 10000L, SKIRT));
+		}
+
+		for (int i = 1; i <= 10; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, i * 15000L, SKIRT));
+		}
+
+		for (int i = 1; i <= 5; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, i * 1000L, SKIRT));
+		}
+
+		ProductSearchCondition condition = createCondition(SKIRT, "", "", null, null, "price_low", "1");
+
+		//when
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
+
+		//then
+		assertThat(products)
+			.filteredOn(productDto -> productDto.getCategory() == SKIRT)
+			.extracting("price", Long.class)
+			.hasSize(20)
+			.isSorted();
+
+		long sumPrice = products.stream()
+			.mapToLong(ProductDto::getPrice)
+			.sum();
+		assertThat(sumPrice).isEqualTo(140000L);
+	}
+
+	@Test
+	@DisplayName("상세검색 시 가격범위에 해당하는 상품들이 페이징되어 조회되어야 한다.")
+	void find_detail_price_range_filter() {
+		//given
+		for (int i = 1; i <= 10; i++) {
+			productRepository.save(new Product(null, "name" + i, "brandA" + i, 1000L, SKIRT));
+		}
+
+		for (int i = 0; i < 5; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 10000L, SKIRT));
+		}
+
+		for (int i = 1; i <= 5; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 15000L * i, SKIRT));
+		}
+
+		for (int i = 1; i <= 10; i++) {
+			productRepository.save(new Product(null, "OtherName" + i, "brandB" + i, 100000L * i, SKIRT));
+		}
+		ProductSearchCondition condition = createCondition(SKIRT, "", "", "1000", "15000", "", "1");
+
+		//when
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
+
+		//then
+		assertThat(products)
+			.filteredOn(productDto -> productDto.getCategory().equals(SKIRT))
+			.hasSize(16)
+			.extracting("id", Long.class)
+			.isSortedAccordingTo(Comparator.reverseOrder());
+
+		long sumPrice = products.stream()
+			.mapToLong(ProductDto::getPrice)
+			.sum();
+
+		assertThat(sumPrice).isEqualTo(75000L);
+	}
+
+	@Test
+	@DisplayName("상세조건 검색 시 카테고리와 page 값만 존재하면 등록일순으로 카테고리만 조건을 가지고 조회 되어야한다.")
+	void find_detail_null_sorted() {
+		//given
+		EntityManager entityManager = testEntityManager.getEntityManager();
+		for (int i = 0; i < 23; i++) {
+			Product entity = new Product(null, "headType" + i, "brandB" + i, 10000L + (i * 100), HEAD_WEAR);
+			entityManager.persist(entity);
+		}
+		entityManager.clear();
+		ProductSearchCondition condition = createCondition(HEAD_WEAR, null, null, null, null, null,
+			"2");
+
+		//when
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
+
+		//then
+		assertThat(products).hasSize(3)
+			.filteredOn(productDto -> productDto.getCategory() == HEAD_WEAR)
+			.extracting("id", Long.class)
+			.isSortedAccordingTo(Comparator.reverseOrder());
+	}
+
+	@Test
+	@DisplayName("상세조건 검색 시 이름을 포함하는 상품들이 페이징되어서 반환 되어야한다.")
+	void find_detail_name_like() {
+		//given
+		EntityManager entityManager = testEntityManager.getEntityManager();
+		for (int i = 0; i < 5; i++) {
+			Product entity = new Product(null, "outerA" + i, "brandB" + i, 10000L + (i * 100), OUTER);
+			entityManager.persist(entity);
+		}
+
+		for (int i = 0; i < 10; i++) {
+			Product entity = new Product(null, "some" + i, "brandB" + i, 10000L + (i * 200), OUTER);
+			entityManager.persist(entity);
+		}
+
+		for (int i = 0; i < 5; i++) {
+			Product entity = new Product(null, "Bouter" + i, "brandB" + i, 10000L + (i * 300), OUTER);
+			entityManager.persist(entity);
+		}
+
+		entityManager.clear();
+		ProductSearchCondition condition = createCondition(OUTER, "outer", "", null, null, null,
+			"1");
+		//when
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
+
+		//then
+		assertThat(products)
+			.filteredOn(productDto -> productDto.getCategory() == OUTER)
+			.hasSize(10);
+
+	}
+
+	@Test
+	@DisplayName("상세조건 검색 시 브랜드 이름을 포함하는 상품들이 페이징되어서 반환 되어야한다.")
+	void find_detail_brandName_like() {
+		//given
+		EntityManager entityManager = testEntityManager.getEntityManager();
+		for (int i = 0; i < 5; i++) {
+			Product entity = new Product(null, "outerA" + i, "brandA", 10000L + (i * 100), SHOES);
+			entityManager.persist(entity);
+		}
+
+		for (int i = 0; i < 10; i++) {
+			Product entity = new Product(null, "some" + i, "brandC", 10000L + (i * 200), SHOES);
+			entityManager.persist(entity);
+		}
+
+		for (int i = 0; i < 15; i++) {
+			Product entity = new Product(null, String.valueOf(i), "brandA", 10000L + (i * 300), SHOES);
+			entityManager.persist(entity);
+		}
+
+		entityManager.clear();
+		ProductSearchCondition condition = createCondition(SHOES, "", "brandA", null, null, null,
+			"1");
+
+		//when
+		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
+
+		//then
+		assertThat(products)
+			.filteredOn(productDto -> productDto.getCategory() == SHOES)
+			.hasSize(20);
+	}
+
+	private ProductSearchCondition createCondition(
+		Category category,
+		String name,
+		String brandName,
+		String minPrice,
+		String maxPrice,
+		String sort,
+		String pageNumber
+	) {
+		HashMap<String, String> hashMap = new HashMap<>();
+		hashMap.put("name", name);
+		hashMap.put("brandName", brandName);
+		hashMap.put("minPrice", minPrice);
+		hashMap.put("maxPrice", maxPrice);
+		hashMap.put("sort", sort);
+		hashMap.put("page", pageNumber);
+		return ProductSearchCondition.createWithCategoryAndAttributes(category, hashMap);
 	}
 }
