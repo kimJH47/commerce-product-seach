@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class ProductSearchCondition {
 
-	private static final int EMPTY_PRICE = -1;
-	private static final String MIN_PRICE = "minPrice";
-	private static final String MAX_PRICE = "maxPrice";
+	private static final String NUMBER_REGEX = "\\d+";
 
 	private final Category category;
 	private final String name;
@@ -45,18 +43,20 @@ public class ProductSearchCondition {
 
 	private static Long getMaxPrice(final Map<String, String> attributes) {
 		String maxPrice = attributes.get("maxPrice");
-		if (maxPrice == null || maxPrice.isEmpty()) {
+		if (maxPrice == null || maxPrice.isEmpty() || !maxPrice.matches(NUMBER_REGEX)) {
 			return null;
 		}
-		return Long.parseLong(maxPrice);
+		long price = Long.parseLong(maxPrice);
+		return price > 0 ? price : null;
 	}
 
 	private static Long getMinPrice(final Map<String, String> attributes) {
 		String minPrice = attributes.get("minPrice");
-		if (minPrice == null|| minPrice.isEmpty()) {
+		if (minPrice == null || minPrice.isEmpty() || !minPrice.matches(NUMBER_REGEX)) {
 			return null;
 		}
-		return Long.parseLong(minPrice);
+		long price = Long.parseLong(minPrice);
+		return price > 0 ? price : null;
 	}
 
 	private static ProductSortCondition getSortCondition(Map<String, String> attributes) {
