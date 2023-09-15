@@ -94,6 +94,8 @@ class CartControllerTest {
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.reasons." + fieldName).isNotEmpty());
+
+		then(cartService).should(times(0)).addProduct(anyString(), anyLong(), anyInt());
 	}
 
 	public static Stream<Arguments> invalidAddProductRequestProvider() {
@@ -120,6 +122,7 @@ class CartControllerTest {
 			.andExpect(jsonPath("$.reasons.quantity").isNotEmpty())
 			.andDo(print());
 
+		then(cartService).should(times(0)).addProduct(anyString(), anyLong(), anyInt());
 	}
 
 	@Test
@@ -135,6 +138,8 @@ class CartControllerTest {
 				.content(mapper.writeValueAsString(new AddCartRequest("email@email.com", 100L, 10))))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+
+		then(cartService).should(times(1)).addProduct(anyString(), anyLong(), anyInt());
 	}
 
 	@Test
@@ -150,6 +155,8 @@ class CartControllerTest {
 				.content(mapper.writeValueAsString(new AddCartRequest("email@email.com", 100L, 10))))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.reasons.product").value("해당하는 상품이 존재하지 않습니다."));
+
+		then(cartService).should(times(1)).addProduct(anyString(), anyLong(), anyInt());
 
 	}
 
@@ -192,6 +199,8 @@ class CartControllerTest {
 			.andExpect(jsonPath("$.entity.cartProducts.value[2].category").value(Category.ACCESSORY.toString()))
 			.andExpect(jsonPath("$.entity.cartProducts.value[2].quantity").value(1))
 			.andExpect(jsonPath("$.entity.cartProducts.value[2].price").value(150000L));
+
+		then(cartService).should(times(1)).findCartByUserEmail(anyString());
 	}
 
 	@Test
@@ -207,6 +216,9 @@ class CartControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+
+		then(cartService).should(times(1)).findCartByUserEmail(anyString());
+
 	}
 
 	private CartProductDto createDto(long id, String name, String brandName, Category category, int quantity,

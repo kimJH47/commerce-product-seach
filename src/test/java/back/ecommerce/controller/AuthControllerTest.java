@@ -80,6 +80,8 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons." + reason).isNotEmpty());
+
+		then(authService).should(times(0)).createToken(anyString(), anyString());
 	}
 
 	public static Stream<Arguments> invalidLoginRequestProvider() {
@@ -105,6 +107,8 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.reasons.email").isNotEmpty())
 			.andExpect(jsonPath("$.reasons.password").value("비밀번호는 필수적으로 필요합니다."));
 
+		then(authService).should(times(0)).createToken(anyString(), anyString());
+
 	}
 
 	@Test
@@ -121,6 +125,8 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+
+		then(authService).should(times(1)).createToken(anyString(), anyString());
 	}
 
 	@Test
@@ -137,6 +143,8 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.login").value("비밀번호가 일치하지 않습니다."));
+
+		then(authService).should(times(1)).createToken(anyString(), anyString());
 	}
 
 	@Test
@@ -157,6 +165,8 @@ class AuthControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.entity.email").value(email))
 			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
+
+		then(authService).should(times(1)).signUp(anyString(), anyString());
 	}
 
 	@ParameterizedTest
@@ -171,6 +181,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons." + field).isNotEmpty());
 
+		then(authService).should(times(0)).signUp(anyString(), anyString());
 	}
 
 	public static Stream<Arguments> invalidSignRequestProvider() {
@@ -197,6 +208,8 @@ class AuthControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.entity.email").value(email))
 			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
+
+		then(authService).should(times(1)).verifiedEmailCode(anyString());
 	}
 
 	@Test
@@ -215,6 +228,8 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
+
+		then(authService).should(times(1)).signUp(anyString(),anyString());
 	}
 
 	@Test
@@ -229,6 +244,8 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
+
+		then(authService).should(times(1)).verifiedEmailCode(anyString());
 	}
 
 	//verified 존재하는 이메일 검증, 코드존재하지않는 검증
@@ -244,6 +261,8 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.code").value("인증 코드가 존재하지 않습니다."));
+
+		then(authService).should(times(1)).verifiedEmailCode(anyString());
 	}
 
 }

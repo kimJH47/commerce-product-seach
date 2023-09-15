@@ -134,6 +134,9 @@ class ProductSearchControllerTest {
 				.param("sort", "NEW"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.reasons.category").value("유효하지 않은 카테고리명 입니다."));
+
+		then(productService).should(times(0)).findWithSearchCondition(any(Category.class), any());
+
 	}
 
 	private ProductDto createDto(long id, String name, String brandName, long price, Category category) {
