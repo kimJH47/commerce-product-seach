@@ -4,6 +4,8 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.controller.auth.AuthController;
 import back.ecommerce.dto.request.user.LoginRequest;
+import back.ecommerce.dto.request.user.SignUpRequest;
 import back.ecommerce.dto.response.auth.TokenResponseDto;
+import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.auth.AuthService;
@@ -132,6 +136,48 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.login").value("비밀번호가 일치하지 않습니다."));
+	}
+
+	@Test
+	@DisplayName("/api/auth/sign-up POST 로 회원정보를 보내면 회원가입 대기상태가 성공적으로 완료 되어야 한다.")
+	void sign_up() throws Exception {
+	    //given
+		String email = "km@gmail.com";
+		String password = "asd,lsaL:LE<@Q:#@!";
+		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+		given(authService.signUp(email, password))
+			.willReturn(new SignUpResponse(email,now));
+
+		//expect
+		mockMvc.perform(post("/api/auth/sign-up")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(new SignUpRequest(email, password))))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.entity.email").value(email))
+			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
+	}
+
+	@ParameterizedTest
+	@MethodSource("invalidSignRequestProvider")
+	@DisplayName("/api/auth/sign-up POST 로 유효하지 않은 데이터를 보내면 응답코드 400 과 함께 실패 이유가 응답 되어야 한다.")
+	void sign_up_invalid_email(SignUpRequest request, String field) throws Exception {
+	    //expect
+		mockMvc.perform(post("/api/auth/sign-up")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons." + field).isNotEmpty());
+
+	}
+
+	public static Stream<Arguments> invalidSignRequestProvider() {
+		return Stream.of(
+			Arguments.of(new SignUpRequest(" ", "asdmlsd2412"), "email"),
+			Arguments.of(new SignUpRequest("email@@com.co", "asdmlsd2412"), "email"),
+			Arguments.of(new SignUpRequest("123@naver.com", " "), "password")
+		);
 	}
 
 }
