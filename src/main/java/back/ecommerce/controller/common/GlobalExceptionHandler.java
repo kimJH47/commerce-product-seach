@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import back.ecommerce.dto.response.common.FailedResponse;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.AuthHeaderInvalidException;
+import back.ecommerce.exception.EmailCodeNotFoundException;
+import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.exception.InvalidCategoryNameException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.ProductNotFoundException;
@@ -82,6 +84,18 @@ public class GlobalExceptionHandler {
 		logging(ERROR, request, "server", e);
 		return ResponseEntity.internalServerError()
 			.body(new FailedResponse(INTERNAL_SERVER_ERROR, "server", e.getMessage()));
+	}
+
+	@ExceptionHandler(ExistsUserEmailException.class)
+	public ResponseEntity<Response> handle(ExistsUserEmailException e, HttpServletRequest request) {
+		logging(WARN, request, "email", e);
+		return Response.createBadRequest(BAD_REQUEST, "email", e.getMessage());
+	}
+
+	@ExceptionHandler(EmailCodeNotFoundException.class)
+	public ResponseEntity<Response> handle(EmailCodeNotFoundException e, HttpServletRequest request) {
+		logging(WARN, request, "code", e);
+		return Response.createBadRequest(BAD_REQUEST, "code", e.getMessage());
 	}
 
 	private void logging(Level level, HttpServletRequest request, String field, Exception e) {
