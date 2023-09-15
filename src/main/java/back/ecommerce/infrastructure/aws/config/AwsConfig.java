@@ -36,7 +36,7 @@ public class AwsConfig {
 	}
 
 	@Bean
-	public SQSEmailSender sqsEmailSender(AmazonSQSAsync amazonSQSAsync, @Value("{cloud.aws.url") String url) {
+	public SQSEmailSender sqsEmailSender(AmazonSQSAsync amazonSQSAsync, @Value("${cloud.aws.sqs.url}") String url) {
 		return new SQSEmailSender(amazonSQSAsync, url);
 	}
 }
