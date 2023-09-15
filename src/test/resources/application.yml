@@ -1,4 +1,7 @@
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -11,3 +14,15 @@ spring:
     driverClassName: org.h2.Driver
   config:
     import: application-auth.yml
+
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: AKIAY6NJZMGAB4CQQHN7
+      secret-key: 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
+    sqs:
+      queue-name: email-queue
+      url: https://sqs.ap-northeast-2.amazonaws.com/615073276288/email-queue
