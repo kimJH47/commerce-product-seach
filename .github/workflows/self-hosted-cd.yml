@@ -45,7 +45,7 @@ jobs:
           cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_KEY }}
           cloud.aws.sqs.url: ${{ secrets.AWS_SQS_URL }}
 
-      - name: Grant execute permission to gradlew
+      - name: Grant execute permission to gradlew!
         run: chmod +x gradlew
 
       - name: Build with Gradle
