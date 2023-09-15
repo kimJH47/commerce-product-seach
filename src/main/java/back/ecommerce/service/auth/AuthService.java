@@ -53,6 +53,7 @@ public class AuthService {
 	}
 
 	public SignUpResponse verifiedEmailCode(String code) {
-		return null;
+		String email = signUpService.verifiedCodeAndSaveUser(code);
+		return new SignUpResponse(email, LocalDateTime.now());
 	}
 }
