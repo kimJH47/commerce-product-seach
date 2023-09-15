@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import back.ecommerce.controller.auth.AuthController;
 import back.ecommerce.dto.request.user.LoginRequest;
 import back.ecommerce.dto.request.user.SignUpRequest;
-import back.ecommerce.dto.response.auth.TokenResponseDto;
+import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.EmailCodeNotFoundException;
 import back.ecommerce.exception.ExistsUserEmailException;
@@ -50,7 +50,7 @@ class AuthControllerTest {
 		String accessToken = "dsdasdmdsamkdsal.sddsamkldmlsa.dsamlkdmsaml21salkdm";
 		int expireTime = 10000;
 		String bearer = "Bearer";
-		TokenResponseDto actual = new TokenResponseDto(accessToken, expireTime, bearer);
+		TokenResponse actual = new TokenResponse(accessToken, expireTime, bearer);
 
 		given(authService.createToken(anyString(), anyString()))
 			.willReturn(actual);

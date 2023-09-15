@@ -10,7 +10,7 @@ import back.ecommerce.auth.token.EmailCodeProvider;
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.user.User;
-import back.ecommerce.dto.response.auth.TokenResponseDto;
+import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
@@ -34,14 +34,14 @@ public class AuthService {
 	private final SignUpService signUpService;
 
 	@Transactional(readOnly = true)
-	public TokenResponseDto createToken(String email, String password) {
+	public TokenResponse createToken(String email, String password) {
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new PasswordNotMatchedException("비밀번호가 일치하지 않습니다.");
 		}
 		Token token = tokenProvider.create(email, JWT_TOKEN_EXPIRED_TIME);
-		return TokenResponseDto.create(token.getValue(), token.getExpireTime(), token.getType());
+		return TokenResponse.create(token.getValue(), token.getExpireTime(), token.getType());
 	}
 
 	public SignUpResponse signUp(String email, String password) {
