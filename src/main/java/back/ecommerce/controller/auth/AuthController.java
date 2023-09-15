@@ -29,7 +29,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/sign-up")
-	private ResponseEntity<Response> signUp(@RequestBody @Valid SignUpRequest request) {
+	public ResponseEntity<Response> signUp(@RequestBody @Valid SignUpRequest request) {
 		return Response.createSuccessResponse("회원가입 요청이 성공적으로 완료되었습니다.",
 			authService.signUp(request.getEmail(), request.getPassword()));
 	}
