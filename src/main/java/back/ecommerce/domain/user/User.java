@@ -30,6 +30,10 @@ public class User extends BaseTimeEntity {
 		return password;
 	}
 
+	public static User create(String email, String password) {
+		return new User(null, email, password);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

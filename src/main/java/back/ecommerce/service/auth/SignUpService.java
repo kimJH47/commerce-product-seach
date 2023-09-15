@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import back.ecommerce.domain.user.User;
+import back.ecommerce.exception.EmailCodeNotFoundException;
 import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
@@ -40,8 +42,21 @@ public class SignUpService {
 	}
 
 	private void cachingKeyAndValue(String key, CacheValue value) {
-		redisTemplate.opsForValue().set(key, value.toJson(objectMapper));
-		redisTemplate.expire(key, Duration.of(value.getExpiredTime(), ChronoUnit.MILLIS));
+		redisTemplate.opsForValue()
+			.set(key, value.toJson(objectMapper), Duration.of(value.getExpiredTime(), ChronoUnit.MILLIS));
+	}
+
+	@Transactional
+	public String verifiedCodeAndSaveUser(String code) {
+		String value = redisTemplate.opsForValue().getAndDelete(code);
+		if (value == null) {
+			throw new EmailCodeNotFoundException("이메일 코드가 존재하지 않습니다.");
+		}
+		CacheValue cacheValue = CacheValue.fromJson(objectMapper, value);
+		validateEmail(cacheValue.getEmail());
+		User user = User.create(cacheValue.getEmail(), cacheValue.getPassword());
+		userRepository.save(user);
+		return cacheValue.getEmail();
 	}
 
 	@AllArgsConstructor
@@ -55,6 +70,14 @@ public class SignUpService {
 		public String toJson(ObjectMapper mapper) {
 			try {
 				return mapper.writeValueAsString(mapper.writeValueAsString(message));
+			} catch (JsonProcessingException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+		public static CacheValue fromJson(ObjectMapper mapper, String json) {
+			try {
+				return mapper.readValue(json, CacheValue.class);
 			} catch (JsonProcessingException e) {
 				throw new IllegalArgumentException(e);
 			}
