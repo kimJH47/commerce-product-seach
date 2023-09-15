@@ -29,7 +29,7 @@ public class SignUpService {
 
 	public void cachingSignUpInfo(String code, String email, String password, Long expiredTime) {
 		validateEmail(email);
-		saveSignUpInfo(code, new CacheValue(email, password, expiredTime));
+		cachingKeyAndValue(code, new CacheValue(email, password, expiredTime));
 	}
 
 	@Transactional(readOnly = true)
@@ -39,7 +39,7 @@ public class SignUpService {
 		}
 	}
 
-	private void saveSignUpInfo(String key, CacheValue value) {
+	private void cachingKeyAndValue(String key, CacheValue value) {
 		redisTemplate.opsForValue().set(key, value.toJson(objectMapper));
 		redisTemplate.expire(key, Duration.of(value.getExpiredTime(), ChronoUnit.MILLIS));
 	}
