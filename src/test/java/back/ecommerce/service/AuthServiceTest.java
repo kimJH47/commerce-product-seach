@@ -18,12 +18,15 @@ import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.response.auth.TokenResponseDto;
+import back.ecommerce.dto.response.user.SignUpResponse;
+import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.infrastructure.aws.SQSEmailSender;
 import back.ecommerce.repository.user.UserRepository;
 import back.ecommerce.service.auth.AuthService;
 import back.ecommerce.service.auth.SignUpService;
+import back.ecommerce.service.auth.email.SignUpEmailMessage;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -76,7 +79,7 @@ class AuthServiceTest {
 
 	@Test
 	@DisplayName("토큰 생성시 일치하는 이메일이 없으면 UserNotFoundException 이 발생해야한다.")
-	void create_userNotFoundException() throws Exception {
+	void create_userNotFoundException() {
 		//given
 		given(userRepository.findByEmail(anyString()))
 			.willReturn(Optional.empty());
@@ -94,7 +97,7 @@ class AuthServiceTest {
 
 	@Test
 	@DisplayName("토큰 생성시 비밀번호가 일치하지 않으면 PasswordNotMatchedException 이 발생해야한다.")
-	void create_passwordNotMatchedException() throws Exception {
+	void create_passwordNotMatchedException() {
 		//given
 		User user = new User(10L, "dmdasdlm@email.com", "ddmlasMKL#sla@");
 
@@ -112,4 +115,50 @@ class AuthServiceTest {
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
 		then(tokenProvider).should(times(0)).create(anyString(), anyInt());
 	}
+
+	@Test
+	@DisplayName("sign up 정보를 받아서 sign response 를 반환 해야한다.")
+	void sign_up() {
+		//given
+		String email = "tray@gmail.com";
+		String password = "saldkmLM@@!#KJ!@";
+
+		given(emailCodeProvider.create())
+			.willReturn("133812312");
+
+		//when
+		SignUpResponse signUpResponse = authService.signUp(email, password);
+
+		//then
+		assertThat(signUpResponse.getEmail()).isEqualTo(email);
+
+		then(emailCodeProvider).should(times(1)).create();
+		then(signUpService).should(times(1)).cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
+		then(emailSender).should(times(1)).send(any(SignUpEmailMessage.class));
+	}
+
+	@Test
+	@DisplayName("이메일이 이미 존재하면 ExistsUserEmailException 예외가 발생한다.")
+	void sign_up_exception() {
+		//given
+		String email = "tray@gmail.com";
+		String password = "saldkmLM@@!#KJ!@";
+
+		given(emailCodeProvider.create())
+			.willReturn("133812312");
+		doThrow(new ExistsUserEmailException("이미 가입된 이메일이 존재합니다.")).when(signUpService)
+			.cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
+
+		//expect
+		assertThatThrownBy(() -> authService.signUp(email, password))
+			.isInstanceOf(ExistsUserEmailException.class)
+			.hasMessage("이미 가입된 이메일이 존재합니다.");
+
+		then(emailCodeProvider).should(times(1)).create();
+		then(signUpService).should(times(1)).cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
+		then(emailSender).should(times(0)).send(any(SignUpEmailMessage.class));
+
+
+	}
+
 }
