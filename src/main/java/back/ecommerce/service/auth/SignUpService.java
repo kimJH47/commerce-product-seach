@@ -1,5 +1,7 @@
 package back.ecommerce.service.auth;
 
+import static io.lettuce.core.pubsub.PubSubOutput.Type.*;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
@@ -12,7 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.repository.user.UserRepository;
-import back.ecommerce.service.auth.email.SignUpEmailMessage;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,9 +27,9 @@ public class SignUpService {
 
 	private final ObjectMapper objectMapper;
 
-	public void cachingSignUpMessage(SignUpEmailMessage message) {
-		validateEmail(message.getEmail());
-		saveSignUpInfo(message);
+	public void cachingSignUpInfo(String code, String email, String password, Long expiredTime) {
+		validateEmail(email);
+		saveSignUpInfo(code, new CacheValue(email, password, expiredTime));
 	}
 
 	@Transactional(readOnly = true)
@@ -36,12 +39,26 @@ public class SignUpService {
 		}
 	}
 
-	private void saveSignUpInfo(SignUpEmailMessage message) {
-		try {
-			redisTemplate.opsForValue().set(message.getCode(), objectMapper.writeValueAsString(message));
-			redisTemplate.expire(message.getCode(), Duration.of(message.getExpiredTime(), ChronoUnit.MILLIS));
-		} catch (JsonProcessingException e) {
-			throw new IllegalArgumentException(e);
+	private void saveSignUpInfo(String key, CacheValue value) {
+		redisTemplate.opsForValue().set(key, value.toJson(objectMapper));
+		redisTemplate.expire(key, Duration.of(value.getExpiredTime(), ChronoUnit.MILLIS));
+	}
+
+	@AllArgsConstructor
+	@Getter
+	static class CacheValue {
+
+		private String email;
+		private String password;
+		private Long expiredTime;
+
+		public String toJson(ObjectMapper mapper) {
+			try {
+				return mapper.writeValueAsString(mapper.writeValueAsString(message));
+			} catch (JsonProcessingException e) {
+				throw new IllegalArgumentException(e);
+			}
 		}
 	}
+
 }
