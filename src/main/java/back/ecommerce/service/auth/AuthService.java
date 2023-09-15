@@ -51,4 +51,8 @@ public class AuthService {
 		emailSender.send(message);
 		return new SignUpResponse(email, LocalDateTime.now());
 	}
+
+	public SignUpResponse verifiedEmailCode(String code) {
+		return null;
+	}
 }

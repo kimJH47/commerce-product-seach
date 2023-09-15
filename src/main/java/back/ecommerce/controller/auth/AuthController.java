@@ -3,6 +3,8 @@ package back.ecommerce.controller.auth;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +34,10 @@ public class AuthController {
 	public ResponseEntity<Response> signUp(@RequestBody @Valid SignUpRequest request) {
 		return Response.createSuccessResponse("회원가입 요청이 성공적으로 완료되었습니다.",
 			authService.signUp(request.getEmail(), request.getPassword()));
+	}
+
+	@GetMapping("/verified/{code}")
+	public ResponseEntity<Response> verifiedEmailCode(@PathVariable String code) {
+		return Response.createSuccessResponse("이메일 인증이 성공적으로 완료되었습니다.", authService.verifiedEmailCode(code));
 	}
 }
