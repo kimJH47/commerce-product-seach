@@ -17,7 +17,7 @@ import back.ecommerce.auth.token.EmailCodeProvider;
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.user.User;
-import back.ecommerce.dto.response.auth.TokenResponseDto;
+import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.exception.PasswordNotMatchedException;
@@ -65,7 +65,7 @@ class AuthServiceTest {
 		given(tokenProvider.create(anyString(), anyInt())).willReturn(expected);
 
 		//when
-		TokenResponseDto actual = authService.createToken("dmdasdlm@email.com", "ddmlasMKL#sla@");
+		TokenResponse actual = authService.createToken("dmdasdlm@email.com", "ddmlasMKL#sla@");
 
 		//then
 		assertThat(actual.getAccessToken()).isEqualTo(expected.getValue());

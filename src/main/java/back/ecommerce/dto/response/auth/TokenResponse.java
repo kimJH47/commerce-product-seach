@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class TokenResponseDto {
+public class TokenResponse {
 	private final String accessToken;
 	private final int expireTime;
 	private final String type;
 
-	public static TokenResponseDto create(String token, int expireTime, String type) {
-		return new TokenResponseDto(token, expireTime, type);
+	public static TokenResponse create(String token, int expireTime, String type) {
+		return new TokenResponse(token, expireTime, type);
 	}
 }
