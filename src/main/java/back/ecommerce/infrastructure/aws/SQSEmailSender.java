@@ -28,12 +28,14 @@ public class SQSEmailSender implements EmailSender {
 	}
 
 	private SendMessageRequest createMessageRequest(SignUpEmailMessage message) {
-		SendMessageRequest sendMessageRequest = new SendMessageRequest();
-		sendMessageRequest.setQueueUrl(queueUrl);
-		sendMessageRequest.setMessageBody(MESSAGE_BODY);
+		SendMessageRequest sendMessageRequest = new SendMessageRequest(queueUrl,MESSAGE_BODY);
 		HashMap<String, MessageAttributeValue> attributeMap = new HashMap<>();
-		attributeMap.put("email", new MessageAttributeValue().withStringValue(message.getEmail()));
-		attributeMap.put("code", new MessageAttributeValue().withStringValue(message.getCode()));
+		attributeMap.put("email", new MessageAttributeValue()
+			.withDataType("String")
+			.withStringValue(message.getEmail()));
+		attributeMap.put("code", new MessageAttributeValue()
+			.withDataType("String")
+			.withStringValue(message.getCode()));
 		sendMessageRequest.setMessageAttributes(attributeMap);
 		return sendMessageRequest;
 	}
