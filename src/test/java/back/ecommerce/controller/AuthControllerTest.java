@@ -27,6 +27,8 @@ import back.ecommerce.dto.request.user.LoginRequest;
 import back.ecommerce.dto.request.user.SignUpRequest;
 import back.ecommerce.dto.response.auth.TokenResponseDto;
 import back.ecommerce.dto.response.user.SignUpResponse;
+import back.ecommerce.exception.EmailCodeNotFoundException;
+import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
 import back.ecommerce.service.auth.AuthService;
@@ -78,7 +80,6 @@ class AuthControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons." + reason).isNotEmpty());
-
 	}
 
 	public static Stream<Arguments> invalidLoginRequestProvider() {
@@ -178,6 +179,71 @@ class AuthControllerTest {
 			Arguments.of(new SignUpRequest("email@@com.co", "asdmlsd2412"), "email"),
 			Arguments.of(new SignUpRequest("123@naver.com", " "), "password")
 		);
+	}
+
+
+	@Test
+	@DisplayName("/api/auth/verified/{code} GET 요청을 보내면 이메일 유효성검증이 완료되어야 한다.")
+	void verified() throws Exception {
+	    //given
+		String code = "213214215";
+		String email = "tra@gmail.com";
+		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+		given(authService.verifiedEmailCode(anyString()))
+			.willReturn(new SignUpResponse(email,now));
+		//expect
+		mockMvc.perform(get("/api/auth/verified/" + code))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.entity.email").value(email))
+			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
+	}
+
+	@Test
+	@DisplayName("/api/auth/sign-up POST 요청으로 이미 존재하지 하는 이메일을 보내면 응답코드 400과 함께 실패이유를 응답해야한다.")
+	void sign_up_existsUserEmail() throws Exception {
+	    //given
+		String email = "km@gmail.com";
+		String password = "asd,lsaL:LE<@Q:#@!";
+		given(authService.signUp(anyString(), anyString()))
+			.willThrow(new ExistsUserEmailException("이미 존재하는 유저 이메일 입니다."));
+
+		//expect
+		mockMvc.perform(post("/api/auth/sign-up")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(new SignUpRequest(email, password))))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
+	}
+
+	@Test
+	@DisplayName("/api/auth/verified/{code} GET 으로 이메일 인증코드를 보낼 때 이미 존재하는 이메일이있으면 응답코드 400과 함께 실패이유를 응답해야한다.")
+	void verified_existsUserEmail() throws Exception {
+	    //given
+		given(authService.verifiedEmailCode(anyString()))
+			.willThrow(new ExistsUserEmailException("이미 존재하는 유저 이메일 입니다."));
+
+		//expect
+		mockMvc.perform(get("/api/auth/verified/123213212"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
+	}
+
+	//verified 존재하는 이메일 검증, 코드존재하지않는 검증
+	@Test
+	@DisplayName("/api/auth/verified/{code} GET 으로 이메일 인증코드를 보낼 때 코드가 만료되었거나 존재하지 않으면 응답코드 400과 함께 실패이유를 응답해야한다.")
+	void verified_codeNotFound() throws Exception {
+		//given
+		given(authService.verifiedEmailCode(anyString()))
+			.willThrow(new EmailCodeNotFoundException("인증 코드가 존재하지 않습니다."));
+
+		//expect
+		mockMvc.perform(get("/api/auth/verified/123213212"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.code").value("인증 코드가 존재하지 않습니다."));
 	}
 
 }
