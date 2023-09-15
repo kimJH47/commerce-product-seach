@@ -13,14 +13,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import back.ecommerce.auth.token.EmailCodeProvider;
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.response.auth.TokenResponseDto;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.infrastructure.aws.SQSEmailSender;
 import back.ecommerce.repository.user.UserRepository;
 import back.ecommerce.service.auth.AuthService;
+import back.ecommerce.service.auth.SignUpService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -32,10 +35,17 @@ class AuthServiceTest {
 	PasswordEncoder passwordEncoder;
 	@Mock
 	TokenProvider tokenProvider;
+	@Mock
+	SQSEmailSender emailSender;
+	@Mock
+	EmailCodeProvider emailCodeProvider;
+	@Mock
+	SignUpService signUpService;
 
 	@BeforeEach
 	void setUp() {
-		authService = new AuthService(userRepository, passwordEncoder, tokenProvider);
+		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, emailCodeProvider, emailSender,
+			signUpService);
 	}
 
 	@Test
