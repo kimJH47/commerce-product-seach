@@ -30,6 +30,12 @@ configurations {
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+
+}
+dependencyManagement {
+    imports {
+        mavenBom("io.awspring.cloud:spring-cloud-aws-dependencies:2.4.4")
+    }
 }
 
 dependencies {
@@ -50,8 +56,15 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-    //AOP
+    //AOP1145
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    //AWS SQS
+    implementation "io.awspring.cloud:spring-cloud-starter-aws-messaging"
+
+    //Redis
+    implementation('org.springframework.boot:spring-boot-starter-data-redis')
+
 
 
     annotationProcessor 'org.projectlombok:lombok'
