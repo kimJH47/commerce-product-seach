@@ -1,4 +1,4 @@
-package back.ecommerce.common.logging;
+package back.ecommerce.controller.common;
 
 import static org.slf4j.event.Level.*;
 
@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.dto.response.common.FailedResponse;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.AuthHeaderInvalidException;
