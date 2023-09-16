@@ -8,7 +8,7 @@ import org.slf4j.event.Level;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import back.ecommerce.common.CustomLogger;
+import back.ecommerce.common.logging.CustomLogger;
 import back.ecommerce.dto.request.product.ProductSearchConditionRequest;
 
 @Aspect

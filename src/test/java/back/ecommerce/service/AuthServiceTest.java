@@ -112,7 +112,7 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("sign up 정보를 받아서 sign response 를 반환 해야한다.")
+	@DisplayName("sign up 정보를 받아서 sign dto 를 반환 해야한다.")
 	void sign_up() {
 		//given
 		String email = "tray@gmail.com";

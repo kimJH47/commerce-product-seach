@@ -28,7 +28,7 @@
         <appender-ref ref="ERROR_LOG"/>
         <appender-ref ref="DISCORD"/>
     </root>
-    <logger name="back.ecommerce.common.SearchRequestLogger" additivity="false">
+    <logger name="back.ecommerce.common.logging.SearchRequestLogger" additivity="false">
         <Level value="INFO"/>
         <appender-ref ref="ASYNC_APPENDER"/>
     </logger>
