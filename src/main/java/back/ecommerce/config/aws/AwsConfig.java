@@ -1,4 +1,4 @@
-package back.ecommerce.infrastructure.aws.config;
+package back.ecommerce.config.aws;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 
-import back.ecommerce.infrastructure.aws.SQSEmailSender;
+import back.ecommerce.client.aws.EmailSQSEventPublisher;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -36,7 +36,8 @@ public class AwsConfig {
 	}
 
 	@Bean
-	public SQSEmailSender sqsEmailSender(AmazonSQSAsync amazonSQSAsync, @Value("${cloud.aws.sqs.url}") String url) {
-		return new SQSEmailSender(amazonSQSAsync, url);
+	@Primary
+	public EmailSQSEventPublisher sqsEmailSender(AmazonSQSAsync amazonSQSAsync, @Value("${cloud.aws.sqs.url}") String url) {
+		return new EmailSQSEventPublisher(amazonSQSAsync, url);
 	}
 }

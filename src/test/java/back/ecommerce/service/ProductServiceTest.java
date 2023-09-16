@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
 import back.ecommerce.domain.product.Category;
-import back.ecommerce.dto.request.product.ProductSearchCondition;
+import back.ecommerce.domain.condition.ProductSearchCondition;
 import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.response.product.ProductListResponse;
 import back.ecommerce.exception.InvalidPageNumberException;

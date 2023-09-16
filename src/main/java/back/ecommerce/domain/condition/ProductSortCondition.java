@@ -1,4 +1,4 @@
-package back.ecommerce.dto.request.product;
+package back.ecommerce.domain.condition;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

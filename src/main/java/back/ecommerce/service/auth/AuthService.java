@@ -14,8 +14,8 @@ import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.infrastructure.aws.SQSEmailSender;
 import back.ecommerce.repository.user.UserRepository;
+import back.ecommerce.service.auth.email.EmailSender;
 import back.ecommerce.service.auth.email.SignUpEmailMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +30,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final TokenProvider tokenProvider;
 	private final EmailCodeProvider emailCodeProvider;
-	private final SQSEmailSender emailSender;
+	private final EmailSender emailSender;
 	private final SignUpService signUpService;
 
 	@Transactional(readOnly = true)
@@ -46,8 +46,8 @@ public class AuthService {
 
 	public SignUpResponse signUp(String email, String password) {
 		String code = emailCodeProvider.create();
-		SignUpEmailMessage message = new SignUpEmailMessage(email, code, EMAIL_TOKEN_EXPIRED_TIME);
 		signUpService.cachingSignUpInfo(code, email, password, EMAIL_TOKEN_EXPIRED_TIME);
+		SignUpEmailMessage message = new SignUpEmailMessage(email, code, EMAIL_TOKEN_EXPIRED_TIME);
 		emailSender.send(message);
 		return new SignUpResponse(email, LocalDateTime.now());
 	}

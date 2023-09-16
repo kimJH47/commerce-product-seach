@@ -1,4 +1,4 @@
-package back.ecommerce.infrastructure.aws;
+package back.ecommerce.client.aws;
 
 import java.util.HashMap;
 
@@ -9,14 +9,14 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import back.ecommerce.service.auth.email.EmailSender;
 import back.ecommerce.service.auth.email.SignUpEmailMessage;
 
-public class SQSEmailSender implements EmailSender {
+public class EmailSQSEventPublisher implements EmailSender {
 
 	private static final String MESSAGE_BODY = "request sign-up email and access code";
 	private final AmazonSQSAsync amazonSQSAsync;
 
 	private final String queueUrl;
 
-	public SQSEmailSender(AmazonSQSAsync amazonSQSAsync, String queueUrl) {
+	public EmailSQSEventPublisher(AmazonSQSAsync amazonSQSAsync, String queueUrl) {
 		this.amazonSQSAsync = amazonSQSAsync;
 		this.queueUrl = queueUrl;
 	}

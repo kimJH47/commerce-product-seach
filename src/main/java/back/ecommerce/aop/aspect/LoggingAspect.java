@@ -1,4 +1,4 @@
-package back.ecommerce.aop;
+package back.ecommerce.aop.aspect;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,7 +8,7 @@ import org.slf4j.event.Level;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import back.ecommerce.controller.common.CustomLogger;
+import back.ecommerce.common.CustomLogger;
 import back.ecommerce.dto.request.product.ProductSearchConditionRequest;
 
 @Aspect

@@ -1,4 +1,4 @@
-package back.ecommerce.controller.common;
+package back.ecommerce.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

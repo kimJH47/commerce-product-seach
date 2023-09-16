@@ -22,7 +22,7 @@ import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.infrastructure.aws.SQSEmailSender;
+import back.ecommerce.client.aws.EmailSQSEventPublisher;
 import back.ecommerce.repository.user.UserRepository;
 import back.ecommerce.service.auth.AuthService;
 import back.ecommerce.service.auth.SignUpService;
@@ -39,7 +39,7 @@ class AuthServiceTest {
 	@Mock
 	TokenProvider tokenProvider;
 	@Mock
-	SQSEmailSender emailSender;
+	EmailSQSEventPublisher emailSender;
 	@Mock
 	EmailCodeProvider emailCodeProvider;
 	@Mock

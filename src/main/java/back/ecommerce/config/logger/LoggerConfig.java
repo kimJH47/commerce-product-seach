@@ -1,9 +1,9 @@
-package back.ecommerce.config.common;
+package back.ecommerce.config.logger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import back.ecommerce.controller.common.GlobalLogger;
+import back.ecommerce.common.GlobalLogger;
 
 @Configuration
 public class LoggerConfig {
