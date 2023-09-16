@@ -14,6 +14,7 @@ import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,10 @@ public class GlobalExceptionHandler {
 		return Response.Failed(AUTHENTICATION_ERROR_MESSAGE, e);
 	}
 
-	@ExceptionHandler(InternalServerException.class)
-	public ResponseEntity<Response> handleInternalServerError(InternalServerException e) {
-		return Response.Failed(INTERNAL_SERVER_ERROR, e);
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Response> handleInternalServerError(Exception e, HttpServletRequest request) {
+		logging(ERROR, request, "server", e);
+		return Response.Failed(INTERNAL_SERVER_ERROR, new InternalServerException(ErrorCode.INTERNAL_SERVER_ERROR));
 	}
 
 	@ExceptionHandler(CustomException.class)
