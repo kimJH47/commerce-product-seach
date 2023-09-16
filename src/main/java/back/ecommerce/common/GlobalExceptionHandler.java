@@ -1,4 +1,4 @@
-package back.ecommerce.controller.common;
+package back.ecommerce.common;
 
 import static org.slf4j.event.Level.*;
 

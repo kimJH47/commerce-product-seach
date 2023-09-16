@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import back.ecommerce.constant.PageConstant;
+import back.ecommerce.domain.condition.ProductSearchCondition;
+import back.ecommerce.domain.condition.ProductSortCondition;
 import back.ecommerce.domain.product.Category;
 
 class ProductSearchConditionTest {

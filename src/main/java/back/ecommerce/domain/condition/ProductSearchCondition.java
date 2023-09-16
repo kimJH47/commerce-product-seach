@@ -1,8 +1,7 @@
-package back.ecommerce.dto.request.product;
+package back.ecommerce.domain.condition;
 
 import java.util.Map;
 
-import back.ecommerce.domain.condition.PageCondition;
 import back.ecommerce.domain.product.Category;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
