@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import back.ecommerce.aop.aspect.LoggingAspect;
-import back.ecommerce.common.SearchRequestLogger;
+import back.ecommerce.common.logging.SearchRequestLogger;
 
 @Configuration
 @EnableAspectJAutoProxy

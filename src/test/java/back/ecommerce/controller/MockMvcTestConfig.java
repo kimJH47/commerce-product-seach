@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.common.GlobalLogger;
+import back.ecommerce.common.logging.GlobalLogger;
 
 @TestConfiguration
 public class MockMvcTestConfig {

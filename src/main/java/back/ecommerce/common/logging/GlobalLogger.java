@@ -1,4 +1,4 @@
-package back.ecommerce.common;
+package back.ecommerce.common.logging;
 
 import java.util.EnumMap;
 
