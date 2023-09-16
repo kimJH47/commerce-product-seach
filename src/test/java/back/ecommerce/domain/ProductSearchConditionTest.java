@@ -1,4 +1,4 @@
-package back.ecommerce.dto.request.product;
+package back.ecommerce.domain;
 
 import static org.assertj.core.api.Assertions.*;
 

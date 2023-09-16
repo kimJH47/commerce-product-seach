@@ -22,9 +22,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.controller.auth.AuthController;
 import back.ecommerce.dto.request.user.LoginRequest;
 import back.ecommerce.dto.request.user.SignUpRequest;
+import back.ecommerce.dto.response.auth.SignUpDto;
 import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.EmailCodeNotFoundException;
@@ -42,6 +44,8 @@ class AuthControllerTest {
 	ObjectMapper mapper = new ObjectMapper();
 	@MockBean
 	AuthService authService;
+	@MockBean
+	EmailSQSEventPublisher emailSQSEventPublisher;
 
 	@Test
 	@DisplayName("/api/auth/token POST 요청 시 인증 성공 후 상태코드 200과 함깨 엑세스 토큰이 응답 되어야 한다.")
@@ -153,10 +157,11 @@ class AuthControllerTest {
 	    //given
 		String email = "km@gmail.com";
 		String password = "asd,lsaL:LE<@Q:#@!";
+		String code = "11231212412";
 		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
 		given(authService.signUp(email, password))
-			.willReturn(new SignUpResponse(email,now));
+			.willReturn(new SignUpDto(email,code));
 
 		//expect
 		mockMvc.perform(post("/api/auth/sign-up")
@@ -167,6 +172,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
 
 		then(authService).should(times(1)).signUp(anyString(), anyString());
+		then(emailSQSEventPublisher).should(times(1)).pub(anyString(), anyString());
 	}
 
 	@ParameterizedTest
@@ -182,6 +188,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.reasons." + field).isNotEmpty());
 
 		then(authService).should(times(0)).signUp(anyString(), anyString());
+		then(emailSQSEventPublisher).should(times(0)).pub(anyString(), anyString());
 	}
 
 	public static Stream<Arguments> invalidSignRequestProvider() {
@@ -230,6 +237,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
 
 		then(authService).should(times(1)).signUp(anyString(),anyString());
+		then(emailSQSEventPublisher).should(times(0)).pub(anyString(), anyString());
 	}
 
 	@Test

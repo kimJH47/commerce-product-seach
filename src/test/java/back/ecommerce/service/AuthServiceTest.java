@@ -13,20 +13,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import back.ecommerce.auth.token.EmailCodeProvider;
 import back.ecommerce.auth.token.Token;
+import back.ecommerce.common.generator.UuidGenerator;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.domain.user.User;
+import back.ecommerce.dto.response.auth.SignUpDto;
 import back.ecommerce.dto.response.auth.TokenResponse;
-import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.ExistsUserEmailException;
 import back.ecommerce.exception.PasswordNotMatchedException;
 import back.ecommerce.exception.UserNotFoundException;
-import back.ecommerce.client.aws.EmailSQSEventPublisher;
 import back.ecommerce.repository.user.UserRepository;
 import back.ecommerce.service.auth.AuthService;
 import back.ecommerce.service.auth.SignUpService;
-import back.ecommerce.service.auth.email.SignUpEmailMessage;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -39,16 +37,13 @@ class AuthServiceTest {
 	@Mock
 	TokenProvider tokenProvider;
 	@Mock
-	EmailSQSEventPublisher emailSender;
-	@Mock
-	EmailCodeProvider emailCodeProvider;
+	UuidGenerator uuidGenerator;
 	@Mock
 	SignUpService signUpService;
 
 	@BeforeEach
 	void setUp() {
-		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, emailCodeProvider, emailSender,
-			signUpService);
+		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, uuidGenerator, signUpService);
 	}
 
 	@Test
@@ -123,18 +118,17 @@ class AuthServiceTest {
 		String email = "tray@gmail.com";
 		String password = "saldkmLM@@!#KJ!@";
 
-		given(emailCodeProvider.create())
+		given(uuidGenerator.create())
 			.willReturn("133812312");
 
 		//when
-		SignUpResponse signUpResponse = authService.signUp(email, password);
+		SignUpDto signUpDto = authService.signUp(email, password);
 
 		//then
-		assertThat(signUpResponse.getEmail()).isEqualTo(email);
+		assertThat(signUpDto.getEmail()).isEqualTo(email);
 
-		then(emailCodeProvider).should(times(1)).create();
+		then(uuidGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
-		then(emailSender).should(times(1)).send(any(SignUpEmailMessage.class));
 	}
 
 	@Test
@@ -144,7 +138,7 @@ class AuthServiceTest {
 		String email = "tray@gmail.com";
 		String password = "saldkmLM@@!#KJ!@";
 
-		given(emailCodeProvider.create())
+		given(uuidGenerator.create())
 			.willReturn("133812312");
 		doThrow(new ExistsUserEmailException("이미 가입된 이메일이 존재합니다.")).when(signUpService)
 			.cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
@@ -154,10 +148,8 @@ class AuthServiceTest {
 			.isInstanceOf(ExistsUserEmailException.class)
 			.hasMessage("이미 가입된 이메일이 존재합니다.");
 
-		then(emailCodeProvider).should(times(1)).create();
+		then(uuidGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
-		then(emailSender).should(times(0)).send(any(SignUpEmailMessage.class));
-
 
 	}
 
