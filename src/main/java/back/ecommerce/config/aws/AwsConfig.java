@@ -10,7 +10,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 
-import back.ecommerce.client.aws.EmailSQSEventPublisher;
+import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

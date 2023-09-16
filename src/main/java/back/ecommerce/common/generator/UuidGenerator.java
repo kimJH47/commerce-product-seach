@@ -1,4 +1,4 @@
-package back.ecommerce.auth.token;
+package back.ecommerce.common.generator;
 
 import java.util.UUID;
 
