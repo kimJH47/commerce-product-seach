@@ -1,5 +1,7 @@
 package back.ecommerce.service.auth;
 
+import static back.ecommerce.exception.ErrorCode.*;
+
 import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,14 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import back.ecommerce.auth.token.Token;
-import back.ecommerce.common.generator.UuidGenerator;
 import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.common.generator.UuidGenerator;
 import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.response.auth.SignUpDto;
 import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
-import back.ecommerce.exception.PasswordNotMatchedException;
-import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.CustomException;
 import back.ecommerce.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -34,9 +36,9 @@ public class AuthService {
 	@Transactional(readOnly = true)
 	public TokenResponse createToken(String email, String password) {
 		User user = userRepository.findByEmail(email)
-			.orElseThrow(() -> new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		if (!passwordEncoder.matches(password, user.getPassword())) {
-			throw new PasswordNotMatchedException("비밀번호가 일치하지 않습니다.");
+			throw new AuthenticationException(PASSWORD_NOT_MATCHED);
 		}
 		Token token = tokenProvider.create(email, JWT_TOKEN_EXPIRED_TIME);
 		return TokenResponse.create(token.getValue(), token.getExpireTime(), token.getType());

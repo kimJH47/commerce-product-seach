@@ -5,7 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
 import back.ecommerce.constant.PageConstant;
-import back.ecommerce.exception.InvalidPageNumberException;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class PageCondition {
 	private static void validatePageNumber(String pageNumber) {
 		if (!StringUtils.hasText(pageNumber) || !pageNumber.matches(NUMBER_REGEX)
 			|| Integer.parseInt(pageNumber) <= INVALID_PAGE_NUMBER) {
-			throw new InvalidPageNumberException("유효하지 않는 페이지 번호입니다.");
+			throw new CustomException(ErrorCode.INVALID_PAGE_NUMBER);
 		}
 	}
 }

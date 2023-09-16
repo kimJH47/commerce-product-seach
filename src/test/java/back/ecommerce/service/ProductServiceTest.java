@@ -17,11 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
-import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.condition.ProductSearchCondition;
+import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.response.product.ProductListResponse;
-import back.ecommerce.exception.InvalidPageNumberException;
+import back.ecommerce.exception.CustomException;
 import back.ecommerce.repository.product.ProductQueryDslRepository;
 import back.ecommerce.service.product.ProductService;
 
@@ -116,7 +116,8 @@ class ProductServiceTest {
 
 		//expect
 		assertThatThrownBy(() -> productService.findWithSearchCondition(Category.ACCESSORY, parameters))
-			.isInstanceOf(InvalidPageNumberException.class);
+			.isInstanceOf(CustomException.class)
+			.hasMessage("유효하지 않는 페이지 번호입니다.");
 
 	}
 }

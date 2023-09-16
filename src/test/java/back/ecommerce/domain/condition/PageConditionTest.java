@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import back.ecommerce.exception.InvalidPageNumberException;
+import back.ecommerce.exception.CustomException;
 
 class PageConditionTest {
 
@@ -34,7 +34,7 @@ class PageConditionTest {
 	void create_exception(String pageNumber) {
 		//expect
 		assertThatThrownBy(() -> PageCondition.create(pageNumber))
-			.isInstanceOf(InvalidPageNumberException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("유효하지 않는 페이지 번호입니다.");
 	}
 

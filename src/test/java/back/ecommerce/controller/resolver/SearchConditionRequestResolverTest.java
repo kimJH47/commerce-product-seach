@@ -17,7 +17,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.request.product.ProductSearchConditionRequest;
-import back.ecommerce.exception.InvalidCategoryNameException;
+import back.ecommerce.exception.CustomException;
 
 class SearchConditionRequestResolverTest {
 
@@ -96,7 +96,8 @@ class SearchConditionRequestResolverTest {
 		//expect
 		assertThatThrownBy(() -> searchConditionRequestResolver.resolveArgument(methodParameter, null,
 			request, null))
-			.isInstanceOf(InvalidCategoryNameException.class);
+			.isInstanceOf(CustomException.class)
+			.hasMessage("유효하지 않은 카테고리명 입니다.");
 
 		then(request).should(times(1)).getNativeRequest();
 		then(servletRequest).should(times(1)).getRequestURI();
