@@ -10,8 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.exception.TokenHasExpiredException;
-import back.ecommerce.exception.TokenHasInvalidException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.CustomException;
 import io.jsonwebtoken.Jwts;
 
 @SpringBootTest(classes = TokenProvider.class)
@@ -50,17 +50,18 @@ class TokenProviderTest {
 
 		//expect
 		assertThatThrownBy(() -> tokenProvider.extractClaim(token.getValue(), "email"))
-			.isInstanceOf(TokenHasExpiredException.class)
+			.isInstanceOf(AuthenticationException.class)
 			.hasMessage("토큰이 만료 되었습니다.");
 	}
 
 	@Test
-	@DisplayName("토큰이 비어있으면 TokenHasInvalidException 발생 한다")
+	@DisplayName("토큰이 비어있으면 TokenIsEmpty 가 발생 한다")
 	void validate_empty_token() {
 		//expect
 		assertThatThrownBy(() ->
-			tokenProvider.extractClaim(null, "email")
-		).isInstanceOf(TokenHasInvalidException.class);
+			tokenProvider.extractClaim(null, "email"))
+			.isInstanceOf(AuthenticationException.class)
+			.hasMessage("토큰이 비어있습니다.");
 
 
 	}
@@ -75,7 +76,7 @@ class TokenProviderTest {
 
 		//expect
 		assertThatThrownBy(() -> tokenProvider.extractClaim(invalidToken,"email"))
-			.isInstanceOf(TokenHasInvalidException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("토큰이 유효하지 않습니다.");
 	}
 

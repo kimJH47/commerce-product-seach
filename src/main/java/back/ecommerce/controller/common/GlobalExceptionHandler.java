@@ -11,17 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import back.ecommerce.common.logging.GlobalLogger;
-import back.ecommerce.dto.response.common.FailedResponse;
 import back.ecommerce.dto.response.common.Response;
-import back.ecommerce.exception.AuthHeaderInvalidException;
-import back.ecommerce.exception.EmailCodeNotFoundException;
-import back.ecommerce.exception.ExistsUserEmailException;
-import back.ecommerce.exception.InvalidCategoryNameException;
-import back.ecommerce.exception.PasswordNotMatchedException;
-import back.ecommerce.exception.ProductNotFoundException;
-import back.ecommerce.exception.TokenHasExpiredException;
-import back.ecommerce.exception.TokenHasInvalidException;
-import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,11 +25,25 @@ public class GlobalExceptionHandler {
 
 	private static final String BAD_REQUEST = "잘못된 요청입니다.";
 	private static final String INTERNAL_SERVER_ERROR = "서버에서 에러가 발생 했습니다.";
-
-	private static final String ERROR_FORMAT =
-		"[ERROR] {} {} -> {} : {}";
+	private static final String AUTHENTICATION_ERROR_MESSAGE = "인증과정에서 문제가 발생 하였습니다";
+	private static final String ERROR_FORMAT = "[ERROR] {} {} -> {} : {}";
 
 	private final GlobalLogger globalLogger;
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<Response> handle(AuthenticationException e) {
+		return Response.Failed(AUTHENTICATION_ERROR_MESSAGE, e);
+	}
+
+	@ExceptionHandler(InternalServerException.class)
+	public ResponseEntity<Response> handleInternalServerError(InternalServerException e) {
+		return Response.Failed(INTERNAL_SERVER_ERROR, e);
+	}
+
+	@ExceptionHandler(CustomException.class)
+	public ResponseEntity<Response> handle(CustomException e) {
+		return Response.Failed(BAD_REQUEST, e);
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Response> handle(MethodArgumentNotValidException e, HttpServletRequest request) {
@@ -44,59 +51,10 @@ public class GlobalExceptionHandler {
 		return Response.createBadRequest(BAD_REQUEST, e);
 	}
 
-	@ExceptionHandler(value = {UserNotFoundException.class, PasswordNotMatchedException.class})
-	public ResponseEntity<Response> handle(Exception e, HttpServletRequest request) {
-		logging(INFO, request, "login", e);
-		return Response.createBadRequest(BAD_REQUEST, "login", e.getMessage());
-	}
-
-	@ExceptionHandler(AuthHeaderInvalidException.class)
-	public ResponseEntity<Response> handle(AuthHeaderInvalidException e, HttpServletRequest request) {
-		logging(WARN, request, "authorizationHeader", e);
-		return Response.createBadRequest(BAD_REQUEST, "authorizationHeader", e.getMessage());
-	}
-
-	@ExceptionHandler({TokenHasInvalidException.class, TokenHasExpiredException.class})
-	public ResponseEntity<Response> handleTokenException(Exception e, HttpServletRequest request) {
-		logging(WARN, request, "accessToken", e);
-		return Response.createBadRequest(BAD_REQUEST, "accessToken", e.getMessage());
-	}
-
-	@ExceptionHandler(ProductNotFoundException.class)
-	public ResponseEntity<Response> handle(ProductNotFoundException e, HttpServletRequest request) {
-		logging(INFO, request, "product", e);
-		return Response.createBadRequest(BAD_REQUEST, "product", e.getMessage());
-	}
-
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<Response> handle(IllegalArgumentException e, HttpServletRequest request) {
 		logging(WARN, request, "argument", e);
 		return Response.createBadRequest(BAD_REQUEST, "argument", e.getMessage());
-	}
-
-	@ExceptionHandler(InvalidCategoryNameException.class)
-	public ResponseEntity<Response> handle(InvalidCategoryNameException e, HttpServletRequest request) {
-		logging(INFO, request, "category", e);
-		return Response.createBadRequest(BAD_REQUEST, "category", e.getMessage());
-	}
-
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<Response> handleInternalServerError(Exception e, HttpServletRequest request) {
-		logging(ERROR, request, "server", e);
-		return ResponseEntity.internalServerError()
-			.body(new FailedResponse(INTERNAL_SERVER_ERROR, "server", e.getMessage()));
-	}
-
-	@ExceptionHandler(ExistsUserEmailException.class)
-	public ResponseEntity<Response> handle(ExistsUserEmailException e, HttpServletRequest request) {
-		logging(WARN, request, "email", e);
-		return Response.createBadRequest(BAD_REQUEST, "email", e.getMessage());
-	}
-
-	@ExceptionHandler(EmailCodeNotFoundException.class)
-	public ResponseEntity<Response> handle(EmailCodeNotFoundException e, HttpServletRequest request) {
-		logging(WARN, request, "code", e);
-		return Response.createBadRequest(BAD_REQUEST, "code", e.getMessage());
 	}
 
 	private void logging(Level level, HttpServletRequest request, String field, Exception e) {

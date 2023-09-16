@@ -19,8 +19,8 @@ import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.cart.AddCartResponse;
 import back.ecommerce.dto.response.cart.CartListResponse;
-import back.ecommerce.exception.ProductNotFoundException;
-import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.repository.cart.CartRepository;
 import back.ecommerce.repository.product.ProductRepository;
 import back.ecommerce.repository.user.UserRepository;
@@ -82,7 +82,8 @@ class CartServiceTest {
 
 		//expect
 		assertThatThrownBy(() -> cartService.addProduct(email, productId, quantity))
-			.isInstanceOf(UserNotFoundException.class);
+			.isInstanceOf(CustomException.class)
+			.hasMessage("해당하는 유저가 존재하지 않습니다.");
 
 		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(0)).findById(anyLong());
@@ -100,11 +101,12 @@ class CartServiceTest {
 		given(userRepository.existsByEmail(anyString()))
 			.willReturn(true);
 		given(productRepository.findById(anyLong()))
-			.willThrow(new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."));
+			.willThrow(new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
 		//expect
 		assertThatThrownBy(() -> cartService.addProduct(email, productId, quantity))
-			.isInstanceOf(ProductNotFoundException.class);
+			.isInstanceOf(CustomException.class)
+			.hasMessage("해당하는 상품이 존재하지 않습니다.");
 
 		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(1)).findById(anyLong());
@@ -159,7 +161,7 @@ class CartServiceTest {
 
 		//expect
 		assertThatThrownBy(() -> cartService.findCartByUserEmail("none@email.com"))
-			.isInstanceOf(UserNotFoundException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("해당하는 유저가 존재하지 않습니다.");
 	}
 

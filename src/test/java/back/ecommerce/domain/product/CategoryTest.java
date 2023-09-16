@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import back.ecommerce.exception.InvalidCategoryNameException;
+import back.ecommerce.exception.CustomException;
 
 class CategoryTest {
 
@@ -31,7 +31,7 @@ class CategoryTest {
 	void test_invalidName() {
 		//expect
 		assertThatThrownBy(() -> Category.from("to1p"))
-			.isInstanceOf(InvalidCategoryNameException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("유효하지 않은 카테고리명 입니다.");
 	}
 
@@ -40,7 +40,7 @@ class CategoryTest {
 	void test_nullValue() {
 		//expect
 		assertThatThrownBy(() -> Category.from(null))
-			.isInstanceOf(InvalidCategoryNameException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("유효하지 않은 카테고리명 입니다.");
 
 	}

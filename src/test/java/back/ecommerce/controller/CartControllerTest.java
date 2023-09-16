@@ -1,5 +1,6 @@
 package back.ecommerce.controller;
 
+import static back.ecommerce.exception.ErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,17 +34,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.auth.annotaion.UserEmail;
+import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.controller.cart.CartController;
 import back.ecommerce.controller.common.GlobalExceptionHandler;
-import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.request.cart.AddCartRequest;
 import back.ecommerce.dto.response.cart.AddCartResponse;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.response.cart.CartProducts;
-import back.ecommerce.exception.ProductNotFoundException;
-import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.CustomException;
 import back.ecommerce.service.cart.CartService;
 
 @WebMvcTest(value = CartController.class, excludeFilters = {
@@ -129,7 +130,7 @@ class CartControllerTest {
 	@DisplayName("/api/cart/add-product POST 로 존재하지 않는 사용자 이메일을 요청으로 보내면 응답코드 400과 함께 실패이유가 응답되어야한다.")
 	void add_product_userNotFoundException() throws Exception {
 		//given
-		doThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."))
+		doThrow(new CustomException(USER_NOT_FOUND))
 			.when(cartService).addProduct(anyString(), anyLong(), anyInt());
 
 		//expect
@@ -137,7 +138,7 @@ class CartControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(new AddCartRequest("email@email.com", 100L, 10))))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+			.andExpect(jsonPath("$.reasons.user").value("해당하는 유저가 존재하지 않습니다."));
 
 		then(cartService).should(times(1)).addProduct(anyString(), anyLong(), anyInt());
 	}
@@ -146,7 +147,7 @@ class CartControllerTest {
 	@DisplayName("/api/cart/add-product POST 로 존재하지 않는 상품 아이디를 요청으로 보내면 응답코드 400과 함께 실패이유가 응답되어야한다.")
 	void add_product_productNotFoundException() throws Exception {
 		//given
-		doThrow(new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."))
+		doThrow(new AuthenticationException(PRODUCT_NOT_FOUND))
 			.when(cartService).addProduct(anyString(), anyLong(), anyInt());
 
 		//expect
@@ -208,14 +209,14 @@ class CartControllerTest {
 	void find_userNotFoundException() throws Exception {
 	    //given
 		given(cartService.findCartByUserEmail(anyString()))
-			.willThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+			.willThrow(new CustomException(USER_NOT_FOUND));
 
 		//expect
 		mockMvc.perform(get("/api/cart")
 				.param("email", "user@email.com"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+			.andExpect(jsonPath("$.reasons.user").value("해당하는 유저가 존재하지 않습니다."));
 
 		then(cartService).should(times(1)).findCartByUserEmail(anyString());
 

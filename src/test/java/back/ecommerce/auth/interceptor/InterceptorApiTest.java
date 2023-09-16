@@ -89,7 +89,7 @@ public class InterceptorApiTest {
 
 		//when
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(failedResponse.getReasons().get("authorizationHeader")).isEqualTo("인증 헤더가 비어있습니다.");
+		assertThat(failedResponse.getReasons().get("authHeader")).isEqualTo("인증 헤더가 비어있습니다.");
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class InterceptorApiTest {
 
 		//when
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(failedResponse.getReasons().get("authorizationHeader")).isEqualTo("인증 헤더가 비어있습니다.");
+		assertThat(failedResponse.getReasons().get("authHeader")).isEqualTo("인증 헤더가 비어있습니다.");
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class InterceptorApiTest {
 
 		//when
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(failedResponse.getReasons().get("authorizationHeader")).isEqualTo("인증 헤더타입이 일치하지 않습니다.");
+		assertThat(failedResponse.getReasons().get("authHeader")).isEqualTo("인증 헤더타입이 일치하지 않습니다.");
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class InterceptorApiTest {
 
 		//when
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(failedResponse.getReasons().get("accessToken")).isEqualTo("토큰이 만료 되었습니다.");
+		assertThat(failedResponse.getReasons().get("token")).isEqualTo("토큰이 만료 되었습니다.");
 	}
 
 	@Test
@@ -182,7 +182,7 @@ public class InterceptorApiTest {
 
 		//when
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(failedResponse.getReasons().get("accessToken")).isEqualTo("토큰이 유효하지 않습니다.");
+		assertThat(failedResponse.getReasons().get("token")).isEqualTo("토큰이 유효하지 않습니다.");
 
 	}
 }

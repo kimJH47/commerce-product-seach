@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.exception.AuthHeaderInvalidException;
+import back.ecommerce.exception.AuthenticationException;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationInterceptorTest {
@@ -68,7 +68,7 @@ class JwtAuthenticationInterceptorTest {
 
 		//expect
 		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
-			.isInstanceOf(AuthHeaderInvalidException.class)
+			.isInstanceOf(AuthenticationException.class)
 			.hasMessage("인증 헤더타입이 일치하지 않습니다.");
 
 		then(request).should(times(1)).getHeader(anyString());
@@ -84,7 +84,7 @@ class JwtAuthenticationInterceptorTest {
 
 		//expect
 		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
-			.isInstanceOf(AuthHeaderInvalidException.class)
+			.isInstanceOf(AuthenticationException.class)
 			.hasMessage("인증 헤더가 비어있습니다.");
 
 		then(request).should(times(1)).getHeader(anyString());
@@ -100,7 +100,7 @@ class JwtAuthenticationInterceptorTest {
 
 		//expect
 		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
-			.isInstanceOf(AuthHeaderInvalidException.class)
+			.isInstanceOf(AuthenticationException.class)
 			.hasMessage("인증 헤더가 비어있습니다.");
 
 		then(request).should(times(1)).getHeader(anyString());

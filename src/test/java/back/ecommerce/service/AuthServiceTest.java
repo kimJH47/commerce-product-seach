@@ -14,14 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import back.ecommerce.auth.token.Token;
-import back.ecommerce.common.generator.UuidGenerator;
 import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.common.generator.UuidGenerator;
 import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.response.auth.SignUpDto;
 import back.ecommerce.dto.response.auth.TokenResponse;
-import back.ecommerce.exception.ExistsUserEmailException;
-import back.ecommerce.exception.PasswordNotMatchedException;
-import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.repository.user.UserRepository;
 import back.ecommerce.service.auth.AuthService;
 import back.ecommerce.service.auth.SignUpService;
@@ -81,7 +81,7 @@ class AuthServiceTest {
 
 		//expect
 		assertThatThrownBy(() -> authService.createToken("edsjl23@email.com", "dmaslkd@#mfd"))
-			.isInstanceOf(UserNotFoundException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("해당하는 유저가 존재하지 않습니다.");
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
@@ -103,7 +103,7 @@ class AuthServiceTest {
 
 		//expect
 		assertThatThrownBy(() -> authService.createToken("edsjl23@email.com", "dmaslkd@#mfd"))
-			.isInstanceOf(PasswordNotMatchedException.class)
+			.isInstanceOf(AuthenticationException.class)
 			.hasMessage("비밀번호가 일치하지 않습니다.");
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
@@ -140,12 +140,12 @@ class AuthServiceTest {
 
 		given(uuidGenerator.create())
 			.willReturn("133812312");
-		doThrow(new ExistsUserEmailException("이미 가입된 이메일이 존재합니다.")).when(signUpService)
+		doThrow(new CustomException(ErrorCode.DUPLICATE_USER_EMAIL)).when(signUpService)
 			.cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
 
 		//expect
 		assertThatThrownBy(() -> authService.signUp(email, password))
-			.isInstanceOf(ExistsUserEmailException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage("이미 가입된 이메일이 존재합니다.");
 
 		then(uuidGenerator).should(times(1)).create();

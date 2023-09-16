@@ -1,5 +1,6 @@
 package back.ecommerce.controller;
 
+import static back.ecommerce.exception.ErrorCode.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,17 +23,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.controller.auth.AuthController;
 import back.ecommerce.dto.request.user.LoginRequest;
 import back.ecommerce.dto.request.user.SignUpRequest;
 import back.ecommerce.dto.response.auth.SignUpDto;
 import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
-import back.ecommerce.exception.EmailCodeNotFoundException;
-import back.ecommerce.exception.ExistsUserEmailException;
-import back.ecommerce.exception.PasswordNotMatchedException;
-import back.ecommerce.exception.UserNotFoundException;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.service.auth.AuthService;
 
 @WebMvcTest(AuthController.class)
@@ -120,7 +118,7 @@ class AuthControllerTest {
 	void login_userNotFoundException() throws Exception {
 		//given
 		given(authService.createToken(anyString(), anyString()))
-			.willThrow(new UserNotFoundException("해당하는 유저가 존재하지 않습니다."));
+			.willThrow(new CustomException(USER_NOT_FOUND));
 
 		//expect
 		mockMvc.perform(post("/api/auth/token")
@@ -128,7 +126,7 @@ class AuthControllerTest {
 				.content(mapper.writeValueAsString(new LoginRequest("dsldsalw42@email.com", "dsamkcmx#dsm"))))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.login").value("해당하는 유저가 존재하지 않습니다."));
+			.andExpect(jsonPath("$.reasons.user").value("해당하는 유저가 존재하지 않습니다."));
 
 		then(authService).should(times(1)).createToken(anyString(), anyString());
 	}
@@ -138,7 +136,7 @@ class AuthControllerTest {
 	void login_passwordNotMatchException() throws Exception {
 		//given
 		given(authService.createToken(anyString(), anyString()))
-			.willThrow(new PasswordNotMatchedException("비밀번호가 일치하지 않습니다."));
+			.willThrow(new CustomException(PASSWORD_NOT_MATCHED));
 
 		//expect
 		mockMvc.perform(post("/api/auth/token")
@@ -146,7 +144,7 @@ class AuthControllerTest {
 				.content(mapper.writeValueAsString(new LoginRequest("dsldsalw42@email.com", "dsamkcmx#dsm"))))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.login").value("비밀번호가 일치하지 않습니다."));
+			.andExpect(jsonPath("$.reasons.password").value("비밀번호가 일치하지 않습니다."));
 
 		then(authService).should(times(1)).createToken(anyString(), anyString());
 	}
@@ -226,7 +224,7 @@ class AuthControllerTest {
 		String email = "km@gmail.com";
 		String password = "asd,lsaL:LE<@Q:#@!";
 		given(authService.signUp(anyString(), anyString()))
-			.willThrow(new ExistsUserEmailException("이미 존재하는 유저 이메일 입니다."));
+			.willThrow(new CustomException(DUPLICATE_USER_EMAIL));
 
 		//expect
 		mockMvc.perform(post("/api/auth/sign-up")
@@ -234,7 +232,7 @@ class AuthControllerTest {
 				.content(mapper.writeValueAsString(new SignUpRequest(email, password))))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
+			.andExpect(jsonPath("$.reasons.email").value("이미 가입된 이메일이 존재합니다."));
 
 		then(authService).should(times(1)).signUp(anyString(),anyString());
 		then(emailSQSEventPublisher).should(times(0)).pub(anyString(), anyString());
@@ -245,13 +243,13 @@ class AuthControllerTest {
 	void verified_existsUserEmail() throws Exception {
 	    //given
 		given(authService.verifiedEmailCode(anyString()))
-			.willThrow(new ExistsUserEmailException("이미 존재하는 유저 이메일 입니다."));
+			.willThrow(new CustomException(DUPLICATE_USER_EMAIL));
 
 		//expect
 		mockMvc.perform(get("/api/auth/verified/123213212"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.email").value("이미 존재하는 유저 이메일 입니다."));
+			.andExpect(jsonPath("$.reasons.email").value("이미 가입된 이메일이 존재합니다."));
 
 		then(authService).should(times(1)).verifiedEmailCode(anyString());
 	}
@@ -262,13 +260,13 @@ class AuthControllerTest {
 	void verified_codeNotFound() throws Exception {
 		//given
 		given(authService.verifiedEmailCode(anyString()))
-			.willThrow(new EmailCodeNotFoundException("인증 코드가 존재하지 않습니다."));
+			.willThrow(new CustomException(EMAIL_CODE_NOT_FOUND));
 
 		//expect
 		mockMvc.perform(get("/api/auth/verified/123213212"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-			.andExpect(jsonPath("$.reasons.code").value("인증 코드가 존재하지 않습니다."));
+			.andExpect(jsonPath("$.reasons.emailCode").value("이메일 코드가 존재하지 않습니다."));
 
 		then(authService).should(times(1)).verifiedEmailCode(anyString());
 	}

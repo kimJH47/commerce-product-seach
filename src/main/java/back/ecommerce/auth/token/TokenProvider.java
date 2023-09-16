@@ -8,8 +8,8 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import back.ecommerce.exception.TokenHasExpiredException;
-import back.ecommerce.exception.TokenHasInvalidException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -62,11 +62,11 @@ public class TokenProvider {
 			}
 			return claim;
 		} catch (IllegalArgumentException e) {
-			throw new TokenHasInvalidException("토큰이 비어있습니다.");
+			throw new AuthenticationException(ErrorCode.TOKEN_IS_EMPTY);
 		} catch (SignatureException | UnsupportedJwtException | MalformedJwtException e) {
-			throw new TokenHasInvalidException("토큰이 유효하지 않습니다.");
+			throw new AuthenticationException(ErrorCode.TOKEN_HAS_INVALID);
 		} catch (ExpiredJwtException e) {
-			throw new TokenHasExpiredException("토큰이 만료 되었습니다.");
+			throw new AuthenticationException(ErrorCode.TOKEN_HAS_EXPIRED);
 		}
 	}
 }

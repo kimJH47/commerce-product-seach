@@ -8,7 +8,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import back.ecommerce.auth.annotaion.UserEmail;
-import back.ecommerce.exception.TokenHasInvalidException;
+import back.ecommerce.exception.AuthenticationException;
+import back.ecommerce.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class UserEmailArgumentResolver implements HandlerMethodArgumentResolver 
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		String email = (String)webRequest.getAttribute(TOKEN_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
 		if (email == null || email.isEmpty()) {
-			throw new TokenHasInvalidException("인증이 성공적으로 되지 않았습니다.");
+			throw new AuthenticationException(ErrorCode.TOKEN_HAS_INVALID);
 		}
 		return email;
 	}

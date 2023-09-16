@@ -1,5 +1,7 @@
 package back.ecommerce.service.auth;
 
+import static back.ecommerce.exception.ErrorCode.*;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
@@ -11,8 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.domain.user.User;
-import back.ecommerce.exception.EmailCodeNotFoundException;
-import back.ecommerce.exception.ExistsUserEmailException;
+import back.ecommerce.exception.CustomException;
 import back.ecommerce.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class SignUpService {
 	@Transactional(readOnly = true)
 	public void validateEmail(String email) {
 		if (userRepository.existsByEmail(email)) {
-			throw new ExistsUserEmailException("이미 가입된 이메일이 존재합니다.");
+			throw new CustomException(DUPLICATE_USER_EMAIL);
 		}
 	}
 
@@ -69,7 +70,7 @@ public class SignUpService {
 	private String getAndDelete(String key) {
 		String value = redisTemplate.opsForValue().get(key);
 		if (value == null) {
-			throw new EmailCodeNotFoundException("이메일 코드가 존재하지 않습니다.");
+			throw new CustomException(EMAIL_CODE_NOT_FOUND);
 		}
 		redisTemplate.delete(key);
 		return value;

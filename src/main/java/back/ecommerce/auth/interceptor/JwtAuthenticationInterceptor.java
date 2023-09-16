@@ -1,5 +1,7 @@
 package back.ecommerce.auth.interceptor;
 
+import static back.ecommerce.exception.ErrorCode.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,7 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.exception.AuthHeaderInvalidException;
+import back.ecommerce.exception.AuthenticationException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -32,10 +34,10 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
 	private String extractHeaderToToken(String header) {
 		if (!StringUtils.hasText(header)) {
-			throw new AuthHeaderInvalidException("인증 헤더가 비어있습니다.");
+			throw new AuthenticationException(AUTH_HEADER_IS_EMPTY);
 		}
 		if (!header.startsWith(AUTHORIZATION_TYPE)) {
-			throw new AuthHeaderInvalidException("인증 헤더타입이 일치하지 않습니다.");
+			throw new AuthenticationException(AUTH_HEADER_INVALID);
 		}
 		return header.substring(AUTHORIZATION_TYPE.length());
 	}
