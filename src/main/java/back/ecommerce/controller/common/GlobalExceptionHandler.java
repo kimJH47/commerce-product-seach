@@ -53,12 +53,6 @@ public class GlobalExceptionHandler {
 		return Response.createBadRequest(BAD_REQUEST, e);
 	}
 
-	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<Response> handle(IllegalArgumentException e, HttpServletRequest request) {
-		logging(WARN, request, "argument", e);
-		return Response.createBadRequest(BAD_REQUEST, "argument", e.getMessage());
-	}
-
 	private void logging(Level level, HttpServletRequest request, String field, Exception e) {
 		globalLogger.log(level, ERROR_FORMAT, request.getRequestURI(), request.getMethod(), field, e.getMessage());
 	}
