@@ -6,35 +6,27 @@ HOME_PATH="/home/ubuntu"
 DIR_PATH="/home/ubuntu/application"
 BRANCH_NAME="master"
 
-echo "서버 시작 스크립트 실행"
 
 if [ -d "$DIR_PATH" ]; then
   cd $DIR_PATH || return
-
-  git fetch
-
-  git checkout $BRANCH_NAME
-
-  echo "원격 저장소에서 프로젝트를 업데이트 합니다."
-  git pull --rebase
-else
-  echo "프로젝트가 존재하지 않습니다. 프로젝트를 받아옵니다."
-  git clone -b $BRANCH_NAME $REPO_URL $DIR_PATH
-  cd $DIR_PATH || return
+  echo "setting jar file permission..."
+  chmod +x *.jar
+  echo " done!"
 fi
 
-PID=$(lsof -t -i:8080)
-if [ -n "$PID" ]; then
-  echo "8080 포트로 실행중인 프로세스가 있습니다. 해당 프로세스를 종료합니다."
-  kill -15 $PID
+echo " check using port..."
+CURRENT_PID=$(sudo lsof -t -i :8080)
+if [ -z $CURRENT_PID ];
+then
+  echo "not used port!"
+else
+  echo "killed process PID = $CURRENT_PID"
+  sudo kill -15 $CURRENT_PID
   sleep 5
 fi
+echo "done!"
 
-echo "프로젝트를 빌드 시작"
-cd ecommerce || return
-./gradlew bootJar
-echo "프로젝트 빌드 완료"
-
-echo "서버를 시작합니다."
+echo "start spring boot server!"
 cd $HOME_PATH || return
-nohup java -jar -Duser.timezone=Asia/Seoul ${DIR_PATH}/ecommerce/build/libs/*.jar
+sudo nohup java -jar -Dspring.profiles.active=prod -Duser.timezone=Asia/Seoul ${DIR_PATH}/*.jar > /dev/null 2>>/home/ubuntu/deploy/deploy_err.log &
+echo "done!"
