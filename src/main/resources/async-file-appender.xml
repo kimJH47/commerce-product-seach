@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<included>
-    <appender name="ASYNC_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="SEARCH_REQUEST_FILE"/>
-        <queueSize>50</queueSize>
-        <discardingThreshold>5</discardingThreshold>
-        <neverBlock>false</neverBlock>
-    </appender>
-</included>

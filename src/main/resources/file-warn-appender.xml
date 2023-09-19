@@ -1,8 +1,15 @@
 <included>
-    <appender name="WARN_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE_PATH}/warns/${WARN_LOG_FILE_NAME}.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timeZone>Asia/Seoul</timeZone>
+            <shortenedLoggerNameLength>15</shortenedLoggerNameLength>
+            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss</timestampPattern>
+            <fieldNames>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -13,11 +20,15 @@
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>5</maxHistory>
         </rollingPolicy>
-
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>WARN</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
+
+    <appender name="WARN_LOG" class="net.logstash.logback.appender.LoggingEventAsyncDisruptorAppender">
+        <appender-ref ref="WARN_FILE"/>
+    </appender>
+
 </included>
