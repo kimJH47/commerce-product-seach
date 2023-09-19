@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import back.ecommerce.aop.annotation.Logging;
+import back.ecommerce.common.logging.aop.annotation.Logging;
 import back.ecommerce.controller.resolver.ProductSearchRequestMapping;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.request.product.ProductSearchConditionRequest;

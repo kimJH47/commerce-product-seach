@@ -1,4 +1,4 @@
-package back.ecommerce.aop.annotation;
+package back.ecommerce.common.logging.aop.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
