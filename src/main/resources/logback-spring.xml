@@ -16,12 +16,11 @@
     <include resource="file-error-appender.xml"/>
     <!-->discord webhook<!-->
     <include resource="discord-webhook-appender.xml"/>
+
     <!-->search-request-file<!-->
     <include resource="file-search-request-appender.xml"/>
-    <!-->async-file-appender<!-->
-    <include resource="async-file-appender.xml"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="console"/>
         <appender-ref ref="INFO_LOG"/>
         <appender-ref ref="WARN_LOG"/>
