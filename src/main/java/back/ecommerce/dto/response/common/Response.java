@@ -22,10 +22,6 @@ public class Response {
 		return ResponseEntity.badRequest().body(new FailedResponse(message, e));
 	}
 
-	public static ResponseEntity<Response> createBadRequest(String message, String field, String reason) {
-		return ResponseEntity.badRequest().body(new FailedResponse(message, field, reason));
-	}
-
 	public static ResponseEntity<Response> Failed(String message, CustomException exception) {
 		return ResponseEntity.status(exception.getStatusCode())
 			.body(new FailedResponse(message, exception.getReasonField(), exception.getDescription()));
