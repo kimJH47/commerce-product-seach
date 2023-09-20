@@ -1,6 +1,3 @@
-# 제로베이스-커머스 과제
-
-
 ## 요구사항
 
 ### 로그인
@@ -34,8 +31,6 @@
 - 상품의 정보들(상품명,브랜드명,등록일자 등)의 기준으로 검색이 가능하다.
 - 상품의 정보를 기준으로 오름차순 또는 내림차 순으로 정렬 할 수 있다.
 
-
-
 ---
 
 ## ERD
@@ -43,12 +38,12 @@
 
 ---
 ## 프로젝트 구조
-![Structure](./docs/structure.PNG)
+![Structure](./docs/architecture.png)
 
 ---
 ## 사용기술
-
-- Spring
+- Java 11
+- Spring Boot 2.7
 - JPA
 - MySQL
 - H2(Local 환경)
