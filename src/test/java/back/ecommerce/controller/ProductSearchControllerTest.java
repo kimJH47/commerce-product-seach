@@ -18,6 +18,8 @@ import back.ecommerce.controller.product.ProductSearchController;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.response.product.ProductListResponse;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.service.product.ProductService;
 
 @WebMvcTest(ProductSearchController.class)
@@ -139,6 +141,44 @@ class ProductSearchControllerTest {
 
 	}
 
+
+	@Test
+	@DisplayName("api/product/{id} GET 으로 단건조회 API 사용시 id 에 해당하는 상품이 응답코드 200과 함께 조회 되어야한다.")
+	void find_one() throws Exception {
+	    //given
+		given(productService.findOne(any()))
+			.willReturn(createDto(1, "상품", "브랜드", 150000, Category.ACCESSORY));
+
+	    //expect
+		mockMvc.perform(get("/api/product/1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.entity.id").value("1"))
+			.andExpect(jsonPath("$.entity.name").value("상품"))
+			.andExpect(jsonPath("$.entity.brandName").value("브랜드"))
+			.andExpect(jsonPath("$.entity.price").value("150000"))
+			.andExpect(jsonPath("$.entity.category").value("ACCESSORY"));
+
+		then(productService).should(times(1)).findOne(any());
+	}
+
+
+	@Test
+	@DisplayName("api/product/{id} GET 으로 존재하지 않는 상품의 id 를 보내면 응답코드 400 과함께 실패이유가 응답되어야 한다.")
+	void find_one_product_not_found() throws Exception {
+	    //given
+		given(productService.findOne(any()))
+			.willThrow(new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+
+	    //expect
+		mockMvc.perform(get("/api/product/1"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.product").value("해당하는 상품이 존재하지 않습니다."));
+
+		then(productService).should(times(1)).findOne(any());
+
+
+	}
 	private ProductDto createDto(long id, String name, String brandName, long price, Category category) {
 		return new ProductDto(id, name, brandName, price, category);
 	}

@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,10 +20,12 @@ import org.springframework.data.domain.Pageable;
 
 import back.ecommerce.domain.condition.ProductSearchCondition;
 import back.ecommerce.domain.product.Category;
+import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.product.ProductDto;
 import back.ecommerce.dto.response.product.ProductListResponse;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.repository.product.ProductQueryDslRepository;
+import back.ecommerce.repository.product.ProductRepository;
 import back.ecommerce.service.product.ProductService;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,8 @@ class ProductServiceTest {
 
 	@Mock
 	ProductQueryDslRepository productQueryDslRepository;
+	@Mock
+	ProductRepository productRepository;
 	@InjectMocks
 	ProductService productService;
 
@@ -118,6 +123,43 @@ class ProductServiceTest {
 		assertThatThrownBy(() -> productService.findWithSearchCondition(Category.ACCESSORY, parameters))
 			.isInstanceOf(CustomException.class)
 			.hasMessage("유효하지 않는 페이지 번호입니다.");
+	}
+
+	@Test
+	@DisplayName("상품 id 를 인자로 받아서 해당하는 상품 dto 를 반환 해야한다.")
+	void findOne() {
+		//given
+		long id = 1L;
+		given(productRepository.findById(id))
+			.willReturn(Optional.of(new Product(id, "상품", "브랜드", 1L, Category.HEAD_WEAR)));
+
+		//when
+		ProductDto actual = productService.findOne(id);
+
+		//then
+		assertThat(actual.getId()).isEqualTo(id);
+		assertThat(actual.getName()).isEqualTo("상품");
+		assertThat(actual.getBrandName()).isEqualTo("브랜드");
+		assertThat(actual.getPrice()).isEqualTo(1L);
+		assertThat(actual.getCategory()).isEqualTo(Category.HEAD_WEAR);
+
+		then(productRepository).should(times(1)).findById(any());
+	}
+
+	@Test
+	@DisplayName("존재하지 않는 상품 id 를 인자로 받으면 예외가 발생한다.")
+	void findOne_exception() {
+		//given
+		given(productRepository.findById(15L))
+			.willReturn(Optional.empty());
+
+		//expect
+		assertThatThrownBy(() -> productService.findOne(15L))
+			.isInstanceOf(CustomException.class)
+			.hasMessage("해당하는 상품이 존재하지 않습니다.");
+		then(productRepository).should(times(1)).findById(any());
+
+
 
 	}
 }
