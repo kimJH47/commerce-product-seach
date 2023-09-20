@@ -34,4 +34,10 @@ public class ProductSearchController {
 		return Response.createSuccessResponse("상품이 성공적으로 조회 되었습니다.",
 			productService.findWithSearchCondition(request.getCategory(), request.getParameters()));
 	}
+
+	@GetMapping("/product/{id}")
+	public ResponseEntity<Response> findOne(@PathVariable Long id) {
+		return Response.createSuccessResponse("상품이 성공적으로 조회 되었습니다.", productService.findOne(id));
+	}
+
 }
