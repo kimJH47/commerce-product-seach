@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import back.ecommerce.domain.product.ApprovalStatus;
-import back.ecommerce.dto.request.amdin.AddProductRequest;
+import back.ecommerce.dto.request.amdin.UpdateApprovalRequest;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
-import back.ecommerce.dto.request.amdin.UpdateApprovalStatusDto;
+import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.service.admin.AdminService;
@@ -39,7 +39,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/admin/add-product")
-	public ResponseEntity<Response> addProduct(@RequestBody @Valid AddProductRequest request) {
+	public ResponseEntity<Response> updateRequestProduct(@RequestBody @Valid UpdateApprovalRequest request) {
 		UpdateApprovalStatusDto updateApprovalStatusDto = adminService.updateApprovalStatus(request.getRequestId(),
 			request.getApprovalStatus(), request.getEmail());
 		emailSQSEventPublisher.pub(updateApprovalStatusDto.toMap());

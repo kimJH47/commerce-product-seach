@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddProductRequest {
+public class UpdateApprovalRequest {
 	@NotNull(message = "등록요청 상품 아아디는 필수적으로 필요합니다.")
 	private Long requestId;
 	@NotNull(message = "승인상태는 필수적로 필요합니다.")

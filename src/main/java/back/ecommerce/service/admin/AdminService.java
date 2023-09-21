@@ -11,7 +11,7 @@ import back.ecommerce.domain.product.ApprovalStatus;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.RequestProduct;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
-import back.ecommerce.dto.request.amdin.UpdateApprovalStatusDto;
+import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
 import back.ecommerce.dto.response.admin.RequestProductDto;
 import back.ecommerce.exception.CustomException;
