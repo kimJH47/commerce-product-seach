@@ -1,14 +1,19 @@
 package back.ecommerce.service.admin;
 
+import static back.ecommerce.domain.product.ApprovalStatus.*;
+import static back.ecommerce.domain.product.Category.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +24,7 @@ import back.ecommerce.domain.product.RequestProduct;
 import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
+import back.ecommerce.dto.response.admin.RequestProductDto;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.repository.RequestProductRepository;
 import back.ecommerce.repository.product.ProductRepository;
@@ -50,7 +56,7 @@ class AdminServiceTest {
 			category);
 
 		given(requestProductRepository.save(any(RequestProduct.class)))
-			.willReturn(new RequestProduct(150L, name, brand, price, Category.TOP, ApprovalStatus.WAIT, email));
+			.willReturn(new RequestProduct(150L, name, brand, price, TOP, WAIT, email));
 
 		given(userRepository.findByEmail(anyString()))
 			.willReturn(Optional.of(new User(10L, "tray@gmal.com", "11455")));
@@ -60,7 +66,7 @@ class AdminServiceTest {
 
 		//then
 		assertThat(actual.getRequestId()).isEqualTo(150L);
-		assertThat(actual.getApprovalStatus()).isEqualTo(ApprovalStatus.WAIT);
+		assertThat(actual.getApprovalStatus()).isEqualTo(WAIT);
 		assertThat(actual.getEmail()).isEqualTo("tray@gmal.com");
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
@@ -112,6 +118,39 @@ class AdminServiceTest {
 
 		then(userRepository).should(times(0)).findByEmail(anyString());
 		then(requestProductRepository).should(times(0)).save(any(RequestProduct.class));
+	}
+
+	@ParameterizedTest
+	@EnumSource(value = ApprovalStatus.class)
+	@DisplayName("승인상태를 받아서 상태에 해당하는 등록요청 상품들이 반환되어야 한다.")
+	void findByApprovalStatus(ApprovalStatus approvalStatus) {
+		//given
+		List<RequestProduct> waits = List.of(
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", TOP, 156000L, approvalStatus),
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", PANTS, 156000L, approvalStatus),
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", ACCESSORY, 156000L, approvalStatus),
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", OUTER, 156000L, approvalStatus)
+		);
+
+		given(requestProductRepository.findByApprovalStatus(any(ApprovalStatus.class)))
+			.willReturn(waits);
+
+		//when
+		List<RequestProductDto> waitActual = adminService.findByApprovalStatus(approvalStatus);
+
+		//then
+		assertThat(waitActual)
+			.extracting(RequestProductDto::getApprovalStatus)
+			.filteredOn(status -> status.equals(approvalStatus))
+			.hasSize(4);
+
+		then(requestProductRepository).should(times(1)).findByApprovalStatus(any(ApprovalStatus.class));
+	}
+
+	public static RequestProduct createRequestProduct(long requestId, String email, String name, String brandName,
+		Category category, long price,
+		ApprovalStatus approvalStatus) {
+		return new RequestProduct(requestId, name, brandName, price, category, approvalStatus, email);
 	}
 
 }

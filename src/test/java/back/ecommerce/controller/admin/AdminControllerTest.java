@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.controller.MockMvcTestConfig;
 import back.ecommerce.domain.product.ApprovalStatus;
+import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
 import back.ecommerce.dto.response.admin.RequestProductDto;
@@ -98,8 +99,10 @@ class AdminControllerTest {
 		//given
 		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 		List<RequestProductDto> products = List.of(
-			new RequestProductDto(10L, "email@naver.com", "name1", "Brand1", 100500L, ApprovalStatus.WAIT, now),
-			new RequestProductDto(15L, "email3@naver.com", "name2", "Brand5", 250000L, ApprovalStatus.WAIT, now));
+			new RequestProductDto(10L, "email@naver.com", "name1", "Brand1", Category.TOP, 100500L, ApprovalStatus.WAIT,
+				now),
+			new RequestProductDto(15L, "email3@naver.com", "name2", "Brand5", Category.PANTS, 250000L,
+				ApprovalStatus.WAIT, now));
 
 		given(adminService.findByApprovalStatus(ApprovalStatus.WAIT))
 			.willReturn(products);
@@ -112,6 +115,7 @@ class AdminControllerTest {
 			.andExpect(jsonPath("$.entity[0].email").value("email@naver.com"))
 			.andExpect(jsonPath("$.entity[0].name").value("name1"))
 			.andExpect(jsonPath("$.entity[0].brandName").value("Brand1"))
+			.andExpect(jsonPath("$.entity[0].category").value("TOP"))
 			.andExpect(jsonPath("$.entity[0].price").value(100500L))
 			.andExpect(jsonPath("$.entity[0].approvalStatus").value("WAIT"))
 			.andExpect(jsonPath("$.entity[0].requestTime").value(now.toString()))
@@ -120,6 +124,7 @@ class AdminControllerTest {
 			.andExpect(jsonPath("$.entity[1].email").value("email3@naver.com"))
 			.andExpect(jsonPath("$.entity[1].name").value("name2"))
 			.andExpect(jsonPath("$.entity[1].brandName").value("Brand5"))
+			.andExpect(jsonPath("$.entity[1].category").value("PANTS"))
 			.andExpect(jsonPath("$.entity[1].price").value(250000L))
 			.andExpect(jsonPath("$.entity[1].approvalStatus").value("WAIT"))
 			.andExpect(jsonPath("$.entity[1].requestTime").value(now.toString()));
