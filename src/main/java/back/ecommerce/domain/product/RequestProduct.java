@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import back.ecommerce.domain.common.BaseTimeEntity;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +36,19 @@ public class RequestProduct extends BaseTimeEntity {
 	private ApprovalStatus approvalStatus;
 	private String email;
 
+	public void updateApproval(ApprovalStatus approvalStatus) {
+		if (this.approvalStatus.equals(approvalStatus)) {
+			throw new CustomException(ErrorCode.ALREADY_UPDATE_APPROVAL_STATUS);
+		}
+		this.approvalStatus = approvalStatus;
+	}
+
 	public static RequestProduct createWithWaitStatus(String name, String brandName, Long price, Category category,
 		String email) {
 		return new RequestProduct(null, name, brandName, price, category, WAIT, email);
+	}
+
+	public Product toProduct() {
+		return new Product(null, name, brandName, price, category);
 	}
 }
