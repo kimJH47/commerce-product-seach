@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import back.ecommerce.domain.product.ApprovalStatus;
+import back.ecommerce.dto.request.amdin.AddProductRequest;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
+import back.ecommerce.dto.request.amdin.UpdateApprovalStatusDto;
 import back.ecommerce.dto.response.common.Response;
+import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
 	private final AdminService adminService;
+	private final EmailSQSEventPublisher emailSQSEventPublisher;
 
 	@PostMapping("/add-request-product")
 	public ResponseEntity<Response> addRequestProduct(@RequestBody @Valid AddRequestProductRequest request) {
@@ -34,8 +38,11 @@ public class AdminController {
 			adminService.findByApprovalStatus(ApprovalStatus.WAIT));
 	}
 
-	// @PostMapping("/admin/add-product")
-	// public ResponseEntity<?> addProduct(@RequestBody AddProductRequest request) {
-	// 	adminService.addProduct(ids);
-	// }
+	@PostMapping("/admin/add-product")
+	public ResponseEntity<Response> addProduct(@RequestBody @Valid AddProductRequest request) {
+		UpdateApprovalStatusDto updateApprovalStatusDto = adminService.updateApprovalStatus(request.getRequestId(),
+			request.getApprovalStatus(), request.getEmail());
+		emailSQSEventPublisher.pub(updateApprovalStatusDto.toMap());
+		return Response.createSuccessResponse("등록요청 상품이 성공적으로 업데이트 되었습니다.", updateApprovalStatusDto);
+	}
 }

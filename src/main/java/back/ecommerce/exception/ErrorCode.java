@@ -23,6 +23,9 @@ public enum ErrorCode {
 	INVALID_PAGE_NUMBER(400, "page", "유효하지 않는 페이지 번호입니다."),
 
 	INTERNAL_SERVER_ERROR(500, "server", "서버에 에러가 발생 했습니다."),
+
+	REQUEST_PRODUCT_NOT_FOUND(400, "requestProduct", "등록요청 상품이 존재하지 않습니다."),
+	ALREADY_UPDATE_APPROVAL_STATUS(400,"approvalStatus","이미 번경된 등록승인 상태 입니다.")
 	;
 
 	private final int status;
