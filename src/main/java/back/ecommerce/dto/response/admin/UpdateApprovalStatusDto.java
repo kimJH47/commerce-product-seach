@@ -1,4 +1,4 @@
-package back.ecommerce.dto.request.amdin;
+package back.ecommerce.dto.response.admin;
 
 import java.util.HashMap;
 import java.util.Map;
