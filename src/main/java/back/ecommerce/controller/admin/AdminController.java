@@ -38,7 +38,7 @@ public class AdminController {
 			adminService.findByApprovalStatus(ApprovalStatus.WAIT));
 	}
 
-	@PostMapping("/admin/add-product")
+	@PostMapping("/admin/update-approval")
 	public ResponseEntity<Response> updateRequestProduct(@RequestBody @Valid UpdateApprovalRequest request) {
 		UpdateApprovalStatusDto updateApprovalStatusDto = adminService.updateApprovalStatus(request.getRequestId(),
 			request.getApprovalStatus(), request.getEmail());
