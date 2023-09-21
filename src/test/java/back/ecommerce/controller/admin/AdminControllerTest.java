@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -17,26 +18,39 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.controller.MockMvcTestConfig;
+import back.ecommerce.domain.admin.Admin;
 import back.ecommerce.domain.product.ApprovalStatus;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
+import back.ecommerce.dto.request.amdin.UpdateApprovalRequest;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
 import back.ecommerce.dto.response.admin.RequestProductDto;
+import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
+import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
+import back.ecommerce.repository.admin.AdminRepository;
 import back.ecommerce.service.admin.AdminService;
 
-@WebMvcTest(AdminController.class)
+@WebMvcTest(value = AdminController.class, excludeFilters = {
+	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)})
 @Import(MockMvcTestConfig.class)
 class AdminControllerTest {
 
 	@MockBean
 	AdminService adminService;
+	@MockBean
+	EmailSQSEventPublisher sqsEventPublisher;
+	@MockBean
+	AdminRepository adminRepository;
 	@Autowired
 	MockMvc mvc;
 	@Autowired
@@ -132,4 +146,33 @@ class AdminControllerTest {
 		then(adminService).should(times(1)).findByApprovalStatus(any(ApprovalStatus.class));
 	}
 
+	@Test
+	@DisplayName("/api/admin/update-approval")
+	void update_approval() throws Exception {
+		//given
+		UpdateApprovalStatusDto updateApprovalStatusDto = new UpdateApprovalStatusDto("email@email.com", 150L,
+			ApprovalStatus.FAILED);
+		UpdateApprovalRequest request = new UpdateApprovalRequest(150L, ApprovalStatus.FAILED,
+			"email@email.com");
+
+		given(adminService.updateApprovalStatus(anyLong(), any(ApprovalStatus.class), anyString()))
+			.willReturn(updateApprovalStatusDto);
+
+		given(adminRepository.findByEmail(anyString())).willReturn(
+			Optional.of(new Admin(10L, "dsad@email.com", "pass")));
+
+		//then
+		mvc.perform(post("/api/admin/update-approval")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("등록요청 상품이 성공적으로 업데이트 되었습니다."))
+			.andExpect(jsonPath("$.entity.email").value("email@email.com"))
+			.andExpect(jsonPath("$.entity.requestId").value("150"))
+			.andExpect(jsonPath("$.entity.approvalStatus").value("FAILED"));
+
+		then(adminService).should(times(1)).updateApprovalStatus(anyLong(), any(ApprovalStatus.class), anyString());
+		then(sqsEventPublisher).should(times(1)).pub(anyMap());
+
+	}
 }
