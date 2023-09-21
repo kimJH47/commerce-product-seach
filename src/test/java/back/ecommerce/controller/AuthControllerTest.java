@@ -152,14 +152,14 @@ class AuthControllerTest {
 	@Test
 	@DisplayName("/api/auth/sign-up POST 로 회원정보를 보내면 회원가입 대기상태가 성공적으로 완료 되어야 한다.")
 	void sign_up() throws Exception {
-	    //given
+		//given
 		String email = "km@gmail.com";
 		String password = "asd,lsaL:LE<@Q:#@!";
 		String code = "11231212412";
 		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
 		given(authService.signUp(email, password))
-			.willReturn(new SignUpDto(email,code));
+			.willReturn(new SignUpDto(email, code));
 
 		//expect
 		mockMvc.perform(post("/api/auth/sign-up")
@@ -170,14 +170,14 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
 
 		then(authService).should(times(1)).signUp(anyString(), anyString());
-		then(emailSQSEventPublisher).should(times(1)).pub(anyString(), anyString());
+		then(emailSQSEventPublisher).should(times(1)).pub(anyMap());
 	}
 
 	@ParameterizedTest
 	@MethodSource("invalidSignRequestProvider")
 	@DisplayName("/api/auth/sign-up POST 로 유효하지 않은 데이터를 보내면 응답코드 400 과 함께 실패 이유가 응답 되어야 한다.")
 	void sign_up_invalid_email(SignUpRequest request, String field) throws Exception {
-	    //expect
+		//expect
 		mockMvc.perform(post("/api/auth/sign-up")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
@@ -186,7 +186,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.reasons." + field).isNotEmpty());
 
 		then(authService).should(times(0)).signUp(anyString(), anyString());
-		then(emailSQSEventPublisher).should(times(0)).pub(anyString(), anyString());
+		then(emailSQSEventPublisher).should(times(0)).pub(anyMap());
 	}
 
 	public static Stream<Arguments> invalidSignRequestProvider() {
@@ -197,17 +197,16 @@ class AuthControllerTest {
 		);
 	}
 
-
 	@Test
 	@DisplayName("/api/auth/verified/{code} GET 요청을 보내면 이메일 유효성검증이 완료되어야 한다.")
 	void verified() throws Exception {
-	    //given
+		//given
 		String code = "213214215";
 		String email = "tra@gmail.com";
 		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
 		given(authService.verifiedEmailCode(anyString()))
-			.willReturn(new SignUpResponse(email,now));
+			.willReturn(new SignUpResponse(email, now));
 		//expect
 		mockMvc.perform(get("/api/auth/verified/" + code))
 			.andExpect(status().isOk())
@@ -220,7 +219,7 @@ class AuthControllerTest {
 	@Test
 	@DisplayName("/api/auth/sign-up POST 요청으로 이미 존재하지 하는 이메일을 보내면 응답코드 400과 함께 실패이유를 응답해야한다.")
 	void sign_up_existsUserEmail() throws Exception {
-	    //given
+		//given
 		String email = "km@gmail.com";
 		String password = "asd,lsaL:LE<@Q:#@!";
 		given(authService.signUp(anyString(), anyString()))
@@ -234,14 +233,14 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 			.andExpect(jsonPath("$.reasons.email").value("이미 가입된 이메일이 존재합니다."));
 
-		then(authService).should(times(1)).signUp(anyString(),anyString());
-		then(emailSQSEventPublisher).should(times(0)).pub(anyString(), anyString());
+		then(authService).should(times(1)).signUp(anyString(), anyString());
+		then(emailSQSEventPublisher).should(times(0)).pub(anyMap());
 	}
 
 	@Test
 	@DisplayName("/api/auth/verified/{code} GET 으로 이메일 인증코드를 보낼 때 이미 존재하는 이메일이있으면 응답코드 400과 함께 실패이유를 응답해야한다.")
 	void verified_existsUserEmail() throws Exception {
-	    //given
+		//given
 		given(authService.verifiedEmailCode(anyString()))
 			.willThrow(new CustomException(DUPLICATE_USER_EMAIL));
 

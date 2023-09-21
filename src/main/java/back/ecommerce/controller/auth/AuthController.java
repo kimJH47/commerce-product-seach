@@ -38,7 +38,7 @@ public class AuthController {
 	@PostMapping("/sign-up")
 	public ResponseEntity<Response> signUp(@RequestBody @Valid SignUpRequest request) {
 		SignUpDto signUpDto = authService.signUp(request.getEmail(), request.getPassword());
-		sqsEventPublisher.pub(signUpDto.getEmail(), signUpDto.getCode());
+		sqsEventPublisher.pub(signUpDto.toMap());
 		return Response.createSuccessResponse("회원가입 요청이 성공적으로 완료되었습니다.",
 			new SignUpResponse(signUpDto.getEmail(), LocalDateTime.now()));
 	}

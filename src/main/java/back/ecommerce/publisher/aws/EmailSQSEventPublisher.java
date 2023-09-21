@@ -1,6 +1,8 @@
 package back.ecommerce.publisher.aws;
 
-import java.util.HashMap;
+import static java.util.stream.Collectors.*;
+
+import java.util.Map;
 
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
@@ -18,27 +20,23 @@ public class EmailSQSEventPublisher {
 		this.queueUrl = queueUrl;
 	}
 
-	public void pub(String email, String code) {
-		SendMessageRequest sendMessageRequest = createMessageRequest(email, code);
+	public void pub(Map<String, String> map) {
+		SendMessageRequest sendMessageRequest = createMessageRequest(map);
 		amazonSQSAsync.sendMessage(sendMessageRequest);
 	}
 
-	private SendMessageRequest createMessageRequest(String email, String code) {
+	private SendMessageRequest createMessageRequest(Map<String, String> map) {
 		SendMessageRequest sendMessageRequest = new SendMessageRequest(queueUrl, MESSAGE_BODY);
-		HashMap<String, MessageAttributeValue> attributeMap = createMessageAttribute(email, code);
+		Map<String, MessageAttributeValue> attributeMap = createMessageAttribute(map);
 		sendMessageRequest.setMessageAttributes(attributeMap);
 		return sendMessageRequest;
 	}
 
-	private HashMap<String, MessageAttributeValue> createMessageAttribute(String email, String code) {
-		HashMap<String, MessageAttributeValue> attributeMap = new HashMap<>();
-		attributeMap.put("email", new MessageAttributeValue()
-			.withDataType("String")
-			.withStringValue(email));
-		attributeMap.put("code", new MessageAttributeValue()
-			.withDataType("String")
-			.withStringValue(code));
-		return attributeMap;
+	private Map<String, MessageAttributeValue> createMessageAttribute(Map<String, String> map) {
+		return map.entrySet().stream()
+			.collect(toMap(Map.Entry::getKey, entry -> new MessageAttributeValue()
+				.withDataType("String")
+				.withStringValue(entry.getValue())));
 	}
 }
 
