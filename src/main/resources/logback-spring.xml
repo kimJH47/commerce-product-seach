@@ -20,7 +20,7 @@
     <!-->search-request-file<!-->
     <include resource="file-search-request-appender.xml"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="console"/>
         <appender-ref ref="INFO_LOG"/>
         <appender-ref ref="WARN_LOG"/>
