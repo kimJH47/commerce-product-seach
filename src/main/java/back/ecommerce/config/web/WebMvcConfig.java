@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import back.ecommerce.auth.interceptor.AdminAuthorizationInterceptor;
 import back.ecommerce.auth.interceptor.JwtAuthenticationInterceptor;
 import back.ecommerce.auth.resolver.UserEmailArgumentResolver;
 import back.ecommerce.common.logging.LoggingInterceptor;
@@ -20,13 +21,18 @@ import lombok.RequiredArgsConstructor;
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	private final JwtAuthenticationInterceptor interceptor;
+	private final AdminAuthorizationInterceptor adminAuthorizationInterceptor;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(interceptor)
-			.addPathPatterns("/api/cart/**");
 		registry.addInterceptor(new LoggingInterceptor())
 			.order(1);
+		registry.addInterceptor(interceptor)
+			.addPathPatterns("/api/cart/**")
+			.order(2);
+		registry.addInterceptor(adminAuthorizationInterceptor)
+			.addPathPatterns("/api/admin/**")
+			.order(3);
 	}
 
 	@Override
