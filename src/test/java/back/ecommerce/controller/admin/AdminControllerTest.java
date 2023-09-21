@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import back.ecommerce.controller.MockMvcTestConfig;
 import back.ecommerce.domain.product.ApprovalStatus;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
+import back.ecommerce.dto.response.admin.RequestProductDto;
 import back.ecommerce.service.admin.AdminService;
 
 @WebMvcTest(AdminController.class)
@@ -80,16 +82,49 @@ class AdminControllerTest {
 	}
 
 	public static Stream<Arguments> invalidAddProductRequestProvider() {
-		return Stream.of(Arguments.of(new AddRequestProductRequest(null,"name","Brand",10000L,"TOP"), "email"),
-			Arguments.of(new AddRequestProductRequest("as@ffkdklj2@as","NamePr","BRAND2",100000L,"top"), "email"),
-			Arguments.of(new AddRequestProductRequest("asffkdklj2@as.com","","BRAND2",100000L,"top"), "name"),
-			Arguments.of(new AddRequestProductRequest("tray@as.com","product","",100000L,"top"), "brandName"),
-			Arguments.of(new AddRequestProductRequest("user@as.com","product","BRAND",null,"pants"), "price"),
-			Arguments.of(new AddRequestProductRequest("user@as.com","product","BRAND",0L,"top"), "price"),
-			Arguments.of(new AddRequestProductRequest("kim@as.com","product","BD",100000L,""), "category")
+		return Stream.of(Arguments.of(new AddRequestProductRequest(null, "name", "Brand", 10000L, "TOP"), "email"),
+			Arguments.of(new AddRequestProductRequest("as@ffkdklj2@as", "NamePr", "BRAND2", 100000L, "top"), "email"),
+			Arguments.of(new AddRequestProductRequest("asffkdklj2@as.com", "", "BRAND2", 100000L, "top"), "name"),
+			Arguments.of(new AddRequestProductRequest("tray@as.com", "product", "", 100000L, "top"), "brandName"),
+			Arguments.of(new AddRequestProductRequest("user@as.com", "product", "BRAND", null, "pants"), "price"),
+			Arguments.of(new AddRequestProductRequest("user@as.com", "product", "BRAND", 0L, "top"), "price"),
+			Arguments.of(new AddRequestProductRequest("kim@as.com", "product", "BD", 100000L, ""), "category")
 		);
 	}
 
+	@Test
+	@DisplayName("/api/admin/add-request-product GET 요청 시 승인 대기중인 등록요청 상품들이 조회되어야 한다.")
+	void findWaitApprovalProduct() throws Exception {
+		//given
+		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+		List<RequestProductDto> products = List.of(
+			new RequestProductDto(10L, "email@naver.com", "name1", "Brand1", 100500L, ApprovalStatus.WAIT, now),
+			new RequestProductDto(15L, "email3@naver.com", "name2", "Brand5", 250000L, ApprovalStatus.WAIT, now));
 
+		given(adminService.findByApprovalStatus(ApprovalStatus.WAIT))
+			.willReturn(products);
+
+		//expect
+		mvc.perform(get("/api/admin/add-request-product"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("등록요청 상품이 성공적 조회 되었습니다."))
+			.andExpect(jsonPath("$.entity[0].requestId").value(10))
+			.andExpect(jsonPath("$.entity[0].email").value("email@naver.com"))
+			.andExpect(jsonPath("$.entity[0].name").value("name1"))
+			.andExpect(jsonPath("$.entity[0].brandName").value("Brand1"))
+			.andExpect(jsonPath("$.entity[0].price").value(100500L))
+			.andExpect(jsonPath("$.entity[0].approvalStatus").value("WAIT"))
+			.andExpect(jsonPath("$.entity[0].requestTime").value(now.toString()))
+
+			.andExpect(jsonPath("$.entity[1].requestId").value(15))
+			.andExpect(jsonPath("$.entity[1].email").value("email3@naver.com"))
+			.andExpect(jsonPath("$.entity[1].name").value("name2"))
+			.andExpect(jsonPath("$.entity[1].brandName").value("Brand5"))
+			.andExpect(jsonPath("$.entity[1].price").value(250000L))
+			.andExpect(jsonPath("$.entity[1].approvalStatus").value("WAIT"))
+			.andExpect(jsonPath("$.entity[1].requestTime").value(now.toString()));
+
+		then(adminService).should(times(1)).findByApprovalStatus(any(ApprovalStatus.class));
+	}
 
 }
