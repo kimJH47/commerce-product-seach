@@ -12,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AddRequestProductResponse {
 	private final String email;
-	private final Long productId;
+	private final Long requestId;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private final LocalDateTime requestTime;
 	private ApprovalStatus approvalStatus;

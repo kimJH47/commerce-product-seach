@@ -58,7 +58,7 @@ class AdminControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.message").value("상품등록 요청이 성공적으로 요청되었습니다."))
 			.andExpect(jsonPath("$.entity.email").value("email@email.com"))
-			.andExpect(jsonPath("$.entity.productId").value(200))
+			.andExpect(jsonPath("$.entity.requestId").value(200))
 			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()))
 			.andExpect(jsonPath("$.entity.approvalStatus").value("WAIT"));
 
