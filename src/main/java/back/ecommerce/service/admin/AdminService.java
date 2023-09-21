@@ -65,8 +65,10 @@ public class AdminService {
 			.orElseThrow(() -> new CustomException(ErrorCode.REQUEST_PRODUCT_NOT_FOUND));
 
 		requestProduct.updateApproval(approvalStatus);
-		Long productId = productRepository.save(requestProduct.toProduct()).getId();
+		if (approvalStatus.equals(ApprovalStatus.SUCCESS)) {
+			productRepository.save(requestProduct.toProduct());
+		}
 
-		return new UpdateApprovalStatusDto(email, requestId, productId, approvalStatus);
+		return new UpdateApprovalStatusDto(email, requestId, approvalStatus);
 	}
 }

@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 public class UpdateApprovalStatusDto {
 	private final String email;
 	private final Long requestId;
-	private final Long productId;
 	private final ApprovalStatus approvalStatus;
 
 	public Map<String, String> toMap() {
@@ -20,7 +19,6 @@ public class UpdateApprovalStatusDto {
 		map.put("type", "update-approval");
 		map.put("email", email);
 		map.put("requestId", requestId.toString());
-		map.put("productId", productId.toString());
 		map.put("approvalStatus", approvalStatus.toString());
 		return map;
 	}
