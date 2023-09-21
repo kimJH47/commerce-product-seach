@@ -1,13 +1,16 @@
 package back.ecommerce.service.admin;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import back.ecommerce.domain.product.ApprovalStatus;
 import back.ecommerce.domain.product.Category;
 import back.ecommerce.domain.product.RequestProduct;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
+import back.ecommerce.dto.response.admin.RequestProductDto;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.repository.RequestProductRepository;
@@ -40,5 +43,9 @@ public class AdminService {
 	private void validateUserEmail(String email) {
 		userRepository.findByEmail(email)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	public List<RequestProductDto> findByApprovalStatus(ApprovalStatus status) {
+		return null;
 	}
 }
