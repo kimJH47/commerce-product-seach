@@ -2,6 +2,7 @@ package back.ecommerce.service.admin;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,8 @@ public class AdminService {
 	}
 
 	public List<RequestProductDto> findByApprovalStatus(ApprovalStatus status) {
-		return null;
+		return requestProductRepository.findByApprovalStatus(status).stream()
+			.map(RequestProductDto::create)
+			.collect(Collectors.toList());
 	}
 }

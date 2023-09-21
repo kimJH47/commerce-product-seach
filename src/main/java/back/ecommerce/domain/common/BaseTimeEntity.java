@@ -17,4 +17,8 @@ public class BaseTimeEntity {
 	private LocalDateTime createdDate;
 	@LastModifiedDate
 	private LocalDateTime modifiedDate;
+
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
 }
