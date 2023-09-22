@@ -11,7 +11,7 @@
   * [회원](#회원)
     + [회원가입 요청](#회원가입-요청)
     + [이메일 인증](#이메일-인증)
-    + [JWT 토큰](#JWT-토큰)
+    + [JWT 토큰 생성](#JWT-토큰-생성)
   * [장바구니](#장바구니)
     + [장바구니 상품등록](#장바구니-상품등록)
     + [장바구니 조회](#장바구니-조회)
@@ -98,7 +98,7 @@
     AuthController -->> reqeust : response status code 200
 ```
 
-### JWT 토큰
+### JWT 토큰 생성
 ```mermaid
     sequenceDiagram
     autonumber
@@ -440,6 +440,30 @@ Content-Type: application/json
 }
 ```
 
+## 에러 Case ##
+### 인증과정 ###
+```http
+HTTP/1.1 400 BAD REQEUST
+Content-Type: application/json
 
+{
+  "message": "인증과정에서 문제가 발생 하였습니다.",
+  "reasons": {
+    "authHeader": "인증 헤더타입이 일치하지 않습니다." /* 하나 이상의 발생 이유 */
+  }
+}
+```
+### 일반적인 에러 ###
+```http
+HTTP/1.1 400 BAD REQEUST
+Content-Type: application/json
+
+{
+  "message": "잘못된 요청입니다.",
+  "reasons": {
+    "product": "해당하는 상품이 존재하지 않습니다." /* 하나 이상의 발생 이유 */
+  }
+}
+```
 
 
