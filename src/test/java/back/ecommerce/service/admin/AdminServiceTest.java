@@ -25,6 +25,7 @@ import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
 import back.ecommerce.dto.response.admin.AddRequestProductResponse;
 import back.ecommerce.dto.response.admin.RequestProductDto;
+import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.repository.RequestProductRepository;
 import back.ecommerce.repository.product.ProductRepository;
@@ -151,6 +152,80 @@ class AdminServiceTest {
 		Category category, long price,
 		ApprovalStatus approvalStatus) {
 		return new RequestProduct(requestId, name, brandName, price, category, approvalStatus, email);
+	}
+
+	@Test
+	@DisplayName("Failed 로 등록요청 승인상태가 업데이트 되어야한다.")
+	void updateApprovalStatus() {
+		//given
+		RequestProduct requestProduct = new RequestProduct(100L, "name", "brand", 10000L, TOP, WAIT, "email@naver.com");
+		given(requestProductRepository.findById(anyLong()))
+			.willReturn(Optional.of(requestProduct));
+		//when
+		UpdateApprovalStatusDto actual = adminService.updateApprovalStatus(100L, FAILED, "email@naver.com");
+
+		//then
+		assertThat(actual.getApprovalStatus()).isEqualTo(FAILED);
+		assertThat(actual.getRequestId()).isEqualTo(100L);
+		assertThat(actual.getEmail()).isEqualTo("email@naver.com");
+
+		then(requestProductRepository).should(times(1)).findById(anyLong());
+		then(productRepository).should(times(0)).save(any());
+	}
+
+	@Test
+	@DisplayName("success 로 등록요청 승인상태가 업데이트 되고 상품이 저장되어야 한다.")
+	void updateApprovalStatus_and_save_product() {
+		//given
+		RequestProduct requestProduct = new RequestProduct(100L, "name", "brand", 10000L, TOP, WAIT, "email@naver.com");
+		given(requestProductRepository.findById(anyLong()))
+			.willReturn(Optional.of(requestProduct));
+
+		//when
+		UpdateApprovalStatusDto actual = adminService.updateApprovalStatus(100L, SUCCESS, "email@naver.com");
+
+		//then
+		assertThat(actual.getApprovalStatus()).isEqualTo(SUCCESS);
+		assertThat(actual.getRequestId()).isEqualTo(100L);
+		assertThat(actual.getEmail()).isEqualTo("email@naver.com");
+
+		then(requestProductRepository).should(times(1)).findById(anyLong());
+		then(productRepository).should(times(1)).save(any());
+	}
+
+	@Test
+	@DisplayName("승인요청 상품이 존재하지 않으면 예외가 발생한다.")
+	void updateApprovalStatus_request_product_not_found() {
+		//given
+		given(requestProductRepository.findById(anyLong()))
+			.willReturn(Optional.empty());
+
+		//expect
+		assertThatThrownBy(() -> adminService.updateApprovalStatus(100L, SUCCESS, "email@naver.com"))
+			.isInstanceOf(CustomException.class)
+			.hasMessage("등록요청 상품이 존재하지 않습니다.");
+
+		then(requestProductRepository).should(times(1)).findById(anyLong());
+		then(productRepository).should(times(0)).save(any());
+	}
+
+	@Test
+	@DisplayName("업데이트 하려는 승인상태가 같으면 예외가 발생한다.")
+	void updateApprovalStatus_ALREADY_UPDATE_APPROVAL_STATUS() {
+		//given
+		RequestProduct requestProduct = new RequestProduct(100L, "name", "brand", 10000L, TOP, FAILED,
+			"email@naver.com");
+		given(requestProductRepository.findById(anyLong()))
+			.willReturn(Optional.of(requestProduct));
+
+		//expect
+		assertThatThrownBy(() -> adminService.updateApprovalStatus(100L, FAILED, "email@naver.com"))
+			.isInstanceOf(CustomException.class)
+			.hasMessage("이미 번경된 등록승인 상태 입니다.");
+
+		then(requestProductRepository).should(times(1)).findById(anyLong());
+		then(productRepository).should(times(0)).save(any());
+
 	}
 
 }
