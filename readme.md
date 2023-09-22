@@ -465,5 +465,4 @@ Content-Type: application/json
   }
 }
 ```
-
-
+자세한 상황별 예외는 [**ErrorCode**](./src/main/java/back/ecommerce/exception/ErrorCode.java) 를 참조하세요.
