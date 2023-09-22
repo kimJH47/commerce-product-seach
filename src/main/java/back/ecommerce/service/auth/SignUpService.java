@@ -52,7 +52,7 @@ public class SignUpService {
 	}
 
 	@Transactional
-	public String verifiedCodeAndSaveUser(String code) {
+	public String verifyCodeAndSaveUser(String code) {
 		String value = getAndDelete(code);
 		redisTemplate.delete(code);
 		try {

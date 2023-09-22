@@ -45,6 +45,6 @@ public class AuthController {
 
 	@GetMapping("/verified/{code}")
 	public ResponseEntity<Response> verifiedEmailCode(@PathVariable String code) {
-		return Response.createSuccessResponse("이메일 인증이 성공적으로 완료되었습니다.", authService.verifiedEmailCode(code));
+		return Response.createSuccessResponse("이메일 인증이 성공적으로 완료되었습니다.", authService.verifyEmailCode(code));
 	}
 }

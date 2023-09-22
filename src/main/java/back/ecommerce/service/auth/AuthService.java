@@ -50,8 +50,8 @@ public class AuthService {
 		return new SignUpDto(email, code);
 	}
 
-	public SignUpResponse verifiedEmailCode(String code) {
-		String email = signUpService.verifiedCodeAndSaveUser(code);
+	public SignUpResponse verifyEmailCode(String code) {
+		String email = signUpService.verifyCodeAndSaveUser(code);
 		return new SignUpResponse(email, LocalDateTime.now());
 	}
 }
