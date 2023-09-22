@@ -23,15 +23,13 @@ public class CartController {
 	private final CartService cartService;
 
 	@PostMapping("/add-product")
-	public ResponseEntity<?> addCart(@RequestBody @Valid AddCartRequest request) {
-		return ResponseEntity.ok()
-			.body(cartService.addProduct(request.getEmail(), request.getProductId(), request.getQuantity()));
+	public ResponseEntity<Response> addCart(@RequestBody @Valid AddCartRequest request) {
+		return Response.createSuccessResponse("장바구니에 상품이 추가 되었습니다.",
+			cartService.addProduct(request.getEmail(), request.getProductId(), request.getQuantity()));
 	}
 
 	@GetMapping
-	public ResponseEntity<Response> findByEmail(
-		@UserEmail String tokenEmail) {
-		return Response.createSuccessResponse("장바구니가 성공적으로 조회 되었습니다.",
-			cartService.findCartByUserEmail(tokenEmail));
+	public ResponseEntity<Response> findByEmail(@UserEmail String tokenEmail) {
+		return Response.createSuccessResponse("장바구니가 성공적으로 조회 되었습니다.", cartService.findCartByUserEmail(tokenEmail));
 	}
 }

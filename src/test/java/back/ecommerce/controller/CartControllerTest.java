@@ -78,9 +78,10 @@ class CartControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(new AddCartRequest(email, 3L, 1))))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(10))
-			.andExpect(jsonPath("$.quantity").value(1))
-			.andExpect(jsonPath("$.price").value(10000));
+			.andExpect(jsonPath("$.message").value("장바구니에 상품이 추가 되었습니다."))
+			.andExpect(jsonPath("$.entity.id").value(10))
+			.andExpect(jsonPath("$.entity.quantity").value(1))
+			.andExpect(jsonPath("$.entity.price").value(10000));
 
 		then(cartService).should(times(1)).addProduct(anyString(), anyLong(), anyInt());
 	}
