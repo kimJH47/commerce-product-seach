@@ -231,3 +231,215 @@
     AdminController -->> request : response status code 200
 ```
 ---
+# API
+# 회원
+### 회원가입 요청 ###
+
+```http
+POST /api/auth/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+ "email" : "email@email.com",
+ "password" : "encriptpassword"
+}
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message" : "회원가입 요청이 성공적으로 완료되었습니다.",
+    "entity": {
+        "email": "email@email.com",
+        "requestTime": "2023-09-21T19:30:14" /** yyyy-MM-dd'T'HH:mm:ss **/
+    }
+}
+```
+
+### 이메일 인증 ###
+`code` : 인증코드
+```http
+GET /api/auth/verified/{code} HTTP/1.1
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message" : "이메일 인증이 성공적으로 완료되었습니다.",
+    "entity": {
+        "email": "email@email.com",
+        "requestTime": "2023-09-21T19:30:14" /** yyyy-MM-dd'T'HH:mm:ss **/
+    }
+}
+```
+
+### 토큰생성 ###
+`CreatedJwt` : 생성된 인증용 JWT
+```http
+POST /api/auth/verified/{code} HTTP/1.1
+Content-Type: application/json
+
+{
+ "email : "email@email.com",
+ "password" : "encriptPassword"
+}
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message" : "이메일 인증이 성공적으로 완료되었습니다.",
+    "entity": {
+        "accessToken": "{CreatedJwt}",
+        "expireTime": "30000000" /** per milis **/,
+        "type" : "Bearer "
+    }
+}
+```
+
+### 장바구니 상품등록 ###
+`accessToken` : 인증용 JWT
+```http
+POST /api/cart/add-product HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {accessToken}
+
+{
+ "email : "email@email.com",
+ "productId" : 15253,
+ "quantity" : 2
+}
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message" : "장바구니에 상품이 추가 되었습니다.",
+    "entity": {
+        "id": 15253,
+        "quantity": 2,
+        "price": 360000 /** 등록한 상품의 갯수의 총합 **/
+    }
+}
+```
+
+### 장바구니 조회 ###
+`accessToken` : 인증용 JWT
+```http
+GET /api/cart HTTP/1.1
+Authorization: Bearer {accessToken}
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "장바구니가 성공적으로 조회 되었습니다.",
+  "entity": {
+    "email": "email@email.com",
+    "products": {
+      "count": 3,
+      "totalPrice": 135000,
+      "value": [
+        {
+          "id": 1,
+          "name": "Product1",
+          "brandName": "나이키",
+          "price": 45000,
+          "category": "TOP",
+          "quantity": 1
+        },/** 조회된 장바구니 상품 **/
+      ]
+    }
+  }
+}
+```
+
+### 상품 카테고리별 조회 ###
+`category` : 상품 카테고리
+```http
+GET /categories/{category} HTTP/1.1
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "상품이 성공적으로 조회 되었습니다.",
+  "entity": {
+    "totalCount": 20,
+    "products": [
+      {
+        "id": 1,
+        "name": "Product1",
+        "brandName": "나이키",
+        "price": 45000,
+        "category": "TOP"
+      },/** 조회된 상품 **/
+    ]
+  }
+}
+```
+
+### 상품 카테고리별 상세조건 조회
+#### Query Parameters ####
+- `name` : 상품 이름
+- `brandName` : 브랜드 이름
+- `minPrice` : 최소 가격
+- `maxPrice` : 최대 가격
+- `sort` : 정렬 조건 (`new` , `price_low`, `price_high`)
+- `page` : 페이지 번호
+- `page` 를 제외한 조건들은 `null` 이 가능하다. 한 페이지당 **20개**의 데이터를 조회한다.
+
+```http
+GET /categories/PANTS/detail HTTP/1.1
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "상품이 성공적으로 조회 되었습니다.",
+  "entity": {
+    "totalCount": 20,
+    "products": [
+      {
+        "id": 150,
+        "name": "청바지",
+        "brandName": "모드나인",
+        "price": 95000,
+        "category": "PANTS"
+      },/** 조회된 상품 **/
+    ]
+  }
+}
+```
+
+### 상품 단건 조회 ###
+`id` : 상품 아이디
+```http
+GET /product/{id} HTTP/1.1
+```
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "상품이 성공적으로 조회 되었습니다.",
+  "entity": {
+    "id": 150,
+    "name": "청바지",
+    "brandName": "모드나인",
+    "price": 95000,
+    "category": "PANTS"
+  }
+}
+```
+
+
+
+
