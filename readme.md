@@ -232,7 +232,7 @@
 ```
 ---
 # API
-# 회원
+
 ### 회원가입 요청 ###
 
 ```http
@@ -252,7 +252,7 @@ Content-Type: application/json
     "message" : "회원가입 요청이 성공적으로 완료되었습니다.",
     "entity": {
         "email": "email@email.com",
-        "requestTime": "2023-09-21T19:30:14" /** yyyy-MM-dd'T'HH:mm:ss **/
+        "requestTime": "2023-09-21T19:30:14" /* yyyy-MM-dd'T'HH:mm:ss */
     }
 }
 ```
@@ -270,7 +270,7 @@ Content-Type: application/json
     "message" : "이메일 인증이 성공적으로 완료되었습니다.",
     "entity": {
         "email": "email@email.com",
-        "requestTime": "2023-09-21T19:30:14" /** yyyy-MM-dd'T'HH:mm:ss **/
+        "requestTime": "2023-09-21T19:30:14" /* yyyy-MM-dd'T'HH:mm:ss */
     }
 }
 ```
@@ -322,7 +322,7 @@ Content-Type: application/json
     "entity": {
         "id": 15253,
         "quantity": 2,
-        "price": 360000 /** 등록한 상품의 갯수의 총합 **/
+        "price": 360000 /* 등록한 상품의 갯수의 총합 */
     }
 }
 ```
@@ -352,7 +352,7 @@ Content-Type: application/json
           "price": 45000,
           "category": "TOP",
           "quantity": 1
-        },/** 조회된 장바구니 상품 **/
+        },/* 조회된 장바구니 상품 */
       ]
     }
   }
@@ -379,7 +379,7 @@ Content-Type: application/json
         "brandName": "나이키",
         "price": 45000,
         "category": "TOP"
-      },/** 조회된 상품 **/
+      },/* 조회된 상품 */
     ]
   }
 }
@@ -413,7 +413,7 @@ Content-Type: application/json
         "brandName": "모드나인",
         "price": 95000,
         "category": "PANTS"
-      },/** 조회된 상품 **/
+      },/* 조회된 상품 */
     ]
   }
 }
