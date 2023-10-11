@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import back.ecommerce.domain.cart.Cart;
 import back.ecommerce.domain.product.Product;
 import back.ecommerce.dto.response.cart.AddCartResponse;
+import back.ecommerce.dto.response.cart.CartDeleteResponse;
 import back.ecommerce.dto.response.cart.CartListResponse;
 import back.ecommerce.dto.response.cart.CartProductDto;
 import back.ecommerce.dto.response.cart.CartProducts;
@@ -49,5 +50,11 @@ public class CartService {
 		if (!userRepository.existsByEmail(email)) {
 			throw new CustomException(ErrorCode.USER_NOT_FOUND);
 		}
+	}
+
+	public CartDeleteResponse deleteById(Long cartId, String email) {
+		validateUserEmail(email);
+		cartRepository.deleteById(cartId);
+		return new CartDeleteResponse(email, cartId);
 	}
 }
