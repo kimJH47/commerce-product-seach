@@ -47,11 +47,12 @@ public class ProductQueryDslRepository {
 		List<Long> ids = jpaQueryFactory.select(product.id)
 			.from(product)
 			.where(
+				likeName(productSearchCondition.getName()),
+				likeBrandName(productSearchCondition.getBranName()),
 				eqCategory(productSearchCondition.getCategory()),
 				minPrice(productSearchCondition.getMinPrice()),
-				maxPrice(productSearchCondition.getMaxPrice()),
-				likeBrandName(productSearchCondition.getBranName()),
-				likeName(productSearchCondition.getName()))
+				maxPrice(productSearchCondition.getMaxPrice())
+			)
 			.limit(productSearchCondition.getPageSize())
 			.offset(productSearchCondition.getOffset())
 			.orderBy(orderSpec)
@@ -84,14 +85,14 @@ public class ProductQueryDslRepository {
 		if (!StringUtils.hasText(name)) {
 			return null;
 		}
-		return product.name.like("%" + name + "%");
+		return product.name.like(name + "%");
 	}
 
 	private BooleanExpression likeBrandName(String brandName) {
 		if (!StringUtils.hasText(brandName)) {
 			return null;
 		}
-		return product.brandName.like("%" + brandName + "%");
+		return product.brandName.like(brandName + "%");
 	}
 
 	private OrderSpecifier<?> defineOrderBy(ProductSortCondition sortCondition) {
