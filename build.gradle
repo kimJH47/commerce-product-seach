@@ -81,12 +81,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-processResources.dependsOn('copySecret')
+processResources.dependsOn('copy')
 
-tasks.register('copySecret', Copy) {
-    from 'src/main/resources'
-    include "application-*.yml"  // 복사할 파일들
-    into 'src/main/resources'  // 복사 위치
+tasks.register('copy', Copy) {
+    from 'src/main/resources/submodule/'
+    include "application-*.yml"
+    into 'src/main/resources'
 }
 
 def querydslDir = "$buildDir/generated/querydsl"
