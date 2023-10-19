@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    tools{
+        gradle 'gradle'
+    }
+    stages {
+        stage('GitHub') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: 'master']],
+                    extensions: [submodule(parentCredentials: true, trackingSubmodules: true)],
+                    userRemoteConfigs: [[credentialsId: 'git-account', url: 'https://github.com/kimJH47/commerce-product-seach']]
+                    )
+            }
+        }
+        stage('Build'){
+            steps {
+                sh "./gradlew clean bootJar"
+            }
+        }
+        stage('Deploy'){
+            steps{
+                sshagent(credentials: ['ec2']){
+                     sh '''
+                       ssh -o StrictHostKeyChecking=no ubuntu@$EC2_APP_IP
+                       scp build/libs/*.jar ubuntu@$EC2_APP_IP:/home/ubuntu
+                       ssh ubuntu@$EC2_APP_IP "sh deploy.sh" &
+                      '''
+                }
+            }
+        }
+    }
+}
