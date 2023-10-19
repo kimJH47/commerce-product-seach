@@ -1,0 +1,3 @@
+[submodule "src/main/ecommerce-sub-module"]
+	path = src/main/ecommerce-sub-module
+	url = https://github.com/kimJH47/ecommerce-sub-module.git
