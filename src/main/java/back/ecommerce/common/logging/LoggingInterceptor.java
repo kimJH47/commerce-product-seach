@@ -1,7 +1,5 @@
 package back.ecommerce.common.logging;
 
-import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoggingInterceptor implements HandlerInterceptor {
 
 	public static final String REQUEST_CONTROLLER_MDC_KEY = "handler";
+	public static final String REQUEST_ID = "X_REQUEST_ID";
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
@@ -22,7 +21,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 			String methodName = handlerMethod.getMethod().getName();
 			String controllerInfo = handlerName + "." + methodName;
 			MDC.put(REQUEST_CONTROLLER_MDC_KEY, controllerInfo);
-			MDC.put("requestId", UUID.randomUUID().toString()); //nginx proxy request id 로 대체가능
+			MDC.put("requestId", request.getHeader(REQUEST_ID)); //nginx proxy request id 로 대체가능
 			MDC.put("url", request.getRequestURI());
 			MDC.put("httpMethod", request.getMethod());
 		}
