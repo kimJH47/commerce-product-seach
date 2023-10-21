@@ -46,7 +46,11 @@ public class AuthService {
 	public SignUpDto signUp(String email, String password) {
 		String code = uuidGenerator.create();
 		signUpService.saveUserSignUpInfo(code, email, password);
-		return new SignUpDto(email, code);
+		return new SignUpDto(email, createVerifiedUrl(code));
+	}
+
+	private String createVerifiedUrl(String code) {
+		return "https://kecommerce.shop/auth/verified/" + code;
 	}
 
 	public SignUpResponse verifyEmailCode(String code) {
