@@ -11,11 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.common.generator.UuidGenerator;
+import back.ecommerce.controller.MockMvcTestConfig;
 import back.ecommerce.domain.user.User;
 import back.ecommerce.dto.response.auth.SignUpDto;
 import back.ecommerce.dto.response.auth.TokenResponse;
@@ -27,6 +29,7 @@ import back.ecommerce.service.auth.AuthService;
 import back.ecommerce.service.auth.SignUpService;
 
 @ExtendWith(MockitoExtension.class)
+@Import(MockMvcTestConfig.class)
 class AuthServiceTest {
 
 	AuthService authService;
@@ -128,7 +131,7 @@ class AuthServiceTest {
 		assertThat(signUpDto.getEmail()).isEqualTo(email);
 
 		then(uuidGenerator).should(times(1)).create();
-		then(signUpService).should(times(1)).cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
+		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
 	}
 
 	@Test
@@ -141,7 +144,7 @@ class AuthServiceTest {
 		given(uuidGenerator.create())
 			.willReturn("133812312");
 		doThrow(new CustomException(ErrorCode.DUPLICATE_USER_EMAIL)).when(signUpService)
-			.cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
+			.saveUserSignUpInfo(anyString(), anyString(), anyString());
 
 		//expect
 		assertThatThrownBy(() -> authService.signUp(email, password))
@@ -149,7 +152,7 @@ class AuthServiceTest {
 			.hasMessage("이미 가입된 이메일이 존재합니다.");
 
 		then(uuidGenerator).should(times(1)).create();
-		then(signUpService).should(times(1)).cachingSignUpInfo(anyString(), anyString(), anyString(), anyLong());
+		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
 
 	}
 

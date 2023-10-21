@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
 	private static final int JWT_TOKEN_EXPIRED_TIME = 1000 * 60 * 60;
-	private static final long EMAIL_TOKEN_EXPIRED_TIME = 1000 * 60 * 60 * 3;
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -46,7 +45,7 @@ public class AuthService {
 
 	public SignUpDto signUp(String email, String password) {
 		String code = uuidGenerator.create();
-		signUpService.cachingSignUpInfo(code, email, password, EMAIL_TOKEN_EXPIRED_TIME);
+		signUpService.saveUserSignUpInfo(code, email, password);
 		return new SignUpDto(email, code);
 	}
 
