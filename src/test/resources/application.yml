@@ -20,8 +20,8 @@ cloud:
     region:
       static: ap-northeast-2
     credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
+      access-key: key
+      secret-key: key
     sqs:
       queue-name: email-queue
-      url: ${AWS_SQS_URL}
+      url: url
