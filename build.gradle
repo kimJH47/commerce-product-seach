@@ -66,8 +66,9 @@ dependencies {
     //Redis
     implementation('org.springframework.boot:spring-boot-starter-data-redis')
 
-    //swagger
-    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+    //spring docs
+    implementation('org.springdoc:springdoc-openapi-ui:1.6.15')
+
 
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
