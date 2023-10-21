@@ -209,7 +209,7 @@ class ProductRepositoryTest {
 		}
 
 		for (int i = 0; i < 5; i++) {
-			Product entity = new Product(null, "Bouter" + i, "brandB" + i, 10000L + (i * 300), OUTER);
+			Product entity = new Product(null, "outerB" + i, "brandB" + i, 10000L + (i * 300), OUTER);
 			entityManager.persist(entity);
 		}
 
