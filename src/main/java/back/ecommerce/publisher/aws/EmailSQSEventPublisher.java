@@ -10,7 +10,7 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 
 public class EmailSQSEventPublisher {
 
-	private static final String MESSAGE_BODY = "request sign-up email and access code";
+	private static final String MESSAGE_BODY = "ecommerce email";
 
 	private final AmazonSQSAsync amazonSQSAsync;
 	private final String queueUrl;
@@ -20,7 +20,9 @@ public class EmailSQSEventPublisher {
 		this.queueUrl = queueUrl;
 	}
 
-	public void pub(Map<String, String> map) {
+	public void pub(MessageType messageType, Map<String, String> map) {
+		map.put("messageType", messageType.toString());
+		map.put("messageTypeCode", messageType.getCode());
 		SendMessageRequest sendMessageRequest = createMessageRequest(map);
 		amazonSQSAsync.sendMessage(sendMessageRequest);
 	}
