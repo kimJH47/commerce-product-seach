@@ -37,6 +37,7 @@ import back.ecommerce.dto.response.admin.AddRequestProductResponse;
 import back.ecommerce.dto.response.admin.RequestProductDto;
 import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
 import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
+import back.ecommerce.publisher.aws.MessageType;
 import back.ecommerce.repository.admin.AdminRepository;
 import back.ecommerce.service.admin.AdminService;
 
@@ -172,7 +173,7 @@ class AdminControllerTest {
 			.andExpect(jsonPath("$.entity.approvalStatus").value("FAILED"));
 
 		then(adminService).should(times(1)).updateApprovalStatus(anyLong(), any(ApprovalStatus.class), anyString());
-		then(sqsEventPublisher).should(times(1)).pub(anyMap());
+		then(sqsEventPublisher).should(times(1)).pub(any(MessageType.class), anyMap());
 
 	}
 }

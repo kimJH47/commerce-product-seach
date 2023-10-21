@@ -31,6 +31,7 @@ import back.ecommerce.dto.response.auth.TokenResponse;
 import back.ecommerce.dto.response.user.SignUpResponse;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
+import back.ecommerce.publisher.aws.MessageType;
 import back.ecommerce.service.auth.AuthService;
 
 @WebMvcTest(AuthController.class)
@@ -170,7 +171,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.entity.requestTime").value(now.toString()));
 
 		then(authService).should(times(1)).signUp(anyString(), anyString());
-		then(emailSQSEventPublisher).should(times(1)).pub(anyMap());
+		then(emailSQSEventPublisher).should(times(1)).pub(any(MessageType.class), anyMap());
 	}
 
 	@ParameterizedTest
@@ -186,7 +187,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.reasons." + field).isNotEmpty());
 
 		then(authService).should(times(0)).signUp(anyString(), anyString());
-		then(emailSQSEventPublisher).should(times(0)).pub(anyMap());
+		then(emailSQSEventPublisher).should(times(0)).pub(any(MessageType.class), anyMap());
 	}
 
 	public static Stream<Arguments> invalidSignRequestProvider() {
@@ -234,7 +235,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.reasons.email").value("이미 가입된 이메일이 존재합니다."));
 
 		then(authService).should(times(1)).signUp(anyString(), anyString());
-		then(emailSQSEventPublisher).should(times(0)).pub(anyMap());
+		then(emailSQSEventPublisher).should(times(0)).pub(any(MessageType.class), anyMap());
 	}
 
 	@Test

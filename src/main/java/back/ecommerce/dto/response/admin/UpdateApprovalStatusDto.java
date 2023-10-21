@@ -16,7 +16,6 @@ public class UpdateApprovalStatusDto {
 
 	public Map<String, String> toMap() {
 		HashMap<String, String> map = new HashMap<>();
-		map.put("type", "update-approval");
 		map.put("email", email);
 		map.put("requestId", requestId.toString());
 		map.put("approvalStatus", approvalStatus.toString());
