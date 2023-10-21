@@ -18,8 +18,6 @@ import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
 import back.ecommerce.dto.response.common.Response;
 import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.service.admin.AdminService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
