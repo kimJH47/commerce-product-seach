@@ -21,14 +21,20 @@
     <include resource="file-search-request-appender.xml"/>
 
     <root level="INFO">
-        <appender-ref ref="console"/>
-        <appender-ref ref="INFO_LOG"/>
-        <appender-ref ref="WARN_LOG"/>
-        <appender-ref ref="ERROR_LOG"/>
-        <appender-ref ref="DISCORD"/>
+        <springProfile name="dev">
+            <appender-ref ref="console"/>
+        </springProfile>
+        <springProfile name="prod">
+            <appender-ref ref="INFO_LOG"/>
+            <appender-ref ref="WARN_LOG"/>
+            <appender-ref ref="ERROR_LOG"/>
+            <appender-ref ref="DISCORD"/>
+        </springProfile>
     </root>
-    <logger name="back.ecommerce.common.logging.SearchRequestLogger" additivity="false">
-        <Level value="INFO"/>
-        <appender-ref ref="ASYNC_APPENDER"/>
-    </logger>
+    <springProfile name="prod">
+        <logger name="back.ecommerce.common.logging.SearchRequestLogger" additivity="false">
+            <Level value="INFO"/>
+            <appender-ref ref="ASYNC_APPENDER"/>
+        </logger>
+    </springProfile>
 </configuration>
