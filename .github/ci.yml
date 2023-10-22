@@ -1,15 +1,20 @@
 name: Java CI with Gradle
 
 on:
+  push:
+    branches:
+      - 'main'
+      - 'master'
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - 'master'
+      - 'main'
 
 permissions:
   contents: read
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
 
     steps:
