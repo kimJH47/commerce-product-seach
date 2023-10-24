@@ -74,7 +74,7 @@
 ---
 
 # Application Architecture #
-![Structure](./docs/architecture.png)
+![Structure](./docs//architecture.png)
 
 ---
 # Flow Chart #
