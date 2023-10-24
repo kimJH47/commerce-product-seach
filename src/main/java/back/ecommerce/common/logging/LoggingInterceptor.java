@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoggingInterceptor implements HandlerInterceptor {
 
 	public static final String REQUEST_CONTROLLER_MDC_KEY = "handler";
-	public static final String REQUEST_ID = "X_REQUEST_ID";
+	public static final String REQUEST_ID = "X-REQUEST-ID";
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
