@@ -26,7 +26,7 @@ jobs:
           distribution: 'temurin'
 
       - name: set permmison
-        run: chmod -x ./gradlew
+        run: chmod +x ./gradlew
 
       - name: run test
         run: ./gradlew --info test
