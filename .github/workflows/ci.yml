@@ -25,7 +25,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: set permmison
+      - name: set permission
         run: chmod +x ./gradlew
 
       - name: run test
