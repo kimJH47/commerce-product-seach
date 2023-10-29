@@ -18,15 +18,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
-import back.ecommerce.domain.condition.ProductSearchCondition;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.Product;
-import back.ecommerce.dto.response.product.ProductDto;
-import back.ecommerce.dto.response.product.ProductListResponse;
+import back.ecommerce.product.dto.condition.ProductSearchCondition;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.Product;
+import back.ecommerce.product.dto.response.ProductDto;
+import back.ecommerce.product.dto.response.ProductListResponse;
 import back.ecommerce.exception.CustomException;
-import back.ecommerce.repository.product.ProductQueryDslRepository;
-import back.ecommerce.repository.product.ProductRepository;
-import back.ecommerce.service.product.ProductService;
+import back.ecommerce.product.repository.ProductQueryDslRepository;
+import back.ecommerce.product.repository.ProductRepository;
+import back.ecommerce.product.service.ProductService;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {

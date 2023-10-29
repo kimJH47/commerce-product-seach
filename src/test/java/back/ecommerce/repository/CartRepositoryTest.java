@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import back.ecommerce.domain.cart.Cart;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.Product;
-import back.ecommerce.dto.response.cart.CartProductDto;
-import back.ecommerce.repository.cart.CartRepository;
-import back.ecommerce.repository.product.ProductRepository;
+import back.ecommerce.cart.entity.Cart;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.Product;
+import back.ecommerce.cart.dto.response.CartProductDto;
+import back.ecommerce.cart.repository.CartRepository;
+import back.ecommerce.product.repository.ProductRepository;
 
 @DataJpaTest
 class CartRepositoryTest {

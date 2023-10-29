@@ -1,7 +1,7 @@
 package back.ecommerce.service.admin;
 
-import static back.ecommerce.domain.product.ApprovalStatus.*;
-import static back.ecommerce.domain.product.Category.*;
+import static back.ecommerce.product.entity.ApprovalStatus.*;
+import static back.ecommerce.product.entity.Category.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -18,18 +18,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import back.ecommerce.domain.product.ApprovalStatus;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.RequestProduct;
-import back.ecommerce.domain.user.User;
-import back.ecommerce.dto.request.amdin.AddRequestProductRequest;
-import back.ecommerce.dto.response.admin.AddRequestProductResponse;
-import back.ecommerce.dto.response.admin.RequestProductDto;
-import back.ecommerce.dto.response.admin.UpdateApprovalStatusDto;
+import back.ecommerce.admin.service.AdminService;
+import back.ecommerce.product.entity.ApprovalStatus;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.RequestProduct;
+import back.ecommerce.user.entity.User;
+import back.ecommerce.admin.dto.request.AddRequestProductRequest;
+import back.ecommerce.admin.dto.response.AddRequestProductResponse;
+import back.ecommerce.admin.dto.response.RequestProductDto;
+import back.ecommerce.admin.dto.response.UpdateApprovalStatusDto;
 import back.ecommerce.exception.CustomException;
-import back.ecommerce.repository.RequestProductRepository;
-import back.ecommerce.repository.product.ProductRepository;
-import back.ecommerce.repository.user.UserRepository;
+import back.ecommerce.product.repository.RequestProductRepository;
+import back.ecommerce.product.repository.ProductRepository;
+import back.ecommerce.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {

@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import back.ecommerce.exception.CustomException;
+import back.ecommerce.product.dto.condition.PageCondition;
 
 class PageConditionTest {
 

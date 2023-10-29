@@ -3,8 +3,8 @@ package back.ecommerce.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import back.ecommerce.repository.user.SignUpMysqlRepository;
-import back.ecommerce.repository.user.SignUpRepository;
+import back.ecommerce.user.repository.SignUpMysqlRepository;
+import back.ecommerce.user.repository.SignUpRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

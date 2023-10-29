@@ -1,7 +1,7 @@
 package back.ecommerce.repository;
 
-import static back.ecommerce.domain.product.ApprovalStatus.*;
-import static back.ecommerce.domain.product.Category.*;
+import static back.ecommerce.product.entity.ApprovalStatus.*;
+import static back.ecommerce.product.entity.Category.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -16,9 +16,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import back.ecommerce.config.jpa.JpaAuditingConfig;
-import back.ecommerce.domain.product.ApprovalStatus;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.RequestProduct;
+import back.ecommerce.product.entity.ApprovalStatus;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.RequestProduct;
+import back.ecommerce.product.repository.RequestProductRepository;
 
 @DataJpaTest
 @Import(JpaAuditingConfig.class)

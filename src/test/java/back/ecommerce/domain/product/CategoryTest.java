@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import back.ecommerce.exception.CustomException;
+import back.ecommerce.product.entity.Category;
 
 class CategoryTest {
 

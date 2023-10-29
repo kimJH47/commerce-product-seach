@@ -17,16 +17,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.common.generator.UuidGenerator;
-import back.ecommerce.controller.MockMvcTestConfig;
-import back.ecommerce.domain.user.User;
-import back.ecommerce.dto.response.auth.SignUpDto;
-import back.ecommerce.dto.response.auth.TokenResponse;
+import back.ecommerce.api.MockMvcTestConfig;
+import back.ecommerce.user.entity.User;
+import back.ecommerce.auth.dto.response.SignUpDto;
+import back.ecommerce.auth.dto.response.TokenResponse;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
-import back.ecommerce.repository.user.UserRepository;
-import back.ecommerce.service.auth.AuthService;
-import back.ecommerce.service.auth.SignUpService;
+import back.ecommerce.user.repository.UserRepository;
+import back.ecommerce.auth.service.AuthService;
+import back.ecommerce.auth.service.SignUpService;
 
 @ExtendWith(MockitoExtension.class)
 @Import(MockMvcTestConfig.class)

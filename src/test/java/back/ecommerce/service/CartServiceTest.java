@@ -14,17 +14,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import back.ecommerce.domain.cart.Cart;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.Product;
-import back.ecommerce.dto.response.cart.AddCartResponse;
-import back.ecommerce.dto.response.cart.CartListResponse;
+import back.ecommerce.cart.entity.Cart;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.Product;
+import back.ecommerce.cart.dto.response.AddCartResponse;
+import back.ecommerce.cart.dto.response.CartListResponse;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
-import back.ecommerce.repository.cart.CartRepository;
-import back.ecommerce.repository.product.ProductRepository;
-import back.ecommerce.repository.user.UserRepository;
-import back.ecommerce.service.cart.CartService;
+import back.ecommerce.cart.repository.CartRepository;
+import back.ecommerce.product.repository.ProductRepository;
+import back.ecommerce.user.repository.UserRepository;
+import back.ecommerce.cart.service.CartService;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {

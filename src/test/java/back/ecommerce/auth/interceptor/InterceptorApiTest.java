@@ -19,13 +19,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.domain.user.User;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.Product;
-import back.ecommerce.dto.request.cart.AddCartRequest;
-import back.ecommerce.dto.response.common.FailedResponse;
-import back.ecommerce.repository.product.ProductRepository;
-import back.ecommerce.repository.user.UserRepository;
+import back.ecommerce.user.entity.User;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.Product;
+import back.ecommerce.cart.dto.request.AddCartRequest;
+import back.ecommerce.api.dto.FailedResponse;
+import back.ecommerce.product.repository.ProductRepository;
+import back.ecommerce.user.repository.UserRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class InterceptorApiTest {
