@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 import back.ecommerce.config.jpa.JpaAuditingConfig;
-import back.ecommerce.constant.PageConstant;
+import back.ecommerce.common.constant.PageConstant;
 import back.ecommerce.product.entity.Category;
 import back.ecommerce.product.entity.Product;
 import back.ecommerce.product.dto.condition.ProductSearchCondition;

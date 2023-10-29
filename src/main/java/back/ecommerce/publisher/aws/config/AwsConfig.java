@@ -1,4 +1,4 @@
-package back.ecommerce.config.aws;
+package back.ecommerce.publisher.aws.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

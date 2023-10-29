@@ -1,4 +1,4 @@
-package back.ecommerce.config.aop;
+package back.ecommerce.common.config.aop;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

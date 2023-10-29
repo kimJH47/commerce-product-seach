@@ -4,7 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
-import back.ecommerce.constant.PageConstant;
+import back.ecommerce.common.constant.PageConstant;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
