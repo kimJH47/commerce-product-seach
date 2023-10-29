@@ -12,7 +12,7 @@ import back.ecommerce.auth.interceptor.AdminAuthorizationInterceptor;
 import back.ecommerce.auth.interceptor.JwtAuthenticationInterceptor;
 import back.ecommerce.auth.resolver.UserEmailArgumentResolver;
 import back.ecommerce.common.logging.LoggingInterceptor;
-import back.ecommerce.controller.resolver.SearchConditionRequestResolver;
+import back.ecommerce.api.resolver.SearchConditionRequestResolver;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

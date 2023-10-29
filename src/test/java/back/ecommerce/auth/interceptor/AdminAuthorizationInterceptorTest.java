@@ -15,9 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import back.ecommerce.domain.admin.Admin;
+import back.ecommerce.admin.entity.Admin;
 import back.ecommerce.exception.AuthenticationException;
-import back.ecommerce.repository.admin.AdminRepository;
+import back.ecommerce.admin.repository.AdminRepository;
 
 @ExtendWith(MockitoExtension.class)
 class AdminAuthorizationInterceptorTest {

@@ -1,6 +1,6 @@
 package back.ecommerce.repository;
 
-import static back.ecommerce.domain.product.Category.*;
+import static back.ecommerce.product.entity.Category.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Comparator;
@@ -19,12 +19,12 @@ import org.springframework.data.domain.PageRequest;
 
 import back.ecommerce.config.jpa.JpaAuditingConfig;
 import back.ecommerce.constant.PageConstant;
-import back.ecommerce.domain.product.Category;
-import back.ecommerce.domain.product.Product;
-import back.ecommerce.domain.condition.ProductSearchCondition;
-import back.ecommerce.dto.response.product.ProductDto;
-import back.ecommerce.repository.product.ProductQueryDslRepository;
-import back.ecommerce.repository.product.ProductRepository;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.Product;
+import back.ecommerce.product.dto.condition.ProductSearchCondition;
+import back.ecommerce.product.dto.response.ProductDto;
+import back.ecommerce.product.repository.ProductQueryDslRepository;
+import back.ecommerce.product.repository.ProductRepository;
 
 @DataJpaTest
 @Import(value = {QueryDSLRepoConfig.class, JpaAuditingConfig.class})

@@ -13,11 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import back.ecommerce.domain.user.SignUpInfo;
-import back.ecommerce.domain.user.User;
+import back.ecommerce.auth.service.SignUpService;
+import back.ecommerce.user.entity.SignUpInfo;
+import back.ecommerce.user.entity.User;
 import back.ecommerce.exception.CustomException;
-import back.ecommerce.repository.user.SignUpRepository;
-import back.ecommerce.repository.user.UserRepository;
+import back.ecommerce.user.repository.SignUpRepository;
+import back.ecommerce.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class SignUpServiceTest {

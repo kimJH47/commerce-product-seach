@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 
 import back.ecommerce.common.logging.CustomLogger;
 import back.ecommerce.common.logging.GlobalLogger;
-import back.ecommerce.dto.request.product.ProductSearchConditionRequest;
+import back.ecommerce.product.dto.request.ProductSearchConditionRequest;
 import back.ecommerce.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 

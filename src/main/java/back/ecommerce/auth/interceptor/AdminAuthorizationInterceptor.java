@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.ErrorCode;
-import back.ecommerce.repository.admin.AdminRepository;
+import back.ecommerce.admin.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
