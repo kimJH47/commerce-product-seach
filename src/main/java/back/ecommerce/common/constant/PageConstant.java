@@ -1,4 +1,4 @@
-package back.ecommerce.constant;
+package back.ecommerce.common.constant;
 
 public class PageConstant {
 	public static final int DEFAULT_PAGE_SIZE = 20;

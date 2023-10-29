@@ -1,6 +1,6 @@
 package back.ecommerce.product.service;
 
-import static back.ecommerce.constant.PageConstant.*;
+import static back.ecommerce.common.constant.PageConstant.*;
 
 import java.util.List;
 import java.util.Map;

@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import back.ecommerce.constant.PageConstant;
+import back.ecommerce.common.constant.PageConstant;
 import back.ecommerce.product.dto.condition.ProductSearchCondition;
 import back.ecommerce.product.dto.condition.ProductSortCondition;
 import back.ecommerce.product.entity.Category;

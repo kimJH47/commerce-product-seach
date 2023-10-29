@@ -1,4 +1,4 @@
-package back.ecommerce.config.jpa;
+package back.ecommerce.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
 package back.ecommerce.domain.condition;
 
-import static back.ecommerce.constant.PageConstant.*;
+import static back.ecommerce.common.constant.PageConstant.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
