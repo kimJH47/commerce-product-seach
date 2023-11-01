@@ -33,6 +33,7 @@ public class RequestProduct extends BaseTimeEntity {
 	private Long price;
 	@Enumerated(EnumType.STRING)
 	private Category category;
+	@Enumerated(EnumType.STRING)
 	private ApprovalStatus approvalStatus;
 	private String email;
 
