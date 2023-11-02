@@ -20,15 +20,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-	private final JwtAuthenticationInterceptor interceptor;
+	private final JwtAuthenticationInterceptor jwtAuthenticationInterceptor;
 	private final AdminAuthorizationInterceptor adminAuthorizationInterceptor;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new LoggingInterceptor())
 			.order(1);
-		registry.addInterceptor(interceptor)
-			.addPathPatterns("/api/cart/**")
+		registry.addInterceptor(jwtAuthenticationInterceptor)
+			.addPathPatterns("/api/cart/**", "/api/payment/**", "api/order/**")
 			.order(2);
 		registry.addInterceptor(adminAuthorizationInterceptor)
 			.addPathPatterns("/api/admin/**")
