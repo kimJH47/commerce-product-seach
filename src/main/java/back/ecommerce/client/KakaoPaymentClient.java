@@ -25,6 +25,7 @@ public class KakaoPaymentClient {
 			cid, orderCode, userEmail, name, quantity, totalPrice, 0L, approvalUrl, cancelUrl, failUrl
 		);
 		KakakoPaymentReadyResponse response = webClient.post()
+			.uri("/ready")
 			.header(HttpHeaders.AUTHORIZATION, adminKey)
 			.body(BodyInserters.fromFormData(request.toMap()))
 			.retrieve()
