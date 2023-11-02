@@ -22,21 +22,16 @@ public class PaymentClientConfig {
 	private String cancelUrl;
 	@Value("kakao.payment.failUrl")
 	private String failUrl;
+
 	@Bean
 	public KakaoPaymentClient kakaoPaymentClient() {
-		return new KakaoPaymentClient(
-			adminKey,
-			cid,
-			approvalUrl,
-			cancelUrl,
-			failUrl
-			, webClient());
+		return new KakaoPaymentClient(adminKey, cid, approvalUrl, cancelUrl, failUrl, webClient());
 	}
 
 	@Bean
 	public WebClient webClient() {
 		return WebClient.builder()
-			.baseUrl("https://kapi.kakao.com/v1/payment/ready")
+			.baseUrl("https://kapi.kakao.com/v1/payment")
 			.defaultHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
 			.build();
 	}
