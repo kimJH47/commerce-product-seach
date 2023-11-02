@@ -1,6 +1,8 @@
 package back.ecommerce.payment.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +23,7 @@ public class Payment extends BaseTimeEntity {
 	private String cid; //가맹점 번호
 	private String userEmail;
 	private String orderCode;
+	@Enumerated(EnumType.STRING)
 	private PaymentStatus paymentStatus;
 	private Long totalPrice;
 	private Long taxFreePrice;
