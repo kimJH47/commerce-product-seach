@@ -1,5 +1,6 @@
 package back.ecommerce.order.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,8 +37,12 @@ public class OrderGroup extends BaseTimeEntity {
 	private int quantity;
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
-	@OneToMany(mappedBy = "orderGroup", cascade = CascadeType.ALL)
-	private List<OrderItem> orderItems;
+	@OneToMany(mappedBy = "orderGroup", cascade = CascadeType.PERSIST)
+	private List<OrderItem> orderItems = new ArrayList<>();
+
+	public Long getId() {
+		return id;
+	}
 
 	public String getOrderCode() {
 		return orderCode;
@@ -55,20 +60,33 @@ public class OrderGroup extends BaseTimeEntity {
 		return quantity;
 	}
 
-	public static OrderGroup createWithOrderItems(String userEmail, Long totalPrice, String name, String orderCode,
+	public static OrderGroup createWithOrderItems(String userEmail, Long totalPrice, int totalQuantity, String name,
+		String orderCode,
 		List<OrderProductDto> orderProducts) {
+		OrderGroup orderGroup = createOrderGroupWithEmptyOrderItems(userEmail, totalPrice, totalQuantity, name,
+			orderCode);
 		List<OrderItem> items = orderProducts.stream()
-			.map(OrderItem::create)
+			.map(p -> OrderItem.create(orderGroup, p))
 			.collect(Collectors.toList());
+		orderGroup.addOrderItem(items);
+		return orderGroup;
+	}
+
+	private static OrderGroup createOrderGroupWithEmptyOrderItems(String userEmail, Long totalPrice, int totalQuantity,
+		String name, String orderCode) {
 		return OrderGroup.builder()
 			.orderCode(orderCode)
 			.name(name)
 			.userEmail(userEmail)
 			.totalPrice(totalPrice)
-			.quantity(items.size())
+			.quantity(totalQuantity)
 			.orderStatus(OrderStatus.PAYMENT_READY)
-			.orderItems(items)
+			.orderItems(new ArrayList<>())
 			.build();
+	}
+
+	private void addOrderItem(List<OrderItem> orderItems) {
+		this.orderItems = new ArrayList<>(orderItems);
 	}
 
 }
