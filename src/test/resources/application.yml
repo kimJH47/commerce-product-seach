@@ -13,7 +13,7 @@ spring:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
   config:
-    import: application-auth.yml
+    import: application-auth.yml, application-kakaopayment-dev.yml
 
 cloud:
   aws:
