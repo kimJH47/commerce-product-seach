@@ -4,6 +4,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +63,13 @@ class PaymentControllerTest {
 		//given
 		String orderCode = "d20bfd22-bf3d-4d63-a616-831610627a05";
 		OrderGroupDto orderGroupDto = new OrderGroupDto(orderCode, "Embroidered Maxi Dress 등 총 2개의 상품", 2, 132130L);
+		String createdAt = LocalDateTime.now().toString();
 		KakaoReadyPaymentResult result = new KakaoReadyPaymentResult(
 			"https://online-pay.kakao.com/test/v1/edc130cb9b44f2fe56dd928ac05c1fddf3f79a2351fc79d642b457695cb49f81/aInfo",
 			"https://online-pay.kakao.com/mockup/v1/edc130cb9b44f2fe56dd928ac05c1fddf3f79a2351fc79d642b457695cb49f81/mInfo",
 			"https://online-pay.kakao.com/mockup/v1/edc130cb9b44f2fe56dd928ac05c1fddf3f79a2351fc79d642b457695cb49f81/info",
 			"TC0ONETIME",
-			"T543457051b66fd46cc1vb", orderCode);
+			"T543457051b66fd46cc1vb", orderCode, createdAt);
 		List<OrderProductDto> orderProducts = getOrderProducts();
 		PaymentReadyRequest request = new PaymentReadyRequest("user@email.com", 3L, 500000L, orderProducts);
 		given(orderService.createOrder(anyString(), anyLong(), anyList()))
@@ -80,14 +82,11 @@ class PaymentControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.appUrl").value(
-				"https://online-pay.kakao.com/test/v1/edc130cb9b44f2fe56dd928ac05c1fddf3f79a2351fc79d642b457695cb49f81/aInfo"))
-			.andExpect(jsonPath("$.mobileUrl").value(
-				"https://online-pay.kakao.com/mockup/v1/edc130cb9b44f2fe56dd928ac05c1fddf3f79a2351fc79d642b457695cb49f81/mInfo"))
-			.andExpect(jsonPath("$.pcUrl").value(
+			.andExpect(jsonPath("$.message").value("결제준비가 완료 되었습니다."))
+			.andExpect(jsonPath("$.entity.pcUrl").value(
 				"https://online-pay.kakao.com/mockup/v1/edc130cb9b44f2fe56dd928ac05c1fddf3f79a2351fc79d642b457695cb49f81/info"))
-			.andExpect(jsonPath("$.cid").value("TC0ONETIME"))
-			.andExpect(jsonPath("$.transactionId").value("T543457051b66fd46cc1vb"));
+			.andExpect(jsonPath("$.entity.orderCode").value("d20bfd22-bf3d-4d63-a616-831610627a05"))
+			.andExpect(jsonPath("$.entity.createdAt").value(createdAt));
 
 		then(orderService).should(times(1))
 			.createOrder(anyString(), anyLong(), anyList());

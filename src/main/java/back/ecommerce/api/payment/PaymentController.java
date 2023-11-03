@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import back.ecommerce.api.dto.Response;
 import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.order.service.OrderGroupDto;
@@ -29,14 +30,14 @@ public class PaymentController {
 	 */
 
 	@PostMapping("/api/payment/ready")
-	public ResponseEntity<?> paymentReady(@UserEmail String userEmail,
-		@Valid @RequestBody PaymentReadyRequest request) {
-		OrderGroupDto orderGroupDto = orderService.createOrder(userEmail, request.getTotalPrice(),
+	public ResponseEntity<?> paymentReady(@UserEmail String email, @Valid @RequestBody PaymentReadyRequest request) {
+		OrderGroupDto orderGroupDto = orderService.createOrder(email, request.getTotalPrice(),
 			request.getOrderProducts());
-		KakaoReadyPaymentResult result = kakaoPaymentClient.ready(userEmail, orderGroupDto.getOrderCode(),
+		KakaoReadyPaymentResult result = kakaoPaymentClient.ready(email, orderGroupDto.getOrderCode(),
 			orderGroupDto.getTotalPrice(), orderGroupDto.getName(), orderGroupDto.getQuantity());
-		paymentService.createReadyPayment(result.getTransactionId(), result.getCid(), result.getOrderCode(), userEmail,
+		paymentService.createReadyPayment(result.getTransactionId(), result.getCid(), result.getOrderCode(), email,
 			request.getTotalPrice());
-		return ResponseEntity.ok(result);
+		return Response.createSuccessResponse("결제준비가 완료 되었습니다."
+			, new PaymentReadyResponse(result.getPcUrl(), result.getOrderCode(), result.getCreatedAt()));
 	}
 }

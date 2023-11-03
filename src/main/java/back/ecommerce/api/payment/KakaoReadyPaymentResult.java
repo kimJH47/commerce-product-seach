@@ -12,4 +12,5 @@ public class KakaoReadyPaymentResult {
 	private String cid;
 	private String transactionId;
 	private String orderCode;
+	private String createdAt;
 }
