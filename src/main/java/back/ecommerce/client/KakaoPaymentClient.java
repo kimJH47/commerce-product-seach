@@ -25,7 +25,7 @@ public class KakaoPaymentClient {
 		assert response != null;
 		return new KakaoReadyPaymentResult(response.getNext_redirect_app_url(),
 			response.getNext_redirect_mobile_url(), response.getNext_redirect_pc_url(),
-			cid, response.getTid(), orderCode);
+			cid, response.getTid(), orderCode,response.getCreated_at());
 	}
 
 	private KakaoPaymentReadyRequest createKakaoPaymentReadyRequest(String userEmail, String orderCode, Long totalPrice,
