@@ -10,5 +10,5 @@ import back.ecommerce.product.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	@Query("select p from Product p where p.id in :ids")
-	List<Product> findByIds(List<Long> Ids);
+	List<Product> findByIds(List<Long> ids);
 }
