@@ -33,8 +33,8 @@ public class OrderItem extends BaseTimeEntity {
 	private Long price;
 	private int quantity;
 
-	public static OrderItem create(OrderProductDto orderProduct) {
-		return new OrderItem(null, null,
+	public static OrderItem create(OrderGroup orderGroup, OrderProductDto orderProduct) {
+		return new OrderItem(null, orderGroup,
 			orderProduct.getProductId(),
 			orderProduct.getName(),
 			orderProduct.getPrice(),
