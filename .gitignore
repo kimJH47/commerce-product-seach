@@ -50,5 +50,7 @@ src/main/resources/application-prod.yml
 src/main/resources/application-auth-dev.yml
 src/main/resources/application-kakaopayment-dev.yml
 
+src/test/resources/application-kakaopayment-dev.yml
+
 ### sql ###
 src/main/resources/sql/**
