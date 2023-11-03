@@ -3,6 +3,7 @@ package back.ecommerce.repository;
 import static back.ecommerce.product.entity.Category.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -257,6 +258,25 @@ class ProductRepositoryTest {
 		assertThat(products)
 			.filteredOn(productDto -> productDto.getCategory() == SHOES)
 			.hasSize(20);
+	}
+
+	@Test
+	void findByIds(){
+	    //given
+		ArrayList<Long> ids = new ArrayList<>();
+		ids.add(productRepository.save(new Product(null, "상품1,", "브랜드", 100L, SHOES)).getId());
+		ids.add(productRepository.save(new Product(null, "상품2,", "브랜드", 100L, SHOES)).getId());
+		ids.add(productRepository.save(new Product(null, "상품3,", "브랜드", 100L, SHOES)).getId());
+		productRepository.save(new Product(null, "다른상품,", "브랜드", 500L, SHOES));
+
+	    //when
+		List<Product> actual = productRepository.findByIds(ids);
+
+		//then
+		assertThat(actual).hasSize(3);
+		assertThat(actual)
+			.filteredOn(product -> product.getName().startsWith("상품"))
+			.hasSize(3);
 	}
 
 	private ProductSearchCondition createCondition(
