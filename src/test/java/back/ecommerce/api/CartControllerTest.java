@@ -18,8 +18,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -29,27 +27,24 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.auth.annotaion.UserEmail;
-import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.api.cart.CartController;
 import back.ecommerce.api.common.GlobalExceptionHandler;
-import back.ecommerce.product.entity.Category;
+import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.cart.dto.request.AddCartRequest;
 import back.ecommerce.cart.dto.response.AddCartResponse;
 import back.ecommerce.cart.dto.response.CartListResponse;
 import back.ecommerce.cart.dto.response.CartProductDto;
 import back.ecommerce.cart.dto.response.CartProducts;
+import back.ecommerce.cart.service.CartService;
+import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.CustomException;
-import back.ecommerce.cart.service.CartService;
+import back.ecommerce.product.entity.Category;
 
-@WebMvcTest(value = CartController.class, excludeFilters = {
-	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)}
-)
+@WebMvcTest(value = CartController.class)
 @Import(MockMvcTestConfig.class)
 class CartControllerTest {
 

@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.admin.repository.AdminRepository;
 
@@ -24,5 +25,10 @@ public class MockMvcTestConfig {
 	@Bean
 	public AdminRepository adminRepository() {
 		return Mockito.mock(AdminRepository.class);
+	}
+
+	@Bean
+	public KakaoPaymentClient kakaoPaymentClient() {
+		return Mockito.mock(KakaoPaymentClient.class);
 	}
 }
