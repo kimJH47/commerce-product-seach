@@ -30,7 +30,9 @@ public enum ErrorCode {
 	INVALID_ORDER_ARGUMENT(400, "order", "주문정보가 옳바르지 않습니다."),
 	INVALID_TOTAL_PRICE(400, "order", "요청 주문상품가격과 실제 가격정보가 일치하지 않습니다."),
 	PAYMENT_NOT_FOUND(400, "payment", "일치하는 결제정보가 없습니다."),
-	ALREADY_PROCESS_PAYMENT(400, "payment", "이미 처리된 결제입니다.");
+	ALREADY_PROCESS_PAYMENT(400, "payment", "이미 처리된 결제입니다."),
+	ORDER_NOT_FOUND(400, "order", "일치하는 주문정보가 없습니다."),
+	ALREADY_PROCESS_ORDER(400, "order", "이미 처리된 주문입니다.");
 
 	private final int status;
 	private final String reasonField;
