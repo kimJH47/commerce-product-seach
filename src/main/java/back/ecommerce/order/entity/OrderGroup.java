@@ -16,6 +16,8 @@ import javax.persistence.Table;
 
 import back.ecommerce.api.payment.OrderProductDto;
 import back.ecommerce.common.entity.BaseTimeEntity;
+import back.ecommerce.exception.CustomException;
+import back.ecommerce.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -89,4 +91,14 @@ public class OrderGroup extends BaseTimeEntity {
 		this.orderItems = new ArrayList<>(orderItems);
 	}
 
+	public void updateToDelivery() {
+		if (isNotPaymentReady()) {
+			throw new CustomException(ErrorCode.ALREADY_PROCESS_ORDER);
+		}
+		orderStatus = OrderStatus.DELIVERY;
+	}
+
+	private boolean isNotPaymentReady() {
+		return !orderStatus.equals(OrderStatus.PAYMENT_READY);
+	}
 }
