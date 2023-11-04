@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
-public class KakakoPaymentReadyResponse {
+public class KakaoPaymentReadyResponse {
 	private String tid;
 	private boolean tms_result;
 	private String next_redirect_app_url;
