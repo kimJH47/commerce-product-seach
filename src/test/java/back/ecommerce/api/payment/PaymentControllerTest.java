@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,6 +35,7 @@ import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.order.service.OrderGroupDto;
 import back.ecommerce.order.service.OrderService;
+import back.ecommerce.payment.service.PaymentDto;
 import back.ecommerce.payment.service.PaymentService;
 
 @WebMvcTest(PaymentController.class)
@@ -166,6 +168,117 @@ class PaymentControllerTest {
 			.ready(anyString(), anyString(), anyLong(), anyString(), anyInt());
 		then(paymentService).should(times(0))
 			.createReadyPayment(anyString(), anyString(), anyString(), anyString(), anyLong());
+	}
+
+	@Test
+	void approval() throws Exception {
+		//given
+		String orderCode = "d20bfd22-bf3d-4d632xv-a616-831610627a05";
+		given(paymentService.findByOrderCode(anyString()))
+			.willReturn(new PaymentDto("tidTest", orderCode, "user@email.com"));
+
+		//expect
+		mvc.perform(get("/api/payment/callback-approval/" + orderCode)
+				.param("pg_token", "dafdg343@1321sc"))
+			.andExpect(status().is3xxRedirection());
+
+		then(paymentService).should(times(1)).findByOrderCode(anyString());
+		then(kakaoPaymentClient).should(times(1))
+			.approval(anyString(), anyString(), anyString(), anyString());
+		then(paymentService).should(times(1)).approval(anyString());
+	}
+
+	@Test
+	void update_approval_payment_not_found() throws Exception {
+		//given
+		String orderCode = "d20bfd22-bf3d-4d632xv-a616-831610627a05";
+		given(paymentService.findByOrderCode(anyString()))
+			.willThrow(new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+
+		//expect
+		mvc.perform(get("/api/payment/callback-approval/" + orderCode)
+				.param("pg_token", "dafdg343@1321sc"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.payment").value("일치하는 결제정보가 없습니다."));
+
+		then(paymentService).should(times(1)).findByOrderCode(anyString());
+		then(kakaoPaymentClient).should(times(0))
+			.approval(anyString(), anyString(), anyString(), anyString());
+		then(paymentService).should(times(0)).approval(anyString());
+
+	}
+
+	@Test
+	@DisplayName("")
+	void approval_already_process_order() throws Exception {
+		String orderCode = "d20bfd22-bf3d-4d632xv-a616-831610627a05";
+
+		given(paymentService.findByOrderCode(anyString()))
+			.willReturn(new PaymentDto("tidTest", orderCode, "user@email.com"));
+
+		doThrow(new CustomException(ErrorCode.ALREADY_PROCESS_ORDER))
+			.when(paymentService).approval(anyString());
+
+		//expect
+		mvc.perform(get("/api/payment/callback-approval/" + orderCode)
+				.param("pg_token", "dafdg343@1321sc"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.order").value("이미 처리된 주문입니다."));
+
+		then(paymentService).should(times(1)).findByOrderCode(anyString());
+		then(kakaoPaymentClient).should(times(1))
+			.approval(anyString(), anyString(), anyString(), anyString());
+		then(paymentService).should(times(1)).approval(anyString());
+
+	}
+
+	@Test
+	void approval_ALREADY_PROCESS_PAYMENT() throws Exception {
+		String orderCode = "d20bfd22-bf3d-4d632xv-a616-831610627a05";
+
+		given(paymentService.findByOrderCode(anyString()))
+			.willReturn(new PaymentDto("tidTest", orderCode, "user@email.com"));
+
+		doThrow(new CustomException(ErrorCode.ALREADY_PROCESS_PAYMENT))
+			.when(paymentService).approval(anyString());
+
+		//expect
+		mvc.perform(get("/api/payment/callback-approval/" + orderCode)
+				.param("pg_token", "dafdg343@1321sc"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.payment").value("이미 처리된 결제입니다."));
+
+		then(paymentService).should(times(1)).findByOrderCode(anyString());
+		then(kakaoPaymentClient).should(times(1))
+			.approval(anyString(), anyString(), anyString(), anyString());
+		then(paymentService).should(times(1)).approval(anyString());
+	}
+
+	@Test
+	@DisplayName("")
+	void approval_update_payment_not_found() throws Exception {
+		String orderCode = "d20bfd22-bf3d-4d632xv-a616-831610627a05";
+
+		given(paymentService.findByOrderCode(anyString()))
+			.willReturn(new PaymentDto("tidTest", orderCode, "user@email.com"));
+
+		doThrow(new CustomException(ErrorCode.PAYMENT_NOT_FOUND))
+			.when(paymentService).approval(anyString());
+
+		//expect
+		mvc.perform(get("/api/payment/callback-approval/" + orderCode)
+				.param("pg_token", "dafdg343@1321sc"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.reasons.payment").value("일치하는 결제정보가 없습니다."));
+
+		then(paymentService).should(times(1)).findByOrderCode(anyString());
+		then(kakaoPaymentClient).should(times(1))
+			.approval(anyString(), anyString(), anyString(), anyString());
+		then(paymentService).should(times(1)).approval(anyString());
 	}
 
 	private OrderProductDto createOrderDto(long productId, String name, int quantity, long price) {
