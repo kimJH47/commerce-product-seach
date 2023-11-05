@@ -54,4 +54,15 @@ public class KakaoPaymentClient {
 			.bodyToMono(KakaoPaymentApprovalResult.class)
 			.block();
 	}
+
+	public KakaoPaymentCancelResult cancel(String transactionId, String orderCode, Long totalPrice) {
+		KakaoPaymentCancelRequest request = new KakaoPaymentCancelRequest(transactionId, orderCode,
+			totalPrice);
+		return webClient.post()
+			.uri("/cancel")
+			.body(BodyInserters.fromFormData(request.toMap()))
+			.retrieve()
+			.bodyToMono(KakaoPaymentCancelResult.class)
+			.block();
+	}
 }
