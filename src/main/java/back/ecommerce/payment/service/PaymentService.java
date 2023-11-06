@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.order.OrderGroupRepository;
+import back.ecommerce.order.entity.OrderGroup;
 import back.ecommerce.payment.entity.Payment;
 import back.ecommerce.payment.entity.PaymentStatus;
 import back.ecommerce.payment.repository.PaymentRepository;
@@ -35,11 +36,22 @@ public class PaymentService {
 			.updatePaymentStatus(PaymentStatus.APPROVAL);
 		orderGroupRepository.findByOrderCode(orderCode)
 			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND))
-			.updateToDelivery();
+			.updateToPaymentApproval();
 	}
 
 	private Payment findByPaymentWithOrderCode(String orderCode) {
 		return paymentRepository.findByOrderCode(orderCode)
 			.orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+	}
+
+	@Transactional
+	public CancelPaymentDto cancel(String orderCode) {
+		OrderGroup orderGroup = orderGroupRepository.findByOrderCode(orderCode)
+			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
+		orderGroup.cancel();
+
+		Payment payment = findByPaymentWithOrderCode(orderCode);
+		payment.updatePaymentStatus(PaymentStatus.CANCEL);
+		return new CancelPaymentDto(payment.getTransactionId(), payment.getTotalPrice(), payment.getPaymentStatus());
 	}
 }
