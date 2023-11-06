@@ -56,7 +56,7 @@ public class KakaoPaymentClient {
 	}
 
 	public KakaoPaymentCancelResult cancel(String transactionId, String orderCode, Long totalPrice) {
-		KakaoPaymentCancelRequest request = new KakaoPaymentCancelRequest(transactionId, orderCode,
+		KakaoPaymentCancelRequest request = new KakaoPaymentCancelRequest(cid, transactionId, orderCode,
 			totalPrice);
 		return webClient.post()
 			.uri("/cancel")
