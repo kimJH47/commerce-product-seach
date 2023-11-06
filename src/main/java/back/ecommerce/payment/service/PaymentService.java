@@ -49,9 +49,15 @@ public class PaymentService {
 		OrderGroup orderGroup = orderGroupRepository.findByOrderCode(orderCode)
 			.orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 		orderGroup.cancel();
-
 		Payment payment = findByPaymentWithOrderCode(orderCode);
 		payment.updatePaymentStatus(PaymentStatus.CANCEL);
 		return new CancelPaymentDto(payment.getTransactionId(), payment.getTotalPrice(), payment.getPaymentStatus());
+	}
+
+	@Transactional
+	public void fail(String orderCode) {
+		findByPaymentWithOrderCode(orderCode)
+			.updatePaymentStatus(PaymentStatus.FAIL);
+
 	}
 }

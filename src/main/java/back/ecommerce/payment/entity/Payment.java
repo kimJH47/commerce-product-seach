@@ -39,10 +39,6 @@ public class Payment extends BaseTimeEntity {
 		return new Payment(null, transactionId, cid, userEmail, orderCode, READY, totalPrice, 0L);
 	}
 
-	public boolean isNotReady() {
-		return !paymentStatus.equals(READY);
-	}
-
 	public void updatePaymentStatus(PaymentStatus paymentStatus) {
 		if (paymentStatus.equals(APPROVAL)) {
 			updateApproval();
@@ -71,6 +67,10 @@ public class Payment extends BaseTimeEntity {
 			throw new CustomException(ErrorCode.ALREADY_PROCESS_PAYMENT);
 		}
 		paymentStatus = FAIL;
+	}
+
+	private boolean isNotReady() {
+		return !paymentStatus.equals(READY);
 	}
 
 	private void updateCancel() {

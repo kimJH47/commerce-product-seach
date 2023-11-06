@@ -1,5 +1,6 @@
 package back.ecommerce.api.payment;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
@@ -68,6 +69,18 @@ public class PaymentController {
 		CancelPaymentDto cancelPayment = paymentService.cancel(request.getOrderCode());
 		kakaoPaymentClient.cancel(cancelPayment.getTransactionId(), request.getOrderCode(),
 			cancelPayment.getTotalPrice());
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+			.header(HttpHeaders.LOCATION, "/")
+			.build();
+	}
+
+	@GetMapping("/api/payment/callback-fail/{orderCode}")
+	public ResponseEntity<?> fail(HttpServletRequest request, @PathVariable("orderCode") String orderCode) {
+		String requestURI = request.getRequestURI();
+		System.out.println(requestURI);
+		String remoteAddr = request.getRemoteAddr();
+		System.out.println(remoteAddr);
+		paymentService.fail(orderCode);
 		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
 			.header(HttpHeaders.LOCATION, "/")
 			.build();
