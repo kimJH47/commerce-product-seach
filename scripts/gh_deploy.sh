@@ -1,19 +1,20 @@
-PORT=-1;
+GREEN_PORT=0
+BLUE_PORT=0
 if nc -z localhost 8080; then
-	PORT=8081
+        GREEN_PORT=8081
+        BLUE_PORT=8080
 else
-	PORT=8080
+        GREEN_PORT=8080
+        BLUE_PORT=8081
 fi
 
 HOME_PATH="/home/ubuntu"
 JAR_PATH="/home/ubuntu"
-URL="http://localhost:$PORT/api/cart"
+HEALTH_CHECK_URL="http://localhost:$GREEN_PORT/api/cart"
 
-SHUT_PORT=0
 TRY_COUNT=10
 WAIT_TIME=5
-GREEN_PORT=8081
-BLUE_PORT=8080
+echo "BLUE_PORT(old) : $BLUE_PORT GRREN_PORT(new) : $GREEN_PORT"
 
 if ! [ -d "$HOME_PATH" ]; then
   echo "HOME_PATH 경로가 존재하지 않습니다! HOME_PATH= $HOME_PATH"
@@ -31,30 +32,23 @@ if [ -z "$JAR_FILE" ]; then
   exit 1
 fi
 
-if [ "$PORT" -eq "$GREEN_PORT" ]; then
-  SHUT_PORT=$BLUE_PORT
-else
-  SHUT_PORT=$GREEN_PORT
-fi
-
 cd "$HOME_PATH" || exit 1
-echo "서버를 실행했습니다. PORT = $PORT, SHUT_PORT = $SHUT_PORT"
-nohup java -jar -Duser.timezone=Asia/Seoul "$JAR_FILE" --spring.profiles.active=prod --server.port="$PORT" &
-sleep 3
+echo "새로운 어플리케이션 서버를 실행했습니다."
+nohup java -jar -Duser.timezone=Asia/Seoul "$JAR_FILE" --spring.profiles.active=prod --server.port="$GREEN_PORT" &
 while true; do
-  STATUS=$(curl -s -o /dev/null -w '%{http_code}' "$URL")
+  STATUS=$(curl -s -o /dev/null -w '%{http_code}' "$HEALTH_CHECK_URL")
   if [ "$STATUS" -eq 400 ]; then
-    echo "$PORT 포트로 열린 서버가 정상적으로 동작중."
+    echo "$GREEN_PORT 포트로 열린 서버가 정상적으로 동작중."
     echo "NGINX 포트 포워딩 변경"
-    sudo sed -i "s/${SHUT_PORT}/$PORT/" /etc/nginx/conf.d/default.conf
+    sudo sed -i "s/${BLUE_PORT}/$GREEN_PORT/" /etc/nginx/conf.d/default.conf
     sudo nginx -s reload
-
-    PID=$(sudo lsof -t -i:$SHUT_PORT)
+    sleep 8
+    PID=$(sudo lsof -t -i:$BLUE_PORT)
     if [ -n "$PID" ]; then
-      kill -15 "$PID"
-      echo "$SHUT_PORT 포트로 열린 서버 종료"
+      sudo kill -15 "$PID"
+      echo "$BLUE_PORT 포트로 열린 서버 종료"
     fi
-    echo "$PORT 포트로 Green Blue 실행 완료."
+    echo "$GREEN_PORT 포트로 Green Blue 실행 완료."
     exit 0
   fi
   TRY_COUNT=$((TRY_COUNT - 1))
@@ -64,6 +58,3 @@ while true; do
   echo "서버가 켜졌는지 대기중... 남은 시도 횟수=$TRY_COUNT, $WAIT_TIME초 대기합니다."
   sleep $WAIT_TIME
 done
-
-echo "$PORT 포트로 서버를 실행하는데 실패했습니다."
-exit 1
