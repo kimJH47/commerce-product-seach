@@ -64,7 +64,7 @@ public class PaymentController {
 	}
 
 	@PostMapping("/api/payment/approval-cancel")
-	public ResponseEntity<?> approvalCancel(CancelPaymentRequest request) {
+	public ResponseEntity<?> approvalCancel(@RequestBody CancelPaymentRequest request) {
 		CancelPaymentDto cancelPayment = paymentService.cancel(request.getOrderCode());
 		kakaoPaymentClient.cancel(cancelPayment.getTransactionId(), request.getOrderCode(),
 			cancelPayment.getTotalPrice());
