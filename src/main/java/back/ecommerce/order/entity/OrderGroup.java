@@ -106,6 +106,7 @@ public class OrderGroup extends BaseTimeEntity {
 	public void cancel() {
 		if (OrderStatus.cancellable(orderStatus)) {
 			orderStatus = OrderStatus.ORDER_CANCEL;
+			return;
 		}
 		throw new CustomException(ErrorCode.ALREADY_PROCESS_ORDER);
 	}
