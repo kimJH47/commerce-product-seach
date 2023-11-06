@@ -2,6 +2,7 @@ package back.ecommerce.order.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -91,14 +92,25 @@ public class OrderGroup extends BaseTimeEntity {
 		this.orderItems = new ArrayList<>(orderItems);
 	}
 
-	public void updateToDelivery() {
+	public void updateToPaymentApproval() {
 		if (isNotPaymentReady()) {
 			throw new CustomException(ErrorCode.ALREADY_PROCESS_ORDER);
 		}
-		orderStatus = OrderStatus.DELIVERY;
+		orderStatus = OrderStatus.PAYMENT_APPROVAL;
 	}
 
 	private boolean isNotPaymentReady() {
 		return !orderStatus.equals(OrderStatus.PAYMENT_READY);
+	}
+
+	public void cancel() {
+		if (OrderStatus.cancellable(orderStatus)) {
+			orderStatus = OrderStatus.ORDER_CANCEL;
+		}
+		throw new CustomException(ErrorCode.ALREADY_PROCESS_ORDER);
+	}
+
+	public boolean isSamePrice(Long cancelPrice) {
+		return Objects.equals(this.totalPrice, cancelPrice);
 	}
 }

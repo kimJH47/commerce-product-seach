@@ -17,6 +17,7 @@ import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.order.service.OrderGroupDto;
 import back.ecommerce.order.service.OrderService;
+import back.ecommerce.payment.service.CancelPaymentDto;
 import back.ecommerce.payment.service.PaymentDto;
 import back.ecommerce.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,24 @@ public class PaymentController {
 		PaymentDto payment = paymentService.findByOrderCode(orderCode);
 		kakaoPaymentClient.approval(token, payment.getTransactionId(), payment.getOrderCode(), payment.getUserEmail());
 		paymentService.approval(orderCode);
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+			.header(HttpHeaders.LOCATION, "/")
+			.build();
+	}
+
+	@GetMapping("/api/payment/callback-cancel/{orderCode}")
+	public ResponseEntity<?> approvalCancel(@PathVariable("orderCode") String orderCode) {
+		paymentService.cancel(orderCode);
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+			.header(HttpHeaders.LOCATION, "/")
+			.build();
+	}
+
+	@PostMapping("/api/payment/approval-cancel")
+	public ResponseEntity<?> approvalCancel(CancelPaymentRequest request) {
+		CancelPaymentDto cancelPayment = paymentService.cancel(request.getOrderCode());
+		kakaoPaymentClient.cancel(cancelPayment.getTransactionId(), request.getOrderCode(),
+			cancelPayment.getTotalPrice());
 		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
 			.header(HttpHeaders.LOCATION, "/")
 			.build();
