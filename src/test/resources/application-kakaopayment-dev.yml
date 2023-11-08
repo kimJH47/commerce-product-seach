@@ -1,0 +1,7 @@
+kakao:
+  payment:
+    adminKey: 478a739e5b6ad67b4f387dbf77d26f01
+    cid: TC0ONETIME
+    approval_url: http://localhost:8080/api/payment/redirect-approval
+    cancel_url: http://localhost:8080/api/payment/redirect-cancel
+    fail_url: http://localhost:8080/api/payment/redirect-fail
