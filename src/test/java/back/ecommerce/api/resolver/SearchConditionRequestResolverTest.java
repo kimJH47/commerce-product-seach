@@ -53,12 +53,12 @@ class SearchConditionRequestResolverTest {
 	void resolveArgument() {
 		//given
 		HashMap<String, String[]> hashMap = new HashMap<>();
-		hashMap.put("name", new String[] {"nameData"});
+		hashMap.put("name", new String[] {"nameData  "});
 		hashMap.put("brandName", new String[] {"BrandC"});
-		hashMap.put("maxPrice", new String[] {"10000"});
+		hashMap.put("maxPrice", new String[] {"  10000  "});
 		hashMap.put("minPrice", new String[] {null});
-		hashMap.put("page", new String[] {"13"});
-		hashMap.put("sort", new String[] {"new"});
+		hashMap.put("page", new String[] {"13  "});
+		hashMap.put("sort", new String[] {"new" });
 
 		HttpServletRequest servletRequest = Mockito.mock(HttpServletRequest.class);
 
