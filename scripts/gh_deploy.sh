@@ -1,20 +1,20 @@
 GREEN_PORT=0
 BLUE_PORT=0
 if nc -z localhost 8080; then
-        GREEN_PORT=8081
-        BLUE_PORT=8080
+  GREEN_PORT=8081
+  BLUE_PORT=8080
 else
-        GREEN_PORT=8080
-        BLUE_PORT=8081
+  GREEN_PORT=8080
+  BLUE_PORT=8081
 fi
 
 HOME_PATH="/home/ubuntu"
 JAR_PATH="/home/ubuntu"
-HEALTH_CHECK_URL="http://localhost:$GREEN_PORT/api/cart"
+HEALTH_CHECK_URL="http://localhost:$GREEN_PORT/api/categories/TOP"
 
 TRY_COUNT=10
 WAIT_TIME=5
-echo "BLUE_PORT(old) : $BLUE_PORT GRREN_PORT(new) : $GREEN_PORT"
+echo "BLUE_PORT(old) : $BLUE_PORT, GRREN_PORT(new) : $GREEN_PORT"
 
 if ! [ -d "$HOME_PATH" ]; then
   echo "HOME_PATH 경로가 존재하지 않습니다! HOME_PATH= $HOME_PATH"
@@ -36,8 +36,8 @@ cd "$HOME_PATH" || exit 1
 echo "새로운 어플리케이션 서버를 실행했습니다."
 nohup java -jar -Duser.timezone=Asia/Seoul "$JAR_FILE" --spring.profiles.active=prod --server.port="$GREEN_PORT" &
 while true; do
-  STATUS=$(curl -s -o /dev/null -w '%{http_code}' "$HEALTH_CHECK_URL")
-  if [ "$STATUS" -eq 400 ]; then
+  STATUS=$(curl -s -o :/dev/null -w '%{http_code}' "$HEALTH_CHECK_URL")
+  if [ "$STATUS" -eq 200 ]; then
     echo "$GREEN_PORT 포트로 열린 서버가 정상적으로 동작중."
     echo "NGINX 포트 포워딩 변경"
     sudo sed -i "s/${BLUE_PORT}/$GREEN_PORT/" /etc/nginx/conf.d/default.conf
@@ -58,3 +58,6 @@ while true; do
   echo "서버가 켜졌는지 대기중... 남은 시도 횟수=$TRY_COUNT, $WAIT_TIME초 대기합니다."
   sleep $WAIT_TIME
 done
+
+echo "$GREEN_PORT 포트로 서버를 실행하는데 실패했습니다."
+exit 1
