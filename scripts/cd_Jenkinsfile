@@ -24,7 +24,7 @@ pipeline {
                      sh '''
                        ssh -o StrictHostKeyChecking=no ubuntu@$EC2_APP_IP
                        scp build/libs/*.jar ubuntu@$EC2_APP_IP:/home/ubuntu
-                       ssh ubuntu@$EC2_APP_IP "sh ./scripts/deploy/blueGreenDeploy.sh" &
+                       ssh ubuntu@$EC2_APP_IP "sudo sh ./scripts/deploy/blueGreenDeploy.sh" &
                       '''
                 }
             }
