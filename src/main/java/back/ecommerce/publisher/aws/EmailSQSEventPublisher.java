@@ -8,7 +8,7 @@ import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 
-public class EmailSQSEventPublisher {
+public class EmailSQSEventPublisher implements EmailPublisher {
 
 	private static final String MESSAGE_BODY = "ecommerce email";
 
@@ -20,6 +20,7 @@ public class EmailSQSEventPublisher {
 		this.queueUrl = queueUrl;
 	}
 
+	@Override
 	public void pub(MessageType messageType, Map<String, String> map) {
 		map.put("messageType", messageType.toString());
 		map.put("messageTypeCode", messageType.getCode());
