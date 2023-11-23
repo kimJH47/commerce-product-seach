@@ -14,22 +14,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import back.ecommerce.api.dto.Response;
 import back.ecommerce.auth.dto.request.LoginRequest;
 import back.ecommerce.auth.dto.request.SignUpRequest;
 import back.ecommerce.auth.dto.response.SignUpDto;
-import back.ecommerce.api.dto.Response;
 import back.ecommerce.auth.dto.response.SignUpResponse;
-import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
 import back.ecommerce.auth.service.AuthService;
-import lombok.RequiredArgsConstructor;
+import back.ecommerce.publisher.aws.EmailPublisher;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
 
 	private final AuthService authService;
-	private final EmailSQSEventPublisher sqsEventPublisher;
+	private final EmailPublisher sqsEventPublisher;
+
+	public AuthController(AuthService authService, EmailPublisher sqsEventPublisher) {
+		this.authService = authService;
+		this.sqsEventPublisher = sqsEventPublisher;
+	}
 
 	@PostMapping("/token")
 	public ResponseEntity<Response> login(@RequestBody @Valid LoginRequest loginRequest) {
