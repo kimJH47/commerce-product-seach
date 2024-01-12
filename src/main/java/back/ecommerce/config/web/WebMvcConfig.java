@@ -28,6 +28,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Value("${cors.allowPort}")
 	private int allowCorsPort;
 
+	@Value("${cors.feHost}")
+	private String feHost;
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new LoggingInterceptor())
@@ -52,7 +55,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(final CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins("http://192.168.0.41:" + allowCorsPort, "http://127.0.0.1:" + allowCorsPort)
+			.allowedOrigins("http://192.168.0.41:" + allowCorsPort, "http://127.0.0.1:" + allowCorsPort,
+				"http://localhost:" + allowCorsPort, feHost)
 			.allowedMethods("GET", "POST")
 			.maxAge(3000);
 	}
