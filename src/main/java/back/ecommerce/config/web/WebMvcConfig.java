@@ -26,7 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	private final AdminAuthorizationInterceptor adminAuthorizationInterceptor;
 
 	@Value("${cors.allowPort}")
-	private final int allowCorsPort;
+	private int allowCorsPort;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -52,7 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(final CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins("http://localhost" + allowCorsPort)
+			.allowedOrigins("http://127.0.0.1:" + allowCorsPort)
 			.allowedMethods("GET", "POST")
 			.maxAge(3000);
 	}
