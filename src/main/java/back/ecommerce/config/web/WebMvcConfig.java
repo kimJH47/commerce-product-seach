@@ -4,15 +4,16 @@ import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import back.ecommerce.api.resolver.SearchConditionRequestResolver;
 import back.ecommerce.auth.interceptor.AdminAuthorizationInterceptor;
 import back.ecommerce.auth.interceptor.JwtAuthenticationInterceptor;
 import back.ecommerce.auth.resolver.UserEmailArgumentResolver;
 import back.ecommerce.common.logging.LoggingInterceptor;
-import back.ecommerce.api.resolver.SearchConditionRequestResolver;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -42,5 +43,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(new UserEmailArgumentResolver());
 		resolvers.add(new SearchConditionRequestResolver());
+	}
+
+	@Override
+	public void addCorsMappings(final CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOrigins("http://localhost:9000")
+			.allowedMethods("GET", "POST")
+			.maxAge(3000);
 	}
 }
