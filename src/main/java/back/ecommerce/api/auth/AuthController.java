@@ -4,7 +4,7 @@ import static back.ecommerce.publisher.aws.MessageType.*;
 
 import java.time.LocalDateTime;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

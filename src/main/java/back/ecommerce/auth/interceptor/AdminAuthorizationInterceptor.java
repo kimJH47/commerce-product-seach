@@ -1,14 +1,13 @@
 package back.ecommerce.auth.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import back.ecommerce.admin.repository.AdminRepository;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.ErrorCode;
-import back.ecommerce.admin.repository.AdminRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component
