@@ -2,7 +2,7 @@ package back.ecommerce.api.common;
 
 import static org.slf4j.event.Level.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.event.Level;
 import org.springframework.http.ResponseEntity;

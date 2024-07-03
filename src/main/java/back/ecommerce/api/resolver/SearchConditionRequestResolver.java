@@ -2,7 +2,7 @@ package back.ecommerce.api.resolver;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;

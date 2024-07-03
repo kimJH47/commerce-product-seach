@@ -2,7 +2,7 @@ package back.ecommerce.api.admin;
 
 import static back.ecommerce.publisher.aws.MessageType.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
