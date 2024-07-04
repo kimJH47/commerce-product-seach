@@ -2,6 +2,9 @@ plugins {
     id("java")
     id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
+    kotlin("plugin.jpa") version "1.9.24"
+    kotlin("jvm") version "1.9.24"
+    kotlin("plugin.spring") version "1.9.24"
 }
 
 group = "back.ecommerce"
@@ -17,6 +20,12 @@ configurations {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -29,6 +38,9 @@ dependencyManagement {
         mavenBom("io.awspring.cloud:spring-cloud-aws-dependencies:2.4.4")
     }
 }
+val kotestVersion = "5.7.2"
+val kotestExtensionSpringVersion = "1.1.3"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -66,6 +78,16 @@ dependencies {
     //webflux(REST API Client)
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("io.projectreactor:reactor-test")
+
+    //Kotlin
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    //kotest
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:$kotestExtensionSpringVersion")
+
 
     annotationProcessor("org.projectlombok:lombok")
     compileOnly("org.projectlombok:lombok")
