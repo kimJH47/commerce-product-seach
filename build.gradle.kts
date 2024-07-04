@@ -45,8 +45,11 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.9.1")
 
     //queryDSL
-    implementation("com.querydsl:querydsl-jpa:5.0.0")
-    implementation("com.querydsl:querydsl-apt:5.0.0")
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+
 
     //AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
@@ -75,10 +78,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-val querydslDir = file("build/generated/querydsl")
-
-tasks.compileJava {
-    options.generatedSourceOutputDirectory.set(querydslDir)
 }
