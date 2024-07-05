@@ -1,24 +1,18 @@
-package back.ecommerce.admin.dto.response;
+package back.ecommerce.admin.dto.response
 
-import java.util.HashMap;
-import java.util.Map;
+import back.ecommerce.product.entity.ApprovalStatus
 
-import back.ecommerce.product.entity.ApprovalStatus;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+data class UpdateApprovalStatusDto(
+    val email: String,
+    val requestId: Long,
+    val approvalStatus: ApprovalStatus,
+) {
 
-@RequiredArgsConstructor
-@Getter
-public class UpdateApprovalStatusDto {
-	private final String email;
-	private final Long requestId;
-	private final ApprovalStatus approvalStatus;
-
-	public Map<String, String> toMap() {
-		HashMap<String, String> map = new HashMap<>();
-		map.put("email", email);
-		map.put("requestId", requestId.toString());
-		map.put("approvalStatus", approvalStatus.toString());
-		return map;
-	}
+    fun toMap(): Map<String, String> {
+        return mapOf(
+            "email" to email,
+            "requestId" to requestId.toString(),
+            "approvalStatus" to approvalStatus.toString()
+        )
+    }
 }

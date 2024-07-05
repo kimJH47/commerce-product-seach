@@ -55,7 +55,7 @@ public class AdminService {
 	@Transactional(readOnly = true)
 	public List<RequestProductDto> findByApprovalStatus(ApprovalStatus status) {
 		return requestProductRepository.findByApprovalStatus(status).stream()
-			.map(RequestProductDto::create)
+			.map(RequestProductDto.Companion::create)
 			.collect(Collectors.toList());
 	}
 
