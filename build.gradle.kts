@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
 group = "back.ecommerce"
@@ -38,8 +39,15 @@ dependencyManagement {
         mavenBom("io.awspring.cloud:spring-cloud-aws-dependencies:2.4.4")
     }
 }
+
+val asciidoctorExt = "asciidoctorExt"
+configurations.create(asciidoctorExt) {
+    extendsFrom(configurations.testImplementation.get())
+}
+
 val kotestVersion = "5.7.2"
 val kotestExtensionSpringVersion = "1.1.3"
+val snippets = file("build/generated-snippets")
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -74,6 +82,8 @@ dependencies {
 
     //spring docs
     implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
     //webflux(REST API Client)
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -88,6 +98,8 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:$kotestExtensionSpringVersion")
 
+    // mockk
+    testImplementation("io.mockk:mockk:1.13.8")
 
     annotationProcessor("org.projectlombok:lombok")
     compileOnly("org.projectlombok:lombok")
@@ -100,4 +112,31 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    outputs.dir(snippets)
+}
+
+
+tasks.asciidoctor {
+    inputs.dir(snippets)
+    dependsOn(tasks.test)
+    configurations(asciidoctorExt)
+}
+
+val register = tasks.register("copyHTML", Copy::class) {
+    dependsOn(tasks.asciidoctor)
+    from(file("build/docs/asciidoc"))
+    into(file("src/main/resources/static/docs"))
+
+    doFirst {
+        delete {
+            file("src/main/resources/static/docs")
+        }
+    }
+}
+
+tasks.build {
+    dependsOn(register)
+}
+tasks.bootJar {
+    dependsOn(register)
 }
