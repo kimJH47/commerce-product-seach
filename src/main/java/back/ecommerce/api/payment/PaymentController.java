@@ -1,8 +1,5 @@
 package back.ecommerce.api.payment;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +15,12 @@ import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.order.service.OrderGroupDto;
 import back.ecommerce.order.service.OrderService;
+import back.ecommerce.payment.dto.request.PaymentReadyRequest;
 import back.ecommerce.payment.service.CancelPaymentDto;
 import back.ecommerce.payment.service.PaymentDto;
 import back.ecommerce.payment.service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,7 +65,7 @@ public class PaymentController {
 	}
 
 	@PostMapping("/api/payment/approval-cancel")
-	public ResponseEntity<?> approvalCancel(@RequestBody CancelPaymentRequest request) {
+	public ResponseEntity<?> approvalCancel(@RequestBody PaymentCancelRequest request) {
 		CancelPaymentDto cancelPayment = paymentService.cancel(request.getOrderCode());
 		kakaoPaymentClient.cancel(cancelPayment.getTransactionId(), request.getOrderCode(),
 			cancelPayment.getTotalPrice());

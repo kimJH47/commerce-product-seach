@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CancelPaymentRequest {
+public class PaymentCancelRequest {
 	private String orderCode;
 }
