@@ -140,3 +140,9 @@ tasks.build {
 tasks.bootJar {
     dependsOn(register)
 }
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
+}
