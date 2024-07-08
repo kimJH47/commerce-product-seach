@@ -35,6 +35,7 @@ import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.order.service.OrderGroupDto;
 import back.ecommerce.order.service.OrderService;
+import back.ecommerce.payment.dto.request.PaymentReadyRequest;
 import back.ecommerce.payment.service.PaymentDto;
 import back.ecommerce.payment.service.PaymentService;
 
