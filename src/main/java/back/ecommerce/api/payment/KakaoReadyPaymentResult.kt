@@ -1,16 +1,11 @@
-package back.ecommerce.api.payment;
+package back.ecommerce.api.payment
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
-public class KakaoReadyPaymentResult {
-	private String appUrl;
-	private String mobileUrl;
-	private String pcUrl;
-	private String cid;
-	private String transactionId;
-	private String orderCode;
-	private String createdAt;
-}
+data class KakaoReadyPaymentResult(
+    val appUrl: String,
+    val mobileUrl: String,
+    val pcUrl: String,
+    val cid: String,
+    val transactionId: String,
+    val orderCode: String,
+    val createdAt: String,
+)
