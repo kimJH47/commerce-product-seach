@@ -2,19 +2,17 @@ package back.ecommerce.api.resolver;
 
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import back.ecommerce.product.entity.Category;
 import back.ecommerce.product.dto.request.ProductSearchConditionRequest;
+import back.ecommerce.product.entity.Category;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -46,7 +44,7 @@ public class SearchConditionRequestResolver implements HandlerMethodArgumentReso
 		Map<String, String> attributes = CollectionUtils.newLinkedHashMap(parameterMap.size());
 		parameterMap.forEach((key, values) -> {
 			if (values.length > 0) {
-				attributes.put(key, StringUtils.trimWhitespace(values[0]));
+				attributes.put(key, values[0].strip());
 			}
 		});
 		return attributes;
