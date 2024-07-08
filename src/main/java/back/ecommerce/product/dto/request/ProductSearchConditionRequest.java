@@ -3,9 +3,7 @@ package back.ecommerce.product.dto.request;
 import java.util.Map;
 
 import back.ecommerce.product.entity.Category;
-import lombok.Getter;
 
-@Getter
 public class ProductSearchConditionRequest {
 	private final Category category;
 	private final Map<String, String> parameters;
@@ -13,6 +11,14 @@ public class ProductSearchConditionRequest {
 	private ProductSearchConditionRequest(Category category, Map<String, String> parameters) {
 		this.category = category;
 		this.parameters = parameters;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 
 	public static ProductSearchConditionRequest create(Category category, Map<String, String> parameters) {
