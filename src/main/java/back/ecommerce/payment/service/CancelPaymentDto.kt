@@ -1,13 +1,9 @@
-package back.ecommerce.payment.service;
+package back.ecommerce.payment.service
 
-import back.ecommerce.payment.entity.PaymentStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import back.ecommerce.payment.entity.PaymentStatus
 
-@Getter
-@AllArgsConstructor
-public class CancelPaymentDto {
-	private final String transactionId;
-	private final Long totalPrice;
-	private final PaymentStatus paymentStatus;
-}
+data class CancelPaymentDto(
+    val transactionId: String,
+    val totalPrice: Long,
+    val paymentStatus: PaymentStatus
+)
