@@ -32,7 +32,7 @@ public class OrderService {
 		List<Product> products = findByIds(orderProducts);
 		validateOrder(orderProducts, products);
 		OrderGroup orderGroup = orderGroupRepository.save(createOrderGroup(userEmail, totalPrice, orderProducts));
-		return OrderGroupDto.create(orderGroup);
+		return OrderGroupDto.Companion.create(orderGroup);
 	}
 
 	private List<Product> findByIds(List<OrderProductDto> orderProducts) {
