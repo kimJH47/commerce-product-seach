@@ -40,7 +40,7 @@ public class AuthService {
 			throw new AuthenticationException(PASSWORD_NOT_MATCHED);
 		}
 		Token token = tokenProvider.create(email, JWT_TOKEN_EXPIRED_TIME);
-		return TokenResponse.create(token.getValue(), token.getExpireTime(), token.getType());
+		return new TokenResponse(token.getValue(), token.getExpireTime(), token.getType());
 	}
 
 	public SignUpDto signUp(String email, String password) {
