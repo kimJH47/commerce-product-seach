@@ -19,7 +19,7 @@ class CartV2Controller(
     fun addCart(@RequestBody @Valid request: AddCartRequest): ResponseEntity<Response> {
         return Response.createSuccessResponse(
             "장바구니에 상품이 추가 되었습니다.",
-            cartService.addProduct(request.email, request.productId!!, request.quantity!!)
+            cartService.addProduct(request.email, request.productId, request.quantity)
         )
     }
 
