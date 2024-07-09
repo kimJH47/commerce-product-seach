@@ -28,7 +28,7 @@ public class ProductSearchController {
 	}
 
 	@Logging
-	@GetMapping("/categories/**/detail")
+	@GetMapping("/categories/{category}/detail")
 	public ResponseEntity<Response> findProductWithPagination(
 		@ProductSearchRequestMapping ProductSearchConditionRequest request) {
 		return Response.createSuccessResponse("상품이 성공적으로 조회 되었습니다.",
