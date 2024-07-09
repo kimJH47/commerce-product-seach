@@ -27,7 +27,7 @@ class ProductV2Controller(
     }
 
     @Logging
-    @GetMapping("/categories/**/detail")
+    @GetMapping("/categories/{category}/detail")
     fun findProductWithPagination(@ProductSearchRequestMapping request: ProductSearchConditionRequest)
             : ResponseEntity<Response> {
         return Response.createSuccessResponse(
