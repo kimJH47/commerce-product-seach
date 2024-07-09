@@ -8,6 +8,7 @@ import back.ecommerce.auth.service.AuthService
 import back.ecommerce.publisher.aws.EmailSQSEventPublisher
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
+import io.mockk.verify
 import org.hamcrest.CoreMatchers.equalTo
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -28,6 +29,7 @@ class AuthV2ControllerTest(
                 val actual = TokenResponse(accessToken, expireTime, bearer)
 
                 every { authService.createToken(any(String::class), any(String::class)) } returns actual
+
 
                 val requestBody = LoginRequest("dsldsalw42@email.com", "dsamkcmx#dsm")
 
@@ -50,7 +52,9 @@ class AuthV2ControllerTest(
                                 "entity.type" type STRING means "인증헤더 타입"
                             )
                         }
+                    verify(exactly = 1) { authService.createToken(any(String::class), any(String::class)) }
                 }
+
             }
         }
     }
