@@ -1,7 +1,5 @@
 package back.ecommerce.api.support
 
-import org.aspectj.weaver.tools.cache.SimpleCacheFactory.path
-import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation
 
