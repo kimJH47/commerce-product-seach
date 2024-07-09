@@ -1,0 +1,94 @@
+= API DOCS
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+=== 로그인 API
+
+==== 기본정보
+
+- 메서드 : POST
+- URL : `/api/v2/auth/token`
+
+==== 요청
+
+===== 본문
+include::{snippets}/로그인 API/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/로그인 API/response-body.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/로그인 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/로그인 API/http-response.adoc[]
+
+'''
+=== 회원가입 API
+
+==== 기본정보
+
+- 메서드 : POST
+- URL : `/api/v2/auth/sign-up`
+
+==== 요청
+
+===== 본문
+include::{snippets}/회원가입 API/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/회원가입 API/response-body.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/회원가입 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/회원가입 API/http-response.adoc[]
+
+'''
+=== 이메일 인증 API
+
+==== 기본정보
+
+- 메서드 : GET
+- URL : `/api/v2/auth/verified/{code}`
+
+==== 요청
+
+===== 요청 파라미터
+include::{snippets}/이메일 인증 API/path-parameters.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/이메일 인증 API/response-body.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/이메일 인증 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/이메일 인증 API/http-response.adoc[]
