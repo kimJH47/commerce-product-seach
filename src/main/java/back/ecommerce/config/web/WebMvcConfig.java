@@ -2,10 +2,8 @@ package back.ecommerce.config.web;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -24,12 +22,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	private final JwtAuthenticationInterceptor jwtAuthenticationInterceptor;
 	private final AdminAuthorizationInterceptor adminAuthorizationInterceptor;
-
-	@Value("${cors.allowPort}")
-	private int allowCorsPort;
-
-	@Value("${cors.feHost}")
-	private String feHost;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -52,12 +44,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		resolvers.add(new SearchConditionRequestResolver());
 	}
 
-	@Override
-	public void addCorsMappings(final CorsRegistry registry) {
-		registry.addMapping("/**")
-			.allowedOrigins("http://192.168.0.41:" + allowCorsPort, "http://127.0.0.1:" + allowCorsPort,
-				"http://localhost:" + allowCorsPort, feHost)
-			.allowedMethods("GET", "POST")
-			.maxAge(3000);
-	}
 }
