@@ -1,6 +1,5 @@
 package back.ecommerce.api.support
 
-import jakarta.validation.Payload
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor
@@ -10,6 +9,7 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.PathParametersSnippet
 import org.springframework.restdocs.request.QueryParametersSnippet
+import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.test.web.servlet.ResultActionsDsl
 
 class RestDocDsl {
@@ -23,13 +23,20 @@ class RestDocDsl {
     private var queryParametersSnippet: QueryParametersSnippet? = null
 
     fun requestFields(vararg fields: Field) {
-        val requestFields = PayloadDocumentation.requestFields()
         requestFieldsSnippet = PayloadDocumentation.requestFields(fields.map { it.fieldDescriptor })
 
     }
 
     fun responseFields(vararg fields: Field) {
         responseFieldsSnippet = PayloadDocumentation.responseFields(fields.map { it.fieldDescriptor })
+    }
+
+    fun pathParameters(vararg parameters: Pair<String, String>) {
+        pathParametersSnippet = RequestDocumentation.pathParameters(
+            parameters.map {
+                RequestDocumentation.parameterWithName(it.first).description(it.second)
+            }
+        )
     }
 
     fun perform(identifier: String, resultActionDsl: ResultActionsDsl): ResultActionsDsl {
