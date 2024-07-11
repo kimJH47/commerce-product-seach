@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UuidGenerator {
+public class RandomUUIDGenerator {
 
 	public String create() {
 		return UUID.randomUUID().toString();
