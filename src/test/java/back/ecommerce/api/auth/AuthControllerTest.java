@@ -1,4 +1,4 @@
-package back.ecommerce.api;
+package back.ecommerce.api.auth;
 
 import static back.ecommerce.exception.ErrorCode.*;
 import static org.mockito.BDDMockito.*;
@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.api.auth.AuthController;
+import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.auth.dto.request.LoginRequest;
 import back.ecommerce.auth.dto.request.SignUpRequest;
 import back.ecommerce.auth.dto.response.SignUpDto;
