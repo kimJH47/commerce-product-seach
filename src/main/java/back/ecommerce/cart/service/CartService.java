@@ -34,7 +34,8 @@ public class CartService {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
 		Cart userCart = Cart.create(email, product, quantity);
-		return AddCartResponse.create(cartRepository.save(userCart));
+		cartRepository.save(userCart);
+		return new AddCartResponse(userCart.getId(), userCart.getQuantity(), userCart.getPrice());
 	}
 
 	@Transactional(readOnly = true)
