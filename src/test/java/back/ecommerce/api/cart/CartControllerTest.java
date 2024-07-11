@@ -1,4 +1,4 @@
-package back.ecommerce.api;
+package back.ecommerce.api.cart;
 
 import static back.ecommerce.exception.ErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -30,7 +30,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.api.cart.CartController;
+import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.api.common.GlobalExceptionHandler;
 import back.ecommerce.auth.annotaion.UserEmail;
 import back.ecommerce.cart.dto.request.AddCartRequest;
