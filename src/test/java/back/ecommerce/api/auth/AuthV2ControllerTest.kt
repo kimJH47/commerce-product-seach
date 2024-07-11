@@ -75,19 +75,19 @@ class AuthV2ControllerTest(
                     mockMvc.docPost("/api/v2/auth/sign-up") {
                         contentType = MediaType.APPLICATION_JSON
                         content = objectMapper.writeValueAsString(SignUpRequest("test@test.com", "pass"))
-                    }.andExpect { status { isOk() } }
-                        .andExpect {
-                            jsonPath("$.message", equalTo("회원가입 요청이 성공적으로 완료되었습니다."))
-                            jsonPath("$.entity.email", equalTo("test@test.com"))
-                            jsonPath("$.entity.requestTime", notNullValue())
-                        }.andDocument("회원가입 API") {
-                            requestFields("email" type STRING means "이메일", "password" type STRING means "비밀번호")
-                            responseFields(
-                                "message" type STRING means "응답 메시지",
-                                "entity.email" type STRING means "이메일",
-                                "entity.requestTime" type DATETIME means "요청시간"
-                            )
-                        }
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.message", equalTo("회원가입 요청이 성공적으로 완료되었습니다."))
+                        jsonPath("$.entity.email", equalTo("test@test.com"))
+                        jsonPath("$.entity.requestTime", notNullValue())
+                    }.andDocument("회원가입 API") {
+                        requestFields("email" type STRING means "이메일", "password" type STRING means "비밀번호")
+                        responseFields(
+                            "message" type STRING means "응답 메시지",
+                            "entity.email" type STRING means "이메일",
+                            "entity.requestTime" type DATETIME means "요청시간"
+                        )
+                    }
                     verify {
                         exactly(1)
                         authService.signUp(any(), any())
@@ -107,8 +107,8 @@ class AuthV2ControllerTest(
             context("유효한 요청이 들어오면") {
                 it("상태코드 200과 함께 가입 이메일이 응답 되어야 한다.") {
                     mockMvc.docGet("/api/v2/auth/verified/{code}", code)
-                        .andExpect { status { isOk() } }
                         .andExpect {
+                            status { isOk() }
                             jsonPath("$.message", equalTo("이메일 인증이 성공적으로 완료되었습니다."))
                             jsonPath("$.entity.email", equalTo("test@test.com"))
                             jsonPath("$.entity.requestTime", notNullValue())
