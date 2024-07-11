@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.common.generator.UuidGenerator;
+import back.ecommerce.common.generator.RandomUUIDGenerator;
 import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.user.entity.User;
 import back.ecommerce.auth.dto.response.SignUpDto;
@@ -40,13 +40,13 @@ class AuthServiceTest {
 	@Mock
 	TokenProvider tokenProvider;
 	@Mock
-	UuidGenerator uuidGenerator;
+	RandomUUIDGenerator randomUUIDGenerator;
 	@Mock
 	SignUpService signUpService;
 
 	@BeforeEach
 	void setUp() {
-		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, uuidGenerator, signUpService);
+		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, randomUUIDGenerator, signUpService);
 	}
 
 	@Test
@@ -60,7 +60,7 @@ class AuthServiceTest {
 			.willReturn(Optional.of(user));
 		given(passwordEncoder.matches(anyString(), anyString()))
 			.willReturn(true);
-		given(tokenProvider.create(anyString())).willReturn(expected);
+		given(tokenProvider.provide(anyString())).willReturn(expected);
 
 		//when
 		TokenResponse actual = authService.createToken("dmdasdlm@email.com", "ddmlasMKL#sla@");
@@ -72,7 +72,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(1)).create(anyString());
+		then(tokenProvider).should(times(1)).provide(anyString());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(0)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).create(anyString());
+		then(tokenProvider).should(times(0)).provide(anyString());
 
 	}
 
@@ -111,7 +111,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).create(anyString());
+		then(tokenProvider).should(times(0)).provide(anyString());
 	}
 
 	@Test
@@ -121,7 +121,7 @@ class AuthServiceTest {
 		String email = "tray@gmail.com";
 		String password = "saldkmLM@@!#KJ!@";
 
-		given(uuidGenerator.create())
+		given(randomUUIDGenerator.create())
 			.willReturn("133812312");
 
 		//when
@@ -130,7 +130,7 @@ class AuthServiceTest {
 		//then
 		assertThat(signUpDto.getEmail()).isEqualTo(email);
 
-		then(uuidGenerator).should(times(1)).create();
+		then(randomUUIDGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
 	}
 
@@ -141,7 +141,7 @@ class AuthServiceTest {
 		String email = "tray@gmail.com";
 		String password = "saldkmLM@@!#KJ!@";
 
-		given(uuidGenerator.create())
+		given(randomUUIDGenerator.create())
 			.willReturn("133812312");
 		doThrow(new CustomException(ErrorCode.DUPLICATE_USER_EMAIL)).when(signUpService)
 			.saveUserSignUpInfo(anyString(), anyString(), anyString());
@@ -151,7 +151,7 @@ class AuthServiceTest {
 			.isInstanceOf(CustomException.class)
 			.hasMessage("이미 가입된 이메일이 존재합니다.");
 
-		then(uuidGenerator).should(times(1)).create();
+		then(randomUUIDGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
 
 	}

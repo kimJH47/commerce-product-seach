@@ -55,7 +55,7 @@ public class InterceptorApiTest {
 	void interceptor() throws Exception {
 		//given
 		String email = "myad@email.com";
-		Token token = tokenProvider.create(email);
+		Token token = tokenProvider.provide(email);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBearerAuth(token.getValue());
@@ -118,7 +118,7 @@ public class InterceptorApiTest {
 	void authorizationHeader_invalidAuthType() throws Exception {
 		//given
 		String email = "myad@email.com";
-		Token token = tokenProvider.create(email);
+		Token token = tokenProvider.provide(email);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBasicAuth(token.getValue());
@@ -142,7 +142,7 @@ public class InterceptorApiTest {
 	void token_expiredTime() throws Exception {
 		//given
 		String email = "myad@email.com";
-		Token token = tokenProvider.create(email);
+		Token token = tokenProvider.provide(email);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBearerAuth(token.getValue());
@@ -166,7 +166,7 @@ public class InterceptorApiTest {
 	void token_invalid() throws Exception {
 		//given
 		String email = "myad@email.com";
-		Token token = tokenProvider.create(email);
+		Token token = tokenProvider.provide(email);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBearerAuth(token.getValue() + "1");
