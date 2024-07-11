@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import back.ecommerce.api.payment.OrderProductDto;
-import back.ecommerce.common.generator.UuidGenerator;
+import back.ecommerce.common.generator.RandomUUIDGenerator;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.order.OrderGroupRepository;
@@ -24,7 +24,7 @@ public class OrderService {
 	private final OrderGroupRepository orderGroupRepository;
 	private final ProductRepository productRepository;
 	private final UserRepository userRepository;
-	private final UuidGenerator uuidGenerator;
+	private final RandomUUIDGenerator randomUUIDGenerator;
 
 	@Transactional
 	public OrderGroupDto createOrder(String userEmail, Long totalPrice, List<OrderProductDto> orderProducts) {
@@ -61,7 +61,7 @@ public class OrderService {
 	}
 
 	private OrderGroup createOrderGroup(String email, Long totalPrice, List<OrderProductDto> products) {
-		String orderCode = uuidGenerator.create();
+		String orderCode = randomUUIDGenerator.create();
 		int quantity = calculateTotalQuantity(products);
 		String name = createShortenName(products, quantity);
 		return OrderGroup.createWithOrderItems(email, totalPrice, quantity, name, orderCode, products);
