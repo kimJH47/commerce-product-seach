@@ -63,6 +63,7 @@ dependencies {
     //Auth JWT
     implementation("org.springframework.security:spring-security-crypto")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
 
     //queryDSL
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")

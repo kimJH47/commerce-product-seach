@@ -1,75 +1,64 @@
-package back.ecommerce.auth.token;
+package back.ecommerce.auth.token
 
-import static io.jsonwebtoken.SignatureAlgorithm.*;
-
-import java.util.Date;
-import java.util.HashMap;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import back.ecommerce.exception.AuthenticationException;
-import back.ecommerce.exception.ErrorCode;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import back.ecommerce.exception.AuthenticationException
+import back.ecommerce.exception.ErrorCode
+import io.jsonwebtoken.*
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
-public class TokenProvider {
+class TokenProvider(
+    @Value("\${jwt.secretKey}")
+    private val securityKey: String
+) {
 
-	private static final String TYPE = "Bearer";
-	private static final SignatureAlgorithm SIGNATURE_ALGORITHM = HS256;
+    private val parser: JwtParser = Jwts.parser()
 
-	@Value("${jwt.secretKey}")
-	private String securityKey;
-	@Value("${JWT_TOKEN_EXPIRED_TIME}")
-	private int expiredTime;
+    fun provide(email: String, expiredTime: Int): Token {
+        val payload = HashMap<String, Any>()
+        payload["email"] = email
 
-	private final JwtParser parser = Jwts.parser();
+        val token = Jwts.builder()
+            .setHeaderParam("typ", "JWT")
+            .setHeaderParam("alg", SIGNATURE_ALGORITHM)
+            .setClaims(payload)
+            .setExpiration(createExpireTime(expiredTime))
+            .signWith(SignatureAlgorithm.HS256, securityKey)
+            .compact()
 
-	public Token provide(String email) {
+        return Token(token, expiredTime, TYPE)
+    }
 
-		HashMap<String, Object> payload = new HashMap<>();
-		payload.put("email", email);
+    private fun createExpireTime(expireTime: Int): Date {
+        val expireDate = Date()
+        expireDate.time += expireTime
+        return expireDate
+    }
 
-		String token = Jwts.builder()
-			.setHeaderParam("typ", "JWT")
-			.setHeaderParam("alg", SIGNATURE_ALGORITHM)
-			.setClaims(payload)
-			.setExpiration(createExpireTime(expiredTime))
-			.signWith(HS256, securityKey)
-			.compact();
+    fun extractClaim(token: String?, claimName: String): String {
+        return kotlin.runCatching {
+            parser.setSigningKey(securityKey)
+                .parseClaimsJws(token)
+                .body
+                .get(claimName, String::class.java)
+        }.getAndNullDefaultOrElse("") {
+            when (it) {
+                is SignatureException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_INVALID)
+                is UnsupportedJwtException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_INVALID)
+                is MalformedJwtException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_INVALID)
+                is ExpiredJwtException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_EXPIRED)
+                else -> throw AuthenticationException(ErrorCode.TOKEN_IS_EMPTY)
+            }
+        }
+    }
 
-		return new Token(token, expiredTime, TYPE);
-	}
+    companion object {
+        private const val TYPE = "Bearer"
+        private val SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256
+    }
+}
 
-	private Date createExpireTime(int expireTime) {
-		Date expireDate = new Date();
-		expireDate.setTime(expireDate.getTime() + expireTime);
-		return expireDate;
-	}
-
-	public String extractClaim(String token, String claimName) {
-		try {
-			String claim = parser.setSigningKey(securityKey)
-				.parseClaimsJws(token)
-				.getBody()
-				.get(claimName, String.class);
-
-			if (claim == null) {
-				return "";
-			}
-			return claim;
-		} catch (IllegalArgumentException e) {
-			throw new AuthenticationException(ErrorCode.TOKEN_IS_EMPTY);
-		} catch (SignatureException | UnsupportedJwtException | MalformedJwtException e) {
-			throw new AuthenticationException(ErrorCode.TOKEN_HAS_INVALID);
-		} catch (ExpiredJwtException e) {
-			throw new AuthenticationException(ErrorCode.TOKEN_HAS_EXPIRED);
-		}
-	}
+inline fun <R, T : R> Result<T>.getAndNullDefaultOrElse(default: T, onFailure: (exception: Throwable) -> R): R {
+    return this.getOrElse { throwable -> onFailure(throwable) } ?: default
 }
