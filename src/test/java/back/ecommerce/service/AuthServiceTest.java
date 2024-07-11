@@ -60,7 +60,7 @@ class AuthServiceTest {
 			.willReturn(Optional.of(user));
 		given(passwordEncoder.matches(anyString(), anyString()))
 			.willReturn(true);
-		given(tokenProvider.create(anyString(), anyInt())).willReturn(expected);
+		given(tokenProvider.create(anyString())).willReturn(expected);
 
 		//when
 		TokenResponse actual = authService.createToken("dmdasdlm@email.com", "ddmlasMKL#sla@");
@@ -72,7 +72,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(1)).create(anyString(), anyInt());
+		then(tokenProvider).should(times(1)).create(anyString());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(0)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).create(anyString(), anyInt());
+		then(tokenProvider).should(times(0)).create(anyString());
 
 	}
 
@@ -111,7 +111,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).create(anyString(), anyInt());
+		then(tokenProvider).should(times(0)).create(anyString());
 	}
 
 	@Test
