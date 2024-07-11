@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import back.ecommerce.auth.service.VerificationURLGenerator;
 import back.ecommerce.auth.token.Token;
 import back.ecommerce.auth.token.TokenProvider;
 import back.ecommerce.common.generator.RandomUUIDGenerator;
@@ -43,10 +44,13 @@ class AuthServiceTest {
 	RandomUUIDGenerator randomUUIDGenerator;
 	@Mock
 	SignUpService signUpService;
+	@Mock
+	VerificationURLGenerator verificationURLGenerator;
 
 	@BeforeEach
 	void setUp() {
-		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, randomUUIDGenerator, signUpService);
+		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, randomUUIDGenerator,
+			signUpService, verificationURLGenerator, 100000000);
 	}
 
 	@Test
@@ -60,7 +64,7 @@ class AuthServiceTest {
 			.willReturn(Optional.of(user));
 		given(passwordEncoder.matches(anyString(), anyString()))
 			.willReturn(true);
-		given(tokenProvider.provide(anyString())).willReturn(expected);
+		given(tokenProvider.provide(anyString(), anyInt())).willReturn(expected);
 
 		//when
 		TokenResponse actual = authService.createToken("dmdasdlm@email.com", "ddmlasMKL#sla@");
@@ -72,7 +76,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(1)).provide(anyString());
+		then(tokenProvider).should(times(1)).provide(anyString(), anyInt());
 	}
 
 	@Test
@@ -89,7 +93,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(0)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).provide(anyString());
+		then(tokenProvider).should(times(0)).provide(anyString(), anyInt());
 
 	}
 
@@ -97,7 +101,8 @@ class AuthServiceTest {
 	@DisplayName("토큰 생성시 비밀번호가 일치하지 않으면 PasswordNotMatchedException 이 발생해야한다.")
 	void create_passwordNotMatchedException() {
 		//given
-		User user = new User(10L, "dmdasdlm@email.com", "ddmlasMKL#sla@");
+		String email = "dmdasdlm@email.com";
+		User user = new User(10L, email, "ddmlasMKL#sla@");
 
 		given(userRepository.findByEmail(anyString()))
 			.willReturn(Optional.of(user));
@@ -111,7 +116,7 @@ class AuthServiceTest {
 
 		then(userRepository).should(times(1)).findByEmail(anyString());
 		then(passwordEncoder).should(times(1)).matches(anyString(), anyString());
-		then(tokenProvider).should(times(0)).provide(anyString());
+		then(tokenProvider).should(times(0)).provide(anyString(), anyInt());
 	}
 
 	@Test
@@ -123,6 +128,7 @@ class AuthServiceTest {
 
 		given(randomUUIDGenerator.create())
 			.willReturn("133812312");
+		given(verificationURLGenerator.generateVerificationURL(anyString())).willReturn("verificationUrl");
 
 		//when
 		SignUpDto signUpDto = authService.signUp(email, password);
@@ -132,6 +138,7 @@ class AuthServiceTest {
 
 		then(randomUUIDGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
+		then(verificationURLGenerator).should(times(1)).generateVerificationURL(anyString());
 	}
 
 	@Test

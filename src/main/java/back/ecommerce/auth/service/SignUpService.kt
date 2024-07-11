@@ -1,51 +1,52 @@
-package back.ecommerce.auth.service;
+package back.ecommerce.auth.service
 
-import static back.ecommerce.exception.ErrorCode.*;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import back.ecommerce.user.entity.SignUpInfo;
-import back.ecommerce.user.entity.User;
-import back.ecommerce.exception.CustomException;
-import back.ecommerce.user.repository.SignUpRepository;
-import back.ecommerce.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import back.ecommerce.exception.CustomException
+import back.ecommerce.exception.ErrorCode
+import back.ecommerce.user.entity.SignUpInfo
+import back.ecommerce.user.entity.User
+import back.ecommerce.user.repository.SignUpRepository
+import back.ecommerce.user.repository.UserRepository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
-public class SignUpService {
+class SignUpService(
+    private val userRepository: UserRepository,
+    private val signUpRepository: SignUpRepository
+) {
 
-	private static final long EMAIL_TOKEN_EXPIRED_SECONDS = 60 * 15; // min
+    @Transactional
+    fun saveUserSignUpInfo(code: String, email: String, password: String) {
+        validateEmail(email).also {
+            signUpRepository.save(SignUpInfo.create(code, email, password, EMAIL_TOKEN_EXPIRED_SECONDS))
+        }
+    }
 
-	private final UserRepository userRepository;
-	private final SignUpRepository signUpRepository;
+    @Transactional
+    fun verifyCodeAndSaveUser(code: String): String {
+        val signUpInfo = signUpRepository.findByVerifiedCode(code)
+            .orElseThrow { CustomException(ErrorCode.EMAIL_CODE_NOT_FOUND) }.also {
+                validate(it)
+            }
 
-	@Transactional
-	public void saveUserSignUpInfo(String code, String email, String password) {
-		validateEmail(email);
-		signUpRepository.save(SignUpInfo.create(code, email, password, EMAIL_TOKEN_EXPIRED_SECONDS));
-	}
+        userRepository.save(User.create(signUpInfo.email, signUpInfo.password))
+        return signUpInfo.email
+    }
 
-	@Transactional
-	public String verifyCodeAndSaveUser(String code) {
-		SignUpInfo signUpInfo = signUpRepository.findByVerifiedCode(code)
-			.orElseThrow(() -> new CustomException(EMAIL_CODE_NOT_FOUND));
-		validateExpired(signUpInfo);
-		validateEmail(signUpInfo.getEmail());
-		userRepository.save(User.create(signUpInfo.getEmail(), signUpInfo.getPassword()));
-		return signUpInfo.getEmail();
-	}
+    private fun validate(signUpInfo: SignUpInfo) {
+        validateEmail(signUpInfo.email)
+        if (signUpInfo.isExpired) {
+            throw CustomException(ErrorCode.TOKEN_HAS_EXPIRED)
+        }
+    }
 
-	private void validateEmail(String email) {
-		if (userRepository.existsByEmail(email)) {
-			throw new CustomException(DUPLICATE_USER_EMAIL);
-		}
-	}
+    private fun validateEmail(email: String) {
+        if (userRepository.existsByEmail(email)) {
+            throw CustomException(ErrorCode.DUPLICATE_USER_EMAIL)
+        }
+    }
 
-	private void validateExpired(SignUpInfo signUpInfo) {
-		if (signUpInfo.isExpired()) {
-			throw new CustomException(TOKEN_HAS_EXPIRED);
-		}
-	}
+    companion object {
+        private const val EMAIL_TOKEN_EXPIRED_SECONDS = (60 * 15).toLong()
+    }
 }

@@ -1,60 +1,53 @@
-package back.ecommerce.auth.service;
+package back.ecommerce.auth.service
 
-import static back.ecommerce.exception.ErrorCode.*;
-
-import java.time.LocalDateTime;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import back.ecommerce.auth.token.Token;
-import back.ecommerce.auth.token.TokenProvider;
-import back.ecommerce.common.generator.UuidGenerator;
-import back.ecommerce.user.entity.User;
-import back.ecommerce.auth.dto.response.SignUpDto;
-import back.ecommerce.auth.dto.response.TokenResponse;
-import back.ecommerce.auth.dto.response.SignUpResponse;
-import back.ecommerce.exception.AuthenticationException;
-import back.ecommerce.exception.CustomException;
-import back.ecommerce.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import back.ecommerce.auth.dto.response.SignUpDto
+import back.ecommerce.auth.dto.response.SignUpResponse
+import back.ecommerce.auth.dto.response.TokenResponse
+import back.ecommerce.auth.token.TokenProvider
+import back.ecommerce.common.generator.RandomUUIDGenerator
+import back.ecommerce.exception.AuthenticationException
+import back.ecommerce.exception.CustomException
+import back.ecommerce.exception.ErrorCode
+import back.ecommerce.user.repository.UserRepository
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
-@RequiredArgsConstructor
-public class AuthService {
+class AuthService(
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val tokenProvider: TokenProvider,
+    private val randomUUIDGenerator: RandomUUIDGenerator,
+    private val signUpService: SignUpService,
+    private val verificationURLGenerator: VerificationURLGenerator,
+    @Value("\${jwt.expiredTime}") private val expiredTime: Int
+) {
+    @Transactional(readOnly = true)
+    fun createToken(email: String, password: String): TokenResponse {
+        val user = userRepository.findByEmail(email)
+            .orElseThrow { CustomException(ErrorCode.USER_NOT_FOUND) }
+        validatePassword(password, user.password)
+        val token = tokenProvider.provide(email, expiredTime)
+        return TokenResponse(token.value, token.expireTime.toLong(), token.type)
+    }
 
-	private static final int JWT_TOKEN_EXPIRED_TIME = 1000 * 60 * 60;
+    private fun validatePassword(rawPassword: String, encodePassword: String) {
+        passwordEncoder.matches(
+            rawPassword, encodePassword
+        ) || throw AuthenticationException(ErrorCode.PASSWORD_NOT_MATCHED)
+    }
 
-	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final TokenProvider tokenProvider;
-	private final UuidGenerator uuidGenerator;
-	private final SignUpService signUpService;
+    fun signUp(email: String, password: String): SignUpDto {
+        val code = randomUUIDGenerator.create()
+        signUpService.saveUserSignUpInfo(code, email, password)
+        return SignUpDto(email, verificationURLGenerator.generateVerificationURL(code))
+    }
 
-	@Transactional(readOnly = true)
-	public TokenResponse createToken(String email, String password) {
-		User user = userRepository.findByEmail(email)
-			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-		if (!passwordEncoder.matches(password, user.getPassword())) {
-			throw new AuthenticationException(PASSWORD_NOT_MATCHED);
-		}
-		Token token = tokenProvider.create(email, JWT_TOKEN_EXPIRED_TIME);
-		return new TokenResponse(token.getValue(), token.getExpireTime(), token.getType());
-	}
-
-	public SignUpDto signUp(String email, String password) {
-		String code = uuidGenerator.create();
-		signUpService.saveUserSignUpInfo(code, email, password);
-		return new SignUpDto(email, createVerifiedUrl(code));
-	}
-
-	private String createVerifiedUrl(String code) {
-		return "https://kecommerce.shop/auth/verified/" + code;
-	}
-
-	public SignUpResponse verifyEmailCode(String code) {
-		String email = signUpService.verifyCodeAndSaveUser(code);
-		return new SignUpResponse(email, LocalDateTime.now());
-	}
+    fun verifyEmailCode(code: String): SignUpResponse {
+        val email = signUpService.verifyCodeAndSaveUser(code)
+        return SignUpResponse(email, LocalDateTime.now())
+    }
 }
