@@ -27,26 +27,25 @@ class TokenProviderTest {
 	@DisplayName("JWT 토큰이 생성 되어야한다.")
 	void provideToken() {
 		//given
-		String expected = "dmkl1s@gmail.com";
+		String email = "dmkl1s@gmail.com";
 		int expireTime = 1000 * 60 * 60;
 		//when
-		Token token = tokenProvider.provide(expected);
+		Token token = tokenProvider.provide(email, expireTime);
 		String actual = Jwts.parser()
 			.setSigningKey(securityKey)
 			.parseClaimsJws(token.getValue())
 			.getBody()
 			.get("email").toString();
 		//then
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isEqualTo(email);
 	}
 
 	@Test
 	@DisplayName("토큰에 유효기간이 만료되면 TokenHasExpiredException 이 발생한다.")
 	void validate_expireDate() {
 		//given
-		String expected = "dmkl1s@gmail.com";
-		int expireTime = -10000;
-		Token token = tokenProvider.provide(expected);
+		String email = "dmkl1s@gmail.com";
+		Token token = tokenProvider.provide(email, 0);
 
 		//expect
 		assertThatThrownBy(() -> tokenProvider.extractClaim(token.getValue(), "email"))
@@ -62,8 +61,6 @@ class TokenProviderTest {
 			tokenProvider.extractClaim(null, "email"))
 			.isInstanceOf(AuthenticationException.class)
 			.hasMessage("토큰이 비어있습니다.");
-
-
 	}
 
 	@Test
@@ -75,7 +72,7 @@ class TokenProviderTest {
 			+ ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 		//expect
-		assertThatThrownBy(() -> tokenProvider.extractClaim(invalidToken,"email"))
+		assertThatThrownBy(() -> tokenProvider.extractClaim(invalidToken, "email"))
 			.isInstanceOf(CustomException.class)
 			.hasMessage("토큰이 유효하지 않습니다.");
 	}
@@ -87,8 +84,8 @@ class TokenProviderTest {
 		String expected1 = "dmkl1s@gmail.com";
 		String expected2 = "ontfasdmkl1s@gmail.co.kr";
 		int expireTime = 1000 * 60 * 60;
-		Token token1 = tokenProvider.provide(expected1);
-		Token token2 = tokenProvider.provide(expected2);
+		Token token1 = tokenProvider.provide(expected1, 10000000);
+		Token token2 = tokenProvider.provide(expected2, 10000000);
 
 		//when
 		String actual1 = tokenProvider.extractClaim(token1.getValue(), "email");
@@ -105,7 +102,7 @@ class TokenProviderTest {
 		//given
 		String expected = "dmkl1s@gmail.com";
 		int expireTime = 1000 * 60 * 60;
-		Token token = tokenProvider.provide(expected);
+		Token token = tokenProvider.provide(expected, 10000000);
 
 		//expect
 		String actual = tokenProvider.extractClaim(token.getValue(), "email@@");
