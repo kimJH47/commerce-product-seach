@@ -26,9 +26,12 @@ public class TokenProvider {
 
 	@Value("${jwt.secretKey}")
 	private String securityKey;
+	@Value("${JWT_TOKEN_EXPIRED_TIME}")
+	private int expiredTime;
+
 	private final JwtParser parser = Jwts.parser();
 
-	public Token create(String email, int expireTime) {
+	public Token create(String email) {
 
 		HashMap<String, Object> payload = new HashMap<>();
 		payload.put("email", email);
@@ -37,11 +40,11 @@ public class TokenProvider {
 			.setHeaderParam("typ", "JWT")
 			.setHeaderParam("alg", SIGNATURE_ALGORITHM)
 			.setClaims(payload)
-			.setExpiration(createExpireTime(expireTime))
+			.setExpiration(createExpireTime(expiredTime))
 			.signWith(HS256, securityKey)
 			.compact();
 
-		return new Token(token, expireTime, TYPE);
+		return new Token(token, expiredTime, TYPE);
 	}
 
 	private Date createExpireTime(int expireTime) {
