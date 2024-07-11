@@ -25,12 +25,12 @@ class TokenProviderTest {
 
 	@Test
 	@DisplayName("JWT 토큰이 생성 되어야한다.")
-	void createToken() {
+	void provideToken() {
 		//given
 		String expected = "dmkl1s@gmail.com";
 		int expireTime = 1000 * 60 * 60;
 		//when
-		Token token = tokenProvider.create(expected);
+		Token token = tokenProvider.provide(expected);
 		String actual = Jwts.parser()
 			.setSigningKey(securityKey)
 			.parseClaimsJws(token.getValue())
@@ -46,7 +46,7 @@ class TokenProviderTest {
 		//given
 		String expected = "dmkl1s@gmail.com";
 		int expireTime = -10000;
-		Token token = tokenProvider.create(expected);
+		Token token = tokenProvider.provide(expected);
 
 		//expect
 		assertThatThrownBy(() -> tokenProvider.extractClaim(token.getValue(), "email"))
@@ -87,8 +87,8 @@ class TokenProviderTest {
 		String expected1 = "dmkl1s@gmail.com";
 		String expected2 = "ontfasdmkl1s@gmail.co.kr";
 		int expireTime = 1000 * 60 * 60;
-		Token token1 = tokenProvider.create(expected1);
-		Token token2 = tokenProvider.create(expected2);
+		Token token1 = tokenProvider.provide(expected1);
+		Token token2 = tokenProvider.provide(expected2);
 
 		//when
 		String actual1 = tokenProvider.extractClaim(token1.getValue(), "email");
@@ -105,7 +105,7 @@ class TokenProviderTest {
 		//given
 		String expected = "dmkl1s@gmail.com";
 		int expireTime = 1000 * 60 * 60;
-		Token token = tokenProvider.create(expected);
+		Token token = tokenProvider.provide(expected);
 
 		//expect
 		String actual = tokenProvider.extractClaim(token.getValue(), "email@@");

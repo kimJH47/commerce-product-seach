@@ -31,7 +31,7 @@ public class TokenProvider {
 
 	private final JwtParser parser = Jwts.parser();
 
-	public Token create(String email) {
+	public Token provide(String email) {
 
 		HashMap<String, Object> payload = new HashMap<>();
 		payload.put("email", email);
