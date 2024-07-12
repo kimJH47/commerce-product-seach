@@ -9,9 +9,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import back.ecommerce.api.resolver.SearchConditionRequestResolver;
-import back.ecommerce.auth.interceptor.AdminAuthorizationInterceptor;
-import back.ecommerce.auth.interceptor.JwtAuthenticationInterceptor;
-import back.ecommerce.auth.resolver.UserEmailArgumentResolver;
+import back.ecommerce.api.auth.interceptor.AdminAuthorizationInterceptor;
+import back.ecommerce.api.auth.interceptor.JwtAuthenticationInterceptor;
+import back.ecommerce.api.auth.resolver.UserEmailArgumentResolver;
 import back.ecommerce.common.logging.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
 

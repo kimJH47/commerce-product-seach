@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import back.ecommerce.auth.annotaion.UserEmail;
+import back.ecommerce.api.auth.resolver.annotation.UserEmail;
 import back.ecommerce.cart.dto.request.AddCartRequest;
 import back.ecommerce.cart.dto.request.DeleteCartRequest;
 import back.ecommerce.api.dto.Response;

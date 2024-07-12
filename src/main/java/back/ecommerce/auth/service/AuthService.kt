@@ -3,7 +3,6 @@ package back.ecommerce.auth.service
 import back.ecommerce.auth.dto.response.SignUpDto
 import back.ecommerce.auth.dto.response.SignUpResponse
 import back.ecommerce.auth.dto.response.TokenResponse
-import back.ecommerce.auth.token.TokenProvider
 import back.ecommerce.common.generator.RandomUUIDGenerator
 import back.ecommerce.exception.AuthenticationException
 import back.ecommerce.exception.CustomException

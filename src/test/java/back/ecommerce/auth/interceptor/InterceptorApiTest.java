@@ -17,8 +17,8 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.auth.token.Token;
-import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.auth.dto.response.Token;
+import back.ecommerce.auth.service.TokenProvider;
 import back.ecommerce.user.entity.User;
 import back.ecommerce.product.entity.Category;
 import back.ecommerce.product.entity.Product;

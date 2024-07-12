@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import back.ecommerce.api.dto.Response;
-import back.ecommerce.auth.annotaion.UserEmail;
+import back.ecommerce.api.auth.resolver.annotation.UserEmail;
 import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.order.service.OrderGroupDto;
 import back.ecommerce.order.service.OrderService;

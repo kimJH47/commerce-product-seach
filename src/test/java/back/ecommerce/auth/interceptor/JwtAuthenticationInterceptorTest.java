@@ -3,6 +3,7 @@ package back.ecommerce.auth.interceptor;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import back.ecommerce.api.auth.interceptor.JwtAuthenticationInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
-import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.auth.service.TokenProvider;
 import back.ecommerce.exception.AuthenticationException;
 
 @ExtendWith(MockitoExtension.class)

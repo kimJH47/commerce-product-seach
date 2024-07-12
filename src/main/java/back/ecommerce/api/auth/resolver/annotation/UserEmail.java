@@ -1,4 +1,4 @@
-package back.ecommerce.auth.annotaion;
+package back.ecommerce.api.auth.resolver.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

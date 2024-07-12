@@ -1,7 +1,7 @@
 package back.ecommerce.api.cart.v2
 
 import back.ecommerce.api.dto.Response
-import back.ecommerce.auth.annotaion.UserEmail
+import back.ecommerce.api.auth.resolver.annotation.UserEmail
 import back.ecommerce.cart.dto.request.AddCartRequest
 import back.ecommerce.cart.dto.request.DeleteCartRequest
 import back.ecommerce.cart.service.CartService

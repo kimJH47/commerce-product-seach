@@ -1,4 +1,4 @@
-package back.ecommerce.auth.resolver;
+package back.ecommerce.api.auth.resolver;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -7,7 +7,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import back.ecommerce.auth.annotaion.UserEmail;
+import back.ecommerce.api.auth.resolver.annotation.UserEmail;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;

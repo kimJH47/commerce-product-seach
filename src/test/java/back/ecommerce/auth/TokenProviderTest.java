@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import back.ecommerce.auth.token.Token;
-import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.auth.dto.response.Token;
+import back.ecommerce.auth.service.TokenProvider;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.CustomException;
 import io.jsonwebtoken.Jwts;
