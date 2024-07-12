@@ -1,4 +1,4 @@
-package back.ecommerce.auth.interceptor;
+package back.ecommerce.api.auth.interceptor;
 
 import static back.ecommerce.exception.ErrorCode.*;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.auth.service.TokenProvider;
 import back.ecommerce.exception.AuthenticationException;
 import lombok.RequiredArgsConstructor;
 

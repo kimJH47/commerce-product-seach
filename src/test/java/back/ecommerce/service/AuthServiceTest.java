@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import back.ecommerce.auth.service.VerificationURLGenerator;
-import back.ecommerce.auth.token.Token;
-import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.auth.dto.response.Token;
+import back.ecommerce.auth.service.TokenProvider;
 import back.ecommerce.common.generator.RandomUUIDGenerator;
 import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.user.entity.User;

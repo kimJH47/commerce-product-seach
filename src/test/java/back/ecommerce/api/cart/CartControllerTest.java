@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.api.common.GlobalExceptionHandler;
-import back.ecommerce.auth.annotaion.UserEmail;
+import back.ecommerce.api.auth.resolver.annotation.UserEmail;
 import back.ecommerce.cart.dto.request.AddCartRequest;
 import back.ecommerce.cart.dto.response.AddCartResponse;
 import back.ecommerce.cart.dto.response.CartListResponse;

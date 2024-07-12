@@ -4,7 +4,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import back.ecommerce.auth.token.TokenProvider;
+import back.ecommerce.auth.service.TokenProvider;
 import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.admin.repository.AdminRepository;

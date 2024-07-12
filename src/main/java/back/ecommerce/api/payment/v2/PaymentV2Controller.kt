@@ -2,7 +2,7 @@ package back.ecommerce.api.payment.v2
 
 import back.ecommerce.api.dto.Response
 import back.ecommerce.api.payment.PaymentReadyResponse
-import back.ecommerce.auth.annotaion.UserEmail
+import back.ecommerce.api.auth.resolver.annotation.UserEmail
 import back.ecommerce.client.KakaoPaymentClient
 import back.ecommerce.order.service.OrderService
 import back.ecommerce.payment.dto.request.PaymentCancelRequest

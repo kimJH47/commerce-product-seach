@@ -1,7 +1,7 @@
 package back.ecommerce.api.spec
 
 import back.ecommerce.admin.repository.AdminRepository
-import back.ecommerce.auth.token.TokenProvider
+import back.ecommerce.auth.service.TokenProvider
 import back.ecommerce.common.logging.GlobalLogger
 import io.kotest.core.extensions.Extension
 import io.kotest.core.spec.style.DescribeSpec

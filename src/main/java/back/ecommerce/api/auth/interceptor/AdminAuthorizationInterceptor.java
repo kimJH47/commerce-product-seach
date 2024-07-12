@@ -1,4 +1,4 @@
-package back.ecommerce.auth.interceptor;
+package back.ecommerce.api.auth.interceptor;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

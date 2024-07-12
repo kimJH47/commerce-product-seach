@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.api.common.GlobalExceptionHandler;
-import back.ecommerce.auth.annotaion.UserEmail;
+import back.ecommerce.api.auth.resolver.annotation.UserEmail;
 import back.ecommerce.client.KakaoPaymentClient;
 import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.exception.CustomException;

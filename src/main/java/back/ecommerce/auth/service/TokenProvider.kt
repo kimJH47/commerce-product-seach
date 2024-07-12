@@ -1,5 +1,6 @@
-package back.ecommerce.auth.token
+package back.ecommerce.auth.service
 
+import back.ecommerce.auth.dto.response.Token
 import back.ecommerce.exception.AuthenticationException
 import back.ecommerce.exception.ErrorCode
 import io.jsonwebtoken.*
