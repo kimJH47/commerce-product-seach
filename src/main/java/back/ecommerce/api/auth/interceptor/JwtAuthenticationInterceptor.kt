@@ -19,15 +19,14 @@ class JwtAuthenticationInterceptor(
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
 
-        request.getHeader(HttpHeaders.AUTHORIZATION)?.let {
-            if (it.startsWith(AUTHORIZATION_TYPE)) {
-                it.removePrefix(AUTHORIZATION_TYPE)
-            } else throw AuthenticationException(ErrorCode.AUTH_HEADER_INVALID)
-            tokenExtractor.extractClaim(it, EMAIL_ATTRIBUTE)
-        }.also {
+        val header = request.getHeader(HttpHeaders.AUTHORIZATION) ?: throw AuthenticationException(ErrorCode.TOKEN_IS_EMPTY)
+        if (!header.startsWith(AUTHORIZATION_TYPE)) {
+            throw AuthenticationException(ErrorCode.AUTH_HEADER_INVALID)
+        }
+        header.removePrefix(AUTHORIZATION_TYPE)
+        tokenExtractor.extractClaim(header, EMAIL_ATTRIBUTE).also {
             request.setAttribute(EMAIL_ATTRIBUTE, it)
-        } ?: throw AuthenticationException(ErrorCode.AUTH_HEADER_IS_EMPTY)
-
+        }
         return true
     }
 
