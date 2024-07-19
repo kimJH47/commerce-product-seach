@@ -8,5 +8,4 @@ data class SignUpRequest(
     val email: String,
     @field:NotBlank(message = "비밀번호는 필수적으로 필요합니다.")
     val password: String
-) {
-}
+)
