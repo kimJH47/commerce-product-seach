@@ -1,28 +1,30 @@
-package back.ecommerce.api.auth.interceptor;
+package back.ecommerce.api.auth.interceptor
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-import back.ecommerce.admin.repository.AdminRepository;
-import back.ecommerce.exception.AuthenticationException;
-import back.ecommerce.exception.ErrorCode;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import back.ecommerce.admin.repository.AdminRepository
+import back.ecommerce.exception.AuthenticationException
+import back.ecommerce.exception.ErrorCode
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.stereotype.Component
+import org.springframework.web.servlet.HandlerInterceptor
 
 @Component
-@RequiredArgsConstructor
-public class AdminAuthorizationInterceptor implements HandlerInterceptor {
+class AdminAuthorizationInterceptor(
+    private val adminRepository: AdminRepository
+) : HandlerInterceptor {
 
-	private static final String EMAIL_ATTRIBUTE = "email";
+    @Throws(Exception::class)
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
 
-	private final AdminRepository adminRepository;
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
-		Exception {
-		String email = (String)request.getAttribute(EMAIL_ATTRIBUTE);
-		adminRepository.findByEmail(email)
-			.orElseThrow(() -> new AuthenticationException(ErrorCode.ADMIN_NOT_FOUND));
-		return HandlerInterceptor.super.preHandle(request, response, handler);
-	}
+        val email = request.getAttribute(EMAIL_ATTRIBUTE) as String
+
+        adminRepository.findByEmail(email)
+            .orElseThrow { AuthenticationException(ErrorCode.ADMIN_NOT_FOUND) }
+
+        return super.preHandle(request, response, handler)
+    }
+
+    companion object {
+        private const val EMAIL_ATTRIBUTE = "email"
+    }
 }
