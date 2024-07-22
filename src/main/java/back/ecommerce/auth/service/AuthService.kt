@@ -41,7 +41,7 @@ class AuthService(
 
     fun signUp(email: String, password: String): SignUpDto {
         val code = randomUUIDGenerator.create()
-        signUpService.saveUserSignUpInfo(code, email, password)
+        signUpService.saveUserSignUpInfo(code, email, passwordEncoder.encode(password))
         return SignUpDto(email, verificationURLGenerator.generateVerificationURL(code))
     }
 
