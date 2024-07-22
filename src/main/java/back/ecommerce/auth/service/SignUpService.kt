@@ -17,7 +17,8 @@ class SignUpService(
 
     @Transactional
     fun saveUserSignUpInfo(code: String, email: String, password: String) {
-        validateEmail(email).also {
+        validateDuplicateEmail(email)
+        validateAlreadySignUpRequest(email).also {
             signUpRepository.save(SignUpInfo.create(code, email, password, EMAIL_TOKEN_EXPIRED_SECONDS))
         }
     }
@@ -26,27 +27,29 @@ class SignUpService(
     fun verifyCodeAndSaveUser(code: String): String {
         val signUpInfo = signUpRepository.findByVerifiedCode(code)
             .orElseThrow { CustomException(ErrorCode.EMAIL_CODE_NOT_FOUND) }.also {
-                validate(it)
+                if (it.isExpired) {
+                    throw CustomException(ErrorCode.TOKEN_HAS_EXPIRED)
+                }
             }
-
+        validateDuplicateEmail(signUpInfo.email)
         userRepository.save(User.create(signUpInfo.email, signUpInfo.password))
+        signUpRepository.deleteById(signUpInfo.id)
         return signUpInfo.email
     }
 
-    private fun validate(signUpInfo: SignUpInfo) {
-        validateEmail(signUpInfo.email)
-        if (signUpInfo.isExpired) {
-            throw CustomException(ErrorCode.TOKEN_HAS_EXPIRED)
+    private fun validateAlreadySignUpRequest(email: String) {
+        if (signUpRepository.existsByEmail(email)) {
+            throw CustomException(ErrorCode.ALREADY_SIGN_UP_EMAIL)
         }
     }
 
-    private fun validateEmail(email: String) {
+    private fun validateDuplicateEmail(email: String) {
         if (userRepository.existsByEmail(email)) {
             throw CustomException(ErrorCode.DUPLICATE_USER_EMAIL)
         }
     }
 
     companion object {
-        private const val EMAIL_TOKEN_EXPIRED_SECONDS = (60 * 15).toLong()
+        private const val EMAIL_TOKEN_EXPIRED_SECONDS = (60 * 15).toLong() //15분
     }
 }
