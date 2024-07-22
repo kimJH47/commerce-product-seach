@@ -32,10 +32,10 @@ public enum ErrorCode {
 	PAYMENT_NOT_FOUND(400, "payment", "일치하는 결제정보가 없습니다."),
 	ALREADY_PROCESS_PAYMENT(400, "payment", "이미 처리된 결제입니다."),
 	ORDER_NOT_FOUND(400, "order", "일치하는 주문정보가 없습니다."),
-	ALREADY_PROCESS_ORDER(400, "order", "이미 처리된 주문입니다.");
+	ALREADY_PROCESS_ORDER(400, "order", "이미 처리된 주문입니다."),
+	ALREADY_SIGN_UP_EMAIL(400, "signup", "이미 가입신청 된 이메일 입니다.");
 
 	private final int status;
 	private final String reasonField;
 	private final String description;
-
 }
