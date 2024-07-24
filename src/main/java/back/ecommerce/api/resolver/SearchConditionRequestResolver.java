@@ -30,7 +30,7 @@ public class SearchConditionRequestResolver implements HandlerMethodArgumentReso
 	public ProductSearchConditionRequest resolveArgument(@NotNull MethodParameter parameter,
 		ModelAndViewContainer mavContainer,
 		@NotNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-		return ProductSearchConditionRequest.create(extractCategory(webRequest), extractParameterToMap(webRequest));
+		return ProductSearchConditionRequest.Companion.create(extractCategory(webRequest), extractParameterToMap(webRequest));
 	}
 
 	private Category extractCategory(NativeWebRequest webRequest) {
