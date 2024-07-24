@@ -3,6 +3,7 @@ package back.ecommerce.api.auth.v2
 import back.ecommerce.api.dto.Response
 import back.ecommerce.auth.dto.request.LoginRequest
 import back.ecommerce.auth.dto.request.SignUpRequest
+import back.ecommerce.auth.dto.request.VerifyTokenRequest
 import back.ecommerce.auth.dto.response.SignUpResponse
 import back.ecommerce.auth.service.AuthService
 import back.ecommerce.publisher.aws.EmailPublisher
@@ -43,6 +44,14 @@ class AuthV2Controller(
         return Response.createSuccessResponse(
             "이메일 인증이 성공적으로 완료되었습니다.",
             authService.verifyEmailCode(code)
+        )
+    }
+
+    @PostMapping("/verify-token")
+    fun verifyToken(request: VerifyTokenRequest): ResponseEntity<Response> {
+        return Response.createSuccessResponse(
+            "토큰검증이 완료 되었습니다.",
+            Pair("isVerify", authService.verifyToken(request.token))
         )
     }
 }
