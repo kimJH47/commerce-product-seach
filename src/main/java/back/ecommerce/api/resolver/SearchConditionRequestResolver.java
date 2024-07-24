@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SearchConditionRequestResolver implements HandlerMethodArgumentResolver {
 
-	private static final int CATEGORY_INDEX = 3;
+	private static final int CATEGORY_INDEX = 4;
 	private static final String URI_SPLIT_REGEX = "/";
 
 	@Override
