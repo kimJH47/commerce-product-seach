@@ -22,6 +22,7 @@ class AuthService(
     private val randomUUIDGenerator: RandomUUIDGenerator,
     private val signUpService: SignUpService,
     private val verificationURLGenerator: VerificationURLGenerator,
+    private val tokenExtractor: TokenExtractor,
     @Value("\${jwt.expiredTime}") private val expiredTime: Int
 ) {
     @Transactional(readOnly = true)
@@ -48,5 +49,14 @@ class AuthService(
     fun verifyEmailCode(code: String): SignUpResponse {
         val email = signUpService.verifyCodeAndSaveUser(code)
         return SignUpResponse(email, LocalDateTime.now())
+    }
+
+    fun verifyToken(token: String): Boolean {
+        return try {
+            tokenExtractor.extractClaim(token, "email")
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }
