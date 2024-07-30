@@ -77,6 +77,8 @@ dependencies {
 
     //AWS SQS
     implementation("io.awspring.cloud:spring-cloud-starter-aws-messaging")
+    //AWS S3
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
 
     //Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
@@ -109,6 +111,11 @@ dependencies {
     testRuntimeOnly("com.h2database:h2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    //ULID
+    implementation("com.github.f4b6a3:ulid-creator:5.2.3")
+
+
 }
 
 tasks.test {
