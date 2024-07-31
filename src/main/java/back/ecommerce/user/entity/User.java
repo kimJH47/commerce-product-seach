@@ -30,6 +30,10 @@ public class User extends BaseTimeEntity {
 		return password;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
 	public static User create(String email, String password) {
 		return new User(null, email, password);
 	}
