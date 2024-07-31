@@ -78,7 +78,7 @@ dependencies {
     //AWS SQS
     implementation("io.awspring.cloud:spring-cloud-starter-aws-messaging")
     //AWS S3
-    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.0")
 
     //Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
