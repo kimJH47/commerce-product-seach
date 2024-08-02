@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import back.ecommerce.auth.service.TokenExtractor;
 import back.ecommerce.auth.service.VerificationURLGenerator;
 import back.ecommerce.auth.dto.response.Token;
 import back.ecommerce.auth.service.TokenProvider;
@@ -46,11 +47,13 @@ class AuthServiceTest {
 	SignUpService signUpService;
 	@Mock
 	VerificationURLGenerator verificationURLGenerator;
+	@Mock
+	TokenExtractor tokenExtractor;
 
 	@BeforeEach
 	void setUp() {
 		authService = new AuthService(userRepository, passwordEncoder, tokenProvider, randomUUIDGenerator,
-			signUpService, verificationURLGenerator, 100000000);
+			signUpService, verificationURLGenerator, tokenExtractor, 100000);
 	}
 
 	@Test
