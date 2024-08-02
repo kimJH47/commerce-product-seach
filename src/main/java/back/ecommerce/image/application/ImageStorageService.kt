@@ -1,5 +1,5 @@
 package back.ecommerce.image.application
 
-interface ImageStorageProcessor {
+interface ImageStorageService {
     fun upload(spec : ImageUploadSpec) : String
 }
