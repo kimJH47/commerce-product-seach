@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		registry.addInterceptor(new LoggingInterceptor())
 			.order(1);
 		registry.addInterceptor(jwtAuthenticationInterceptor)
-			.addPathPatterns("/api/cart/**", "/api/payment/**", "api/order/**")
+			.addPathPatterns("/api/cart/**", "/api/payment/**", "/api/order/**", "/api/images/products/upload")
 			.excludePathPatterns("/api/payment/callback-approval/**")
 			.excludePathPatterns("/api/payment/callback-cancel/**")
 			.excludePathPatterns("/api/payment/callback-fail/**")
