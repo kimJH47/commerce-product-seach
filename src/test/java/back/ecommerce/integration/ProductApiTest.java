@@ -65,7 +65,7 @@ public class ProductApiTest {
 		//given
 		HashMap<String, String> hashMap = new HashMap<>();
 		hashMap.put("page", "2");
-		ProductSearchConditionRequest request = ProductSearchConditionRequest.create(Category.TOP, hashMap);
+		ProductSearchConditionRequest request = ProductSearchConditionRequest.Companion.create(Category.TOP, hashMap);
 
 		//when
 		ResponseEntity<Response> responseResponseEntity = productSearchController.findProductWithPagination(request);
