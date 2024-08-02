@@ -23,8 +23,7 @@ class JwtAuthenticationInterceptor(
         if (!header.startsWith(AUTHORIZATION_TYPE)) {
             throw AuthenticationException(ErrorCode.AUTH_HEADER_INVALID)
         }
-        header.removePrefix(AUTHORIZATION_TYPE)
-        tokenExtractor.extractClaim(header, EMAIL_ATTRIBUTE).also {
+        tokenExtractor.extractClaim(header.removePrefix(AUTHORIZATION_TYPE), EMAIL_ATTRIBUTE).also {
             request.setAttribute(EMAIL_ATTRIBUTE, it)
         }
         return true
