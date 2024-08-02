@@ -59,4 +59,11 @@ class AuthService(
             false
         }
     }
+
+    @Transactional(readOnly = true)
+    fun findIdByEmail(email: String) : Long{
+        return userRepository.findByEmail(email)
+            .orElseThrow { CustomException(ErrorCode.USER_NOT_FOUND) }
+            .id
+    }
 }
