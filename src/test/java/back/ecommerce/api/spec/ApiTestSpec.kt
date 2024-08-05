@@ -1,6 +1,7 @@
 package back.ecommerce.api.spec
 
 import back.ecommerce.admin.repository.AdminRepository
+import back.ecommerce.auth.service.TokenExtractor
 import back.ecommerce.auth.service.TokenProvider
 import back.ecommerce.common.logging.GlobalLogger
 import io.kotest.core.extensions.Extension
@@ -48,6 +49,7 @@ class MockServiceBeanFactoryPostProcessor : BeanFactoryPostProcessor {
         beanFactory.registerSingleton("adminRepository", mockkClass(AdminRepository::class))
         beanFactory.registerSingleton("globalLogger", mockkClass(GlobalLogger::class))
         beanFactory.registerSingleton("TokenProvider", mockkClass(TokenProvider::class))
+        beanFactory.registerSingleton("TokenExtractor", mockkClass(TokenExtractor::class))
     }
 }
 
