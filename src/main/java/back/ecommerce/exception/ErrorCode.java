@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-	AUTH_HEADER_IS_EMPTY(400, "authHeader", "인증 헤더가 비어있습니다."),
 	AUTH_HEADER_INVALID(400, "authHeader", "인증 헤더타입이 일치하지 않습니다."),
 
 	TOKEN_IS_EMPTY(400, "token", "토큰이 비어있습니다."),
