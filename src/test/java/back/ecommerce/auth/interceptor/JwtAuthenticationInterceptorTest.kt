@@ -1,142 +1,87 @@
-package back.ecommerce.auth.interceptor;
+package back.ecommerce.auth.interceptor
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import back.ecommerce.api.auth.interceptor.JwtAuthenticationInterceptor
+import back.ecommerce.auth.service.TokenExtractor
+import back.ecommerce.exception.AuthenticationException
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.IsolationMode
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
-import back.ecommerce.api.auth.interceptor.JwtAuthenticationInterceptor;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+internal class JwtAuthenticationInterceptorTest : DescribeSpec(
+    {
+        isolationMode = IsolationMode.InstancePerTest
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
+        val tokenExtractor: TokenExtractor = mockk<TokenExtractor>()
+        val request: HttpServletRequest = mockk<HttpServletRequest>()
+        val response: HttpServletResponse = mockk<HttpServletResponse>()
+        val handler = ArrayList<Any>()
+        val jwtAuthenticationInterceptor = JwtAuthenticationInterceptor(tokenExtractor)
 
-import back.ecommerce.auth.service.TokenProvider;
-import back.ecommerce.exception.AuthenticationException;
+        describe("토큰 인터셉터 테스트") {
+            context("유효한 토큰이 헤더에 담겨있을 때") {
+                val header = ("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                        + ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                        + ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4")
+                val token =
+                    ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                            + ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                            + ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4")
 
-@ExtendWith(MockitoExtension.class)
-class JwtAuthenticationInterceptorTest {
-	@Mock
-	HttpServletRequest request;
-	@Mock
-	HttpServletResponse response;
-	@Mock
-	Object handle;
-	@Mock
-	TokenProvider tokenProvider;
-	JwtAuthenticationInterceptor jwtAuthenticationInterceptor;
+                every { request.getHeader(any()) } returns header
+                every { tokenExtractor.extractClaim(any(), any()) } returns token
+                every { request.setAttribute(any(), any()) } returns Unit
 
-	@BeforeEach
-	void setUp() {
-		jwtAuthenticationInterceptor = new JwtAuthenticationInterceptor(tokenProvider);
-	}
+                it("true 를 반환해야한다.") {
+                    jwtAuthenticationInterceptor.preHandle(request, response, handler) shouldBe true
+                    verify(exactly = 1) { request.getHeader(any()) }
+                    verify(exactly = 1) { tokenExtractor.extractClaim(any(), any()) }
+                    verify(exactly = 1) { request.setAttribute(any(), any()) }
+                }
 
-	@Test
-	@DisplayName("유효한 토큰이 헤더에 담겨올 시 성공적으로 통괴가 되어야한다.")
-	void authentication() throws Exception {
-		//given
-		String header = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-			+ ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
-			+ ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4";
+            }
+            context("Authorization 헤더에 토큰이 존재 하지 않으면") {
+                val header = null
+                every { request.getHeader(any()) } returns header
+                every { request.setAttribute(any(), any()) } returns Unit
 
-		given(request.getHeader(anyString()))
-			.willReturn(header);
+                it("예외가 발생한다.") {
 
-		//when
-		boolean actual = jwtAuthenticationInterceptor.preHandle(request, response, handle);
+                    shouldThrow<AuthenticationException> {
+                        jwtAuthenticationInterceptor.preHandle(request, response, handler)
+                    }.message shouldBe "토큰이 비어있습니다."
 
-		//then
-		assertThat(actual).isTrue();
-		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(1)).extractClaim(anyString(),anyString());
-	}
+                    verify(exactly = 1) { request.getHeader(any()) }
+                    verify(exactly = 0) { tokenExtractor.extractClaim(any(), any()) }
+                    verify(exactly = 0) { request.setAttribute(any(), any()) }
+                }
+            }
 
-	@Test
-	@DisplayName(" authorization Header 의 인증 타입이 Bearer 가 아닐 시 AuthHeaderInvalidException 가 발생한다.")
-	void authentication_invalidType() {
-		//given
-		String header = "Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-			+ ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
-			+ ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4";
+            context("Authorization 헤더에 인증타입이 Bearer 가 아니면") {
+                val header = ("Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                        + ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+                        + ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4")
 
-		given(request.getHeader(anyString()))
-			.willReturn(header);
+                every { request.getHeader(any()) } returns header
+                every { request.setAttribute(any(), any()) } returns Unit
 
-		//expect
-		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
-			.isInstanceOf(AuthenticationException.class)
-			.hasMessage("인증 헤더타입이 일치하지 않습니다.");
+                it("예외가 발생한다.") {
 
-		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(0)).extractClaim(anyString(),anyString());
-	}
+                    shouldThrow<AuthenticationException> {
+                        jwtAuthenticationInterceptor.preHandle(request, response, handler)
+                    }.message shouldBe "인증 헤더타입이 일치하지 않습니다."
 
-	@Test
-	@DisplayName("authorization Header 가 비어있을 시 AuthHeaderInvalidException 가 발생한다.")
-	void authentication_emptyHeader() {
-		//given
-		given(request.getHeader(anyString()))
-			.willReturn(" ");
+                    verify(exactly = 1) { request.getHeader(any()) }
+                    verify(exactly = 0) { tokenExtractor.extractClaim(any(), any()) }
+                    verify(exactly = 0) { request.setAttribute(any(), any()) }
+                }
+            }
 
-		//expect
-		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
-			.isInstanceOf(AuthenticationException.class)
-			.hasMessage("인증 헤더가 비어있습니다.");
-
-		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(0)).extractClaim(anyString(),anyString());
-	}
-
-	@Test
-	@DisplayName("authorization Header 가 비어있을 시 AuthHeaderInvalidException 가 발생한다.")
-	void authentication_nullHeader() {
-		//given
-		given(request.getHeader(anyString()))
-			.willReturn(null);
-
-		//expect
-		assertThatThrownBy(() -> jwtAuthenticationInterceptor.preHandle(request, response, handle))
-			.isInstanceOf(AuthenticationException.class)
-			.hasMessage("인증 헤더가 비어있습니다.");
-
-		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(0)).extractClaim(anyString(),anyString());
-	}
-
-	@Test
-	@DisplayName("검증이 끝나면 페이로드에 존재하는 사용자의 이메일이 attribute 에 담겨야한다.")
-	void authentication_setAttribute() throws Exception {
-	    //given
-		String header = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-			+ ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
-			+ ".3UsoYUK0_vvq2jwN6eskqTAC2E9xStyN7iVwZ7d3rw4";
-		String email = "userEmail@email.com";
-
-		given(request.getHeader(HttpHeaders.AUTHORIZATION))
-			.willReturn(header);
-		given(tokenProvider.extractClaim(anyString(), anyString()))
-			.willReturn(email);
-
-	    //when
-		boolean actual = jwtAuthenticationInterceptor.preHandle(request, response, handle);
-
-		//then
-		assertThat(actual).isTrue();
-
-		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> ignore = ArgumentCaptor.forClass(String.class);
-		verify(request).setAttribute(anyString(), captor.capture());
-
-		assertThat(email).isEqualTo(captor.getValue());
-		then(request).should(times(1)).getHeader(anyString());
-		then(tokenProvider).should(times(1)).extractClaim(anyString(), anyString());
-		then(request).should(times(1)).setAttribute(anyString(), anyString());
-
-
-	}
-}
+        }
+    }
+)
