@@ -19,7 +19,7 @@ class ProductV2Controller(
 ) {
 
     @GetMapping("/categories/{category}")
-    fun getProductsByCategory(@PathVariable("category") category: String): ResponseEntity<Response> {
+    fun findProductsByCategory(@PathVariable("category") category: String): ResponseEntity<Response> {
         return Response.createSuccessResponse(
             "상품이 성공적으로 조회 되었습니다.",
             productService.findWithCategoryAndPagination(Category.from(category))
