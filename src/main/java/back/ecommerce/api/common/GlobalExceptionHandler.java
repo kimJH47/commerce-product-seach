@@ -2,20 +2,19 @@ package back.ecommerce.api.common;
 
 import static org.slf4j.event.Level.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.slf4j.event.Level;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.api.dto.Response;
+import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.exception.InternalServerException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
