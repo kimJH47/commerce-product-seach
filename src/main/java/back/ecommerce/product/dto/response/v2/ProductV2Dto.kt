@@ -1,15 +1,13 @@
 package back.ecommerce.product.dto.response.v2
 
 import back.ecommerce.product.entity.Category
+import com.querydsl.core.annotations.QueryProjection
 
-/**
-썸네일 url 추가
- */
-data class ProductV2Dto(
+data class ProductV2Dto @QueryProjection constructor(
     val id: Long,
     val name: String,
     val brandName: String,
     val price: Long,
     val category: Category,
-    val thumbnail: String
+    val thumbnailUrl: String
 )
