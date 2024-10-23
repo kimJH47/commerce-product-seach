@@ -4,7 +4,7 @@ import back.ecommerce.api.dto.Response
 import back.ecommerce.api.payment.PaymentReadyResponse
 import back.ecommerce.api.auth.resolver.annotation.UserEmail
 import back.ecommerce.client.KakaoPaymentClient
-import back.ecommerce.order.service.OrderService
+import back.ecommerce.order.application.OrderService
 import back.ecommerce.payment.dto.request.PaymentCancelRequest
 import back.ecommerce.payment.dto.request.PaymentReadyRequest
 import back.ecommerce.payment.service.PaymentService
