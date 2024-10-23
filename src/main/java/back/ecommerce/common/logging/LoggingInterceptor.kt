@@ -1,36 +1,44 @@
-package back.ecommerce.common.logging;
+package back.ecommerce.common.logging
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.MDC
+import org.slf4j.event.Level
+import org.springframework.web.method.HandlerMethod
+import org.springframework.web.servlet.HandlerInterceptor
 
-import org.slf4j.MDC;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
+class LoggingInterceptor(
+    private val globalLogger: GlobalLogger
+) : HandlerInterceptor {
 
-public class LoggingInterceptor implements HandlerInterceptor {
+    @Throws(Exception::class)
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        if (handler is HandlerMethod) {
+            val handlerName = handler.beanType.simpleName
+            val methodName = handler.method.name
+            val controllerInfo = "$handlerName.$methodName"
+            MDC.put(REQUEST_CONTROLLER_MDC_KEY, controllerInfo)
+            MDC.put("requestId", request.getHeader(REQUEST_ID)) //nginx proxy request id 로 대체가능
+            MDC.put("url", request.requestURI)
+            MDC.put("httpMethod", request.method)
 
-	public static final String REQUEST_CONTROLLER_MDC_KEY = "handler";
-	public static final String REQUEST_ID = "X-REQUEST-ID";
+            globalLogger.log(Level.INFO, "API REQUEST")
+        }
+        return true
+    }
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
-		Exception {
-		if (handler instanceof HandlerMethod) {
-			HandlerMethod handlerMethod = (HandlerMethod)handler;
-			String handlerName = handlerMethod.getBeanType().getSimpleName();
-			String methodName = handlerMethod.getMethod().getName();
-			String controllerInfo = handlerName + "." + methodName;
-			MDC.put(REQUEST_CONTROLLER_MDC_KEY, controllerInfo);
-			MDC.put("requestId", request.getHeader(REQUEST_ID)); //nginx proxy request id 로 대체가능
-			MDC.put("url", request.getRequestURI());
-			MDC.put("httpMethod", request.getMethod());
-		}
-		return true;
-	}
+    @Throws(Exception::class)
+    override fun afterCompletion(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any,
+        ex: Exception?
+    ) {
+        MDC.clear()
+    }
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-		Exception ex) throws Exception {
-		MDC.clear();
-	}
+    companion object {
+        const val REQUEST_CONTROLLER_MDC_KEY: String = "handler"
+        const val REQUEST_ID: String = "X-REQUEST-ID"
+    }
 }
