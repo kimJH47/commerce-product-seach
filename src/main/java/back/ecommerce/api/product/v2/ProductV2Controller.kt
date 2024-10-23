@@ -2,7 +2,6 @@ package back.ecommerce.api.product.v2
 
 import back.ecommerce.api.dto.Response
 import back.ecommerce.api.resolver.ProductSearchRequestMapping
-import back.ecommerce.common.logging.aop.annotation.Logging
 import back.ecommerce.product.application.ProductV2Service
 import back.ecommerce.product.dto.request.ProductSearchConditionRequest
 import back.ecommerce.product.entity.Category
@@ -26,7 +25,6 @@ class ProductV2Controller(
         )
     }
 
-    @Logging
     @GetMapping("/categories/{category}/detail")
     fun findProductWithPagination(@ProductSearchRequestMapping request: ProductSearchConditionRequest)
             : ResponseEntity<Response> {
