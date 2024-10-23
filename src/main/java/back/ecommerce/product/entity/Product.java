@@ -1,5 +1,6 @@
 package back.ecommerce.product.entity;
 
+import back.ecommerce.common.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -8,17 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import back.ecommerce.common.entity.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Entity
 @Table(name = "PRODUCT")
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class Product extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +20,36 @@ public class Product extends BaseTimeEntity {
 	private Long price;
 	@Enumerated(EnumType.STRING)
 	private Category category;
+
+	public Product(Long id, String name, String brandName, Long price, Category category) {
+		this.id = id;
+		this.name = name;
+		this.brandName = brandName;
+		this.price = price;
+		this.category = category;
+	}
+
+	public Product() {
+
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public Long getPrice() {
+		return price;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
 }
