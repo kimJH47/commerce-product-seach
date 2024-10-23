@@ -8,8 +8,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import jakarta.persistence.EntityManager;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +16,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
-import back.ecommerce.config.jpa.JpaAuditingConfig;
 import back.ecommerce.common.constant.PageConstant;
-import back.ecommerce.product.entity.Category;
-import back.ecommerce.product.entity.Product;
+import back.ecommerce.config.jpa.JpaAuditingConfig;
 import back.ecommerce.product.dto.condition.ProductSearchCondition;
 import back.ecommerce.product.dto.response.ProductDto;
+import back.ecommerce.product.dto.response.v2.ProductV2Dto;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.Product;
 import back.ecommerce.product.repository.ProductQueryDslRepository;
 import back.ecommerce.product.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
 
 @DataJpaTest
 @Import(value = {QueryDSLRepoConfig.class, JpaAuditingConfig.class})
@@ -261,15 +261,15 @@ class ProductRepositoryTest {
 	}
 
 	@Test
-	void findByIds(){
-	    //given
+	void findByIds() {
+		//given
 		ArrayList<Long> ids = new ArrayList<>();
 		ids.add(productRepository.save(new Product(null, "상품1,", "브랜드", 100L, SHOES)).getId());
 		ids.add(productRepository.save(new Product(null, "상품2,", "브랜드", 100L, SHOES)).getId());
 		ids.add(productRepository.save(new Product(null, "상품3,", "브랜드", 100L, SHOES)).getId());
 		productRepository.save(new Product(null, "다른상품,", "브랜드", 500L, SHOES));
 
-	    //when
+		//when
 		List<Product> actual = productRepository.findByIds(ids);
 
 		//then
@@ -277,6 +277,14 @@ class ProductRepositoryTest {
 		assertThat(actual)
 			.filteredOn(product -> product.getName().startsWith("상품"))
 			.hasSize(3);
+	}
+
+	@Test
+	void findByCategoryWithPaginationOrderByBrandNewV2() {
+		List<ProductV2Dto> byCategoryWithPaginationOrderByBrandNewV2 = productQueryDslRepository.findByCategoryWithPaginationOrderByBrandNewV2(
+			ACCESSORY,
+			PageRequest.of(PageConstant.DEFAULT__PAGE, PageConstant.DEFAULT_PAGE_SIZE));
+
 	}
 
 	private ProductSearchCondition createCondition(
