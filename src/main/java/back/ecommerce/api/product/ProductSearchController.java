@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import back.ecommerce.common.logging.aop.annotation.Logging;
 import back.ecommerce.api.resolver.ProductSearchRequestMapping;
 import back.ecommerce.product.entity.Category;
 import back.ecommerce.product.dto.request.ProductSearchConditionRequest;
@@ -27,7 +26,6 @@ public class ProductSearchController {
 			, productService.findWithCategoryAndPagination(Category.from(category)));
 	}
 
-	@Logging
 	@GetMapping("/categories/{category}/detail")
 	public ResponseEntity<Response> findProductWithPagination(
 		@ProductSearchRequestMapping ProductSearchConditionRequest request) {
