@@ -61,7 +61,6 @@ dependencies {
 
     // Logback Appender Discord
     implementation("org.slf4j:slf4j-api:2.0.0")
-    implementation("com.github.napstr:logback-discord-appender:1.0.0")
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
     //Auth JWT
