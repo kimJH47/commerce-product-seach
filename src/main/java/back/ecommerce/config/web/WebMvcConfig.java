@@ -12,6 +12,7 @@ import back.ecommerce.api.resolver.SearchConditionRequestResolver;
 import back.ecommerce.api.auth.interceptor.AdminAuthorizationInterceptor;
 import back.ecommerce.api.auth.interceptor.JwtAuthenticationInterceptor;
 import back.ecommerce.api.auth.resolver.UserEmailArgumentResolver;
+import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.common.logging.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new LoggingInterceptor())
+		registry.addInterceptor(new LoggingInterceptor(new GlobalLogger()))
 			.order(1);
 		registry.addInterceptor(jwtAuthenticationInterceptor)
 			.addPathPatterns("/api/cart/**", "/api/payment/**", "/api/order/**", "/api/images/products/upload")
