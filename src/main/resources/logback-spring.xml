@@ -1,40 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <property name="LOG_PATTERN" value="[%d{HH:mm:ss.SSS}]%thread-[%level] %logger{36} - %msg%n"/>
-    <property name="LOG_FILE_PATH" value="./logs"/>
-    <property name="INFO_LOG_FILE_NAME" value="info"/>
-    <property name="WARN_LOG_FILE_NAME" value="warn"/>
-    <property name="ERROR_LOG_FILE_NAME" value="error"/>
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS}[%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-    <!-->console 설정<!-->
-    <include resource="console-appender.xml"/>
-    <!-->Info log 설정<!-->
-    <include resource="file-info-appender.xml"/>
-    <!-->warn log 설정<!-->
-    <include resource="file-warn-appender.xml"/>
-    <!-->error log 설정<!-->
-    <include resource="file-error-appender.xml"/>
-    <!-->discord webhook<!-->
-    <include resource="discord-webhook-appender.xml"/>
+    <!-- FILE Appender -->
+    <springProperty scope="context" name="LOG_DIR" source="logging.path" defaultValue="./log"/>
+    <springProperty scope="context" name="LOG_PATH_NAME" source="logging.file-name"
+                    defaultValue="${LOG_DIR}/server-application.log"/>
+    <springProperty scope="context" name="LOG_STASH_ADDR" source="logging.log-stash" defaultValue="{IP_ADDRESS}"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.zipkin.service.name" defaultValue="LOGGING_GROUND"/>
 
-    <!-->search-request-file<!-->
-    <include resource="file-search-request-appender.xml"/>
+
+    <!--로그 파일 Appender 정의-->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH_NAME}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH_NAME}.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <pattern>yyyy-MM-dd'T'HH:mm:ssZ</pattern>
+                    <timeZone>Asia/Seoul</timeZone>
+                </timestamp>
+                <version/>
+                <logLevel/>
+                <threadName/>
+                <loggerName/>
+                <message/>
+                <mdc/>
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${APP_NAME:-}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!--로그 파일 AsyncAppender 정의-->
+    <appender name="async-file" class="ch.qos.logback.classic.AsyncAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <param name="includeCallerData" value="false"/>
+        <param name="queueSize" value="256"/>
+        <param name="neverBlock" value="true"/>
+        <param name="maxFlushTime" value="60000"/>
+        <appender-ref ref="file"/>
+    </appender>
 
     <root level="INFO">
-        <springProfile name="dev">
-            <appender-ref ref="console"/>
-        </springProfile>
-        <springProfile name="prod">
-            <appender-ref ref="INFO_LOG"/>
-            <appender-ref ref="WARN_LOG"/>
-            <appender-ref ref="ERROR_LOG"/>
-            <appender-ref ref="DISCORD"/>
-        </springProfile>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="async-file"/>
     </root>
-    <springProfile name="prod">
-        <logger name="back.ecommerce.common.logging.SearchRequestLogger" additivity="false">
-            <Level value="INFO"/>
-            <appender-ref ref="ASYNC_APPENDER"/>
-        </logger>
-    </springProfile>
 </configuration>

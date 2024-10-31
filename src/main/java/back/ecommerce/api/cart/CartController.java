@@ -1,7 +1,5 @@
 package back.ecommerce.api.cart;
 
-import jakarta.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import back.ecommerce.api.auth.resolver.annotation.UserEmail;
+import back.ecommerce.api.dto.Response;
+import back.ecommerce.cart.application.CartService;
 import back.ecommerce.cart.dto.request.AddCartRequest;
 import back.ecommerce.cart.dto.request.DeleteCartRequest;
-import back.ecommerce.api.dto.Response;
-import back.ecommerce.cart.service.CartService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
