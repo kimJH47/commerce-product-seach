@@ -22,17 +22,14 @@ class LoggingInterceptor(
             MDC.put("url", request.requestURI)
             MDC.put("httpMethod", request.method)
 
-            globalLogger.log(Level.INFO, "API REQUEST")
+            globalLogger.log(Level.INFO, "API 요청이 발생했습니다.")
         }
         return true
     }
 
     @Throws(Exception::class)
     override fun afterCompletion(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        handler: Any,
-        ex: Exception?
+        request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?
     ) {
         MDC.clear()
     }
