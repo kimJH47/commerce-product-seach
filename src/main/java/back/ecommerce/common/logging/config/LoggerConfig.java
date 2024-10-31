@@ -1,4 +1,4 @@
-package back.ecommerce.common.config.logging;
+package back.ecommerce.common.logging.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
