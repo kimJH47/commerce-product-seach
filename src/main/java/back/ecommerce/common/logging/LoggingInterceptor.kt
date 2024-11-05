@@ -1,5 +1,6 @@
 package back.ecommerce.common.logging
 
+import com.github.f4b6a3.ulid.UlidCreator
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.MDC
@@ -18,7 +19,14 @@ class LoggingInterceptor(
             val methodName = handler.method.name
             val controllerInfo = "$handlerName.$methodName"
             MDC.put(REQUEST_CONTROLLER_MDC_KEY, controllerInfo)
-            MDC.put("requestId", request.getHeader(REQUEST_ID)) //nginx proxy request id 로 대체가능
+
+            var requestId = request.getHeader(REQUEST_ID)
+
+            if (requestId == null || requestId.isEmpty()) {
+                requestId = UlidCreator.getUlid().toString()
+            }
+
+            MDC.put("requestId", requestId) //nginx proxy request id 로 대체가능
             MDC.put("url", request.requestURI)
             MDC.put("httpMethod", request.method)
 
