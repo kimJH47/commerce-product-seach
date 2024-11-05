@@ -24,7 +24,7 @@ import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.cart.repository.CartRepository;
 import back.ecommerce.product.repository.ProductRepository;
 import back.ecommerce.user.repository.UserRepository;
-import back.ecommerce.cart.service.CartService;
+import back.ecommerce.cart.application.CartService;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {

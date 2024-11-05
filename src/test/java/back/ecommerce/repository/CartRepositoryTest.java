@@ -4,20 +4,19 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
-import jakarta.persistence.EntityManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import back.ecommerce.cart.dto.response.CartProductDto;
 import back.ecommerce.cart.entity.Cart;
+import back.ecommerce.cart.repository.CartRepository;
 import back.ecommerce.product.entity.Category;
 import back.ecommerce.product.entity.Product;
-import back.ecommerce.cart.dto.response.CartProductDto;
-import back.ecommerce.cart.repository.CartRepository;
 import back.ecommerce.product.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
 
 @DataJpaTest
 class CartRepositoryTest {
@@ -57,7 +56,7 @@ class CartRepositoryTest {
 		//when
 		List<Cart> actual = cartRepository.findByUserEmail("user@naver.com");
 		Cart cart = actual.get(0);
-		CartProductDto cartProductDto = CartProductDto.create(cart);
+		CartProductDto cartProductDto = CartProductDto.Companion.create(cart);
 
 		//then
 		assertThat(actual).hasSize(3);

@@ -38,7 +38,7 @@ import back.ecommerce.cart.dto.response.AddCartResponse;
 import back.ecommerce.cart.dto.response.CartListResponse;
 import back.ecommerce.cart.dto.response.CartProductDto;
 import back.ecommerce.cart.dto.response.CartProducts;
-import back.ecommerce.cart.service.CartService;
+import back.ecommerce.cart.application.CartService;
 import back.ecommerce.common.logging.GlobalLogger;
 import back.ecommerce.exception.AuthenticationException;
 import back.ecommerce.exception.CustomException;
@@ -166,7 +166,7 @@ class CartControllerTest {
 		cartProductDtos.add(createDto(23, "cap", "carHartt", Category.HEAD_WEAR, 1, 8000L));
 		cartProductDtos.add(createDto(35, "ring", "carHartt", Category.ACCESSORY, 1, 150000L));
 		given(cartService.findCartByUserEmail(anyString()))
-			.willReturn(new CartListResponse("user@email.com", CartProducts.create(cartProductDtos)));
+			.willReturn(new CartListResponse("user@email.com", CartProducts.Companion.create(cartProductDtos)));
 		//expect
 		mockMvc.perform(get("/api/cart"))
 			.andExpect(status().isOk())
