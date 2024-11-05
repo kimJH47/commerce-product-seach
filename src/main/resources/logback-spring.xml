@@ -10,7 +10,7 @@
     <springProperty scope="context" name="LOG_PATH_NAME" source="logging.file-name"
                     defaultValue="${LOG_DIR}/server-application.log"/>
     <springProperty scope="context" name="LOG_STASH_ADDR" source="logging.log-stash" defaultValue="{IP_ADDRESS}"/>
-    <springProperty scope="context" name="APP_NAME" source="spring.zipkin.service.name" defaultValue="LOGGING_GROUND"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.zipkin.service.name" defaultValue="ECOMMERCE_API"/>
 
 
     <!--로그 파일 Appender 정의-->
