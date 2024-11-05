@@ -24,35 +24,37 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	private static final String BAD_REQUEST = "잘못된 요청입니다.";
-	private static final String INTERNAL_SERVER_ERROR = "서버에서 에러가 발생 했습니다.";
+	private static final String INTERNAL_SERVER_ERROR = "요청처리중 에러가 발생했습니다.";
 	private static final String AUTHENTICATION_ERROR_MESSAGE = "인증과정에서 문제가 발생 하였습니다";
-	private static final String ERROR_FORMAT = "[ERROR] {} {} -> {} : {}";
+	private static final String LOG_FORMAT = "{}";
 
 	private final GlobalLogger globalLogger;
 
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<Response> handle(AuthenticationException e) {
+		logging(WARN, e);
 		return Response.Failed(AUTHENTICATION_ERROR_MESSAGE, e);
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<Response> handleInternalServerError(Exception e, HttpServletRequest request) {
-		logging(ERROR, request, "server", e);
+	public ResponseEntity<Response> handleInternalServerError(Exception e) {
+		logging(ERROR, e);
 		return Response.Failed(INTERNAL_SERVER_ERROR, new InternalServerException(ErrorCode.INTERNAL_SERVER_ERROR));
 	}
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<Response> handle(CustomException e) {
+		logging(WARN, e);
 		return Response.Failed(BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Response> handle(MethodArgumentNotValidException e, HttpServletRequest request) {
-		logging(WARN, request, "request", e);
+		logging(WARN, e);
 		return Response.createBadRequest(BAD_REQUEST, e);
 	}
 
-	private void logging(Level level, HttpServletRequest request, String field, Exception e) {
-		globalLogger.log(level, ERROR_FORMAT, request.getRequestURI(), request.getMethod(), field, e.getMessage());
+	private void logging(Level level, Exception e) {
+		globalLogger.log(level, LOG_FORMAT, e.getMessage());
 	}
 }
