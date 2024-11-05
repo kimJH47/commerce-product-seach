@@ -2,9 +2,9 @@ package back.ecommerce.api.cart
 
 import back.ecommerce.api.spec.ApiTestSpec
 import back.ecommerce.api.support.*
+import back.ecommerce.cart.application.CartService
 import back.ecommerce.cart.dto.request.AddCartRequest
 import back.ecommerce.cart.dto.response.AddCartResponse
-import back.ecommerce.cart.service.CartService
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.verify

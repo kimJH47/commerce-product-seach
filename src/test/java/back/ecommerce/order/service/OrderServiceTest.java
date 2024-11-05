@@ -14,9 +14,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import back.ecommerce.api.payment.OrderProductDto;
-import back.ecommerce.common.generator.RandomUUIDGenerator;
+import back.ecommerce.common.generator.ULIDGenerator;
 import back.ecommerce.exception.CustomException;
 import back.ecommerce.order.OrderGroupRepository;
+import back.ecommerce.order.application.OrderService;
 import back.ecommerce.order.entity.OrderGroup;
 import back.ecommerce.order.entity.OrderItem;
 import back.ecommerce.product.entity.Category;
@@ -34,13 +35,13 @@ class OrderServiceTest {
 	@Mock
 	UserRepository userRepository;
 	@Mock
-	RandomUUIDGenerator randomUUIDGenerator;
+	ULIDGenerator ulidGenerator;
 
 	OrderService orderService;
 
 	@BeforeEach
 	void setUp() {
-		orderService = new OrderService(orderGroupRepository, productRepository, userRepository, randomUUIDGenerator);
+		orderService = new OrderService(orderGroupRepository, productRepository, userRepository, ulidGenerator);
 	}
 
 	@Test
