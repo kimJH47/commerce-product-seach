@@ -7,7 +7,6 @@ import back.ecommerce.product.dto.response.v2.ProductDetailDto
 import back.ecommerce.product.dto.response.v2.ProductListV2Response
 import back.ecommerce.product.dto.response.v2.ProductV2Dto
 import back.ecommerce.product.entity.Category
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.verify
 import org.hamcrest.CoreMatchers.equalTo
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 
 class ProductV2ControllerTest(
     mockMvc: MockMvc,
-    objectMapper: ObjectMapper,
     productService: ProductV2Service
 
 ) : ApiTestSpec({
