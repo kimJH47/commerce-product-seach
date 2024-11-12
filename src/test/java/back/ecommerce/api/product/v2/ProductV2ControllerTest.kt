@@ -105,12 +105,12 @@ class ProductV2ControllerTest(
                 }.andDocument("카테고리 상품 조건 조회 API") {
                     pathParameters("category" to "카테고리")
                     queryParameters(
-                        "name" query STRING means "상품 이름" isRequired false isOptional true,
-                        "brandName" query STRING means "상품 브랜드 이름" isRequired false isOptional true,
-                        "minPrice" query STRING means "상품 최소 가격" isRequired false isOptional true,
-                        "maxPrice" query STRING means "상품 최대 가격" isRequired false isOptional true,
-                        "page" query STRING means "페이지 번호" isRequired true,
-                        "sort" query STRING means "정렬 방식" isRequired false isOptional true,
+                        "name" query STRING means "상품 이름" isOptional true,
+                        "brandName" query STRING means "상품 브랜드 이름" isOptional true,
+                        "minPrice" query NUMBER means "상품 최소 가격" isOptional true,
+                        "maxPrice" query NUMBER means "상품 최대 가격" isOptional true,
+                        "sort" query STRING means "정렬 방식" isOptional true,
+                        "page" query NUMBER means "페이지 번호" isOptional false,
                     )
                     responseFields(
                         "message" type STRING means "응답 메시지",
