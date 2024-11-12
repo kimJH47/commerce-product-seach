@@ -39,6 +39,14 @@ class RestDocDsl {
         )
     }
 
+    fun queryParameters(vararg queryParam: QueryParam) {
+        queryParametersSnippet = RequestDocumentation.queryParameters(
+            queryParam.map {
+                it.parameterDescriptor
+            }
+        )
+    }
+
     fun perform(identifier: String, resultActionDsl: ResultActionsDsl): ResultActionsDsl {
         return resultActionDsl.andDo {
             handle(
