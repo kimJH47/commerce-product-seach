@@ -108,40 +108,40 @@ class CartV2ControllerTest(
                     verify(exactly = 1) { cartService.addProduct(any(), any(), any()) }
                 }
             }
+        }
+        describe("DELETE /api/v2/cart") {
+            context("유효한 요청이 오면") {
+                val request = DeleteCartRequest("kmr2644@gmail.com", 100L)
+                val response = CartDeleteResponse("kmr2644@gmail.com", 100L)
 
-            describe("DELETE /api/v2/cart") {
-                context("유효한 요청이 오면") {
-                    val request = DeleteCartRequest("kmr2644@gmail.com", 100L)
-                    val response = CartDeleteResponse("kmr2644@gmail.com", 100L)
+                every { cartService.deleteById(any(), any()) } returns response
 
-                    every { cartService.deleteById(any(), any()) } returns response
-
-                    it("should not return 200") {
-                        mockMvc.docDelete("/api/v2/cart") {
-                            header(AUTHORIZATION, "Bearer your_token")
-                            contentType = MediaType.APPLICATION_JSON
-                            content = objectMapper.writeValueAsString(request)
-                        }.andExpect {
-                            status { isOk() }
-                            jsonPath("$.message", equalTo("상품이 성공적으로 삭제되었습니다."))
-                            jsonPath("$.entity.email", equalTo("kmr2644@gmail.com"))
-                            jsonPath("$.entity.id", equalTo(100))
-                        }.andDocument("장바구니 상품 삭제 API") {
-                            requestHeaders("Authorization" to "토큰 인증 헤더")
-                            requestFields(
-                                "email" type STRING means "이메일",
-                                "cartId" type NUMBER means "장바구니 상품 ID"
-                            )
-                            responseFields(
-                                "message" type STRING means "응답 메시지",
-                                "entity.email" type STRING means "이메일",
-                                "entity.id" type NUMBER means "장바구니 상품 ID"
-                            )
-                        }
-                        verify(exactly = 1) { cartService.deleteById(any(), any()) }
+                it("should not return 200") {
+                    mockMvc.docDelete("/api/v2/cart") {
+                        header(AUTHORIZATION, "Bearer your_token")
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(request)
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.message", equalTo("상품이 성공적으로 삭제되었습니다."))
+                        jsonPath("$.entity.email", equalTo("kmr2644@gmail.com"))
+                        jsonPath("$.entity.id", equalTo(100))
+                    }.andDocument("장바구니 상품 삭제 API") {
+                        requestHeaders("Authorization" to "토큰 인증 헤더")
+                        requestFields(
+                            "email" type STRING means "이메일",
+                            "cartId" type NUMBER means "장바구니 상품 ID"
+                        )
+                        responseFields(
+                            "message" type STRING means "응답 메시지",
+                            "entity.email" type STRING means "이메일",
+                            "entity.id" type NUMBER means "장바구니 상품 ID"
+                        )
                     }
+                    verify(exactly = 1) { cartService.deleteById(any(), any()) }
                 }
             }
         }
+
     }
 )
