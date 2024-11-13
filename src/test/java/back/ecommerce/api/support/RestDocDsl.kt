@@ -1,5 +1,7 @@
 package back.ecommerce.api.support
 
+import org.springframework.restdocs.headers.HeaderDocumentation
+import org.springframework.restdocs.headers.RequestHeadersSnippet
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor
@@ -21,6 +23,8 @@ class RestDocDsl {
     private var responseFieldsSnippet: ResponseFieldsSnippet? = null
 
     private var queryParametersSnippet: QueryParametersSnippet? = null
+
+    private var requestHeadersSnippet: RequestHeadersSnippet? = null
 
     fun requestFields(vararg fields: Field) {
         requestFieldsSnippet = PayloadDocumentation.requestFields(fields.map { it.fieldDescriptor })
@@ -47,6 +51,12 @@ class RestDocDsl {
         )
     }
 
+    fun requestHeaders(vararg headers: Pair<String, String>) {
+        requestHeadersSnippet = HeaderDocumentation.requestHeaders(headers.map {
+            HeaderDocumentation.headerWithName(it.first).description(it.second)
+        })
+    }
+
     fun perform(identifier: String, resultActionDsl: ResultActionsDsl): ResultActionsDsl {
         return resultActionDsl.andDo {
             handle(
@@ -58,7 +68,8 @@ class RestDocDsl {
                         pathParametersSnippet,
                         requestFieldsSnippet,
                         responseFieldsSnippet,
-                        queryParametersSnippet
+                        queryParametersSnippet,
+                        requestHeadersSnippet
                     ).toTypedArray()
                 )
             )
