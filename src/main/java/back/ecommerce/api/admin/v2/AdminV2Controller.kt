@@ -29,7 +29,7 @@ class AdminV2Controller(
             "등록요청 상품이 성공적 조회 되었습니다.", adminService.findByApprovalStatus(ApprovalStatus.WAIT))
     }
 
-    @PostMapping("/admin/update-approval")
+    @PostMapping("/update-approval")
     fun updateApprovalProduct(@RequestBody @Valid request: UpdateApprovalRequest): ResponseEntity<Response> {
         val status = adminService.updateApprovalStatus(request.requestId, request.approvalStatus, request.email)
         emailSQSEventPublisher.pub(REQUEST_PRODUCT_APPROVAL_STATUS, status.toMap())
