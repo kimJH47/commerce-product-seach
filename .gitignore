@@ -41,6 +41,7 @@ out/
 !**/src/main/resources/logs/**
 **/*.log
 **/*.log.gz
+log/**
 .DS_Store
 log/**
 
@@ -55,3 +56,4 @@ src/main/resources/application-tomcat-prod.yml
 
 ### sql ###
 src/main/resources/sql/**
+
