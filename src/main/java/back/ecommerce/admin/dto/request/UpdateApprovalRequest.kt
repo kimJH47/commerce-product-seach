@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull
 
 data class UpdateApprovalRequest(
     @field:NotNull(message = "등록요청 상품 아아디는 필수적으로 필요합니다.")
-    var requestId: Long?,
+    var requestId: Long,
     @field:NotNull(message = "승인상태는 필수적로 필요합니다.")
     val approvalStatus: ApprovalStatus,
     @field:NotBlank(message = "이메일은 필수적으로 필요합니다.")
