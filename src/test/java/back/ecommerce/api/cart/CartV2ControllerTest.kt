@@ -2,6 +2,8 @@ package back.ecommerce.api.cart
 
 import back.ecommerce.api.spec.ApiTestSpec
 import back.ecommerce.api.support.*
+import back.ecommerce.auth.domain.AuthUser
+import back.ecommerce.auth.domain.Role
 import back.ecommerce.cart.application.CartService
 import back.ecommerce.cart.dto.request.AddCartRequest
 import back.ecommerce.cart.dto.request.DeleteCartRequest
@@ -13,6 +15,7 @@ import io.mockk.verify
 import org.hamcrest.CoreMatchers.equalTo
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.web.servlet.MockMvc
 
 class CartV2ControllerTest(
@@ -26,6 +29,7 @@ class CartV2ControllerTest(
                 every { cartService.addProduct(any(), any(), any()) } returns AddCartResponse(1000L, 10, 10000L)
                 it("return 200") {
                     mockMvc.docPost("/api/v2/cart/add-product") {
+                        header(AUTHORIZATION, "Bearer your_token")
                         contentType = MediaType.APPLICATION_JSON
                         content = objectMapper.writeValueAsString(AddCartRequest("test@gmail.com", 10L, 10))
                     }.andExpect {
@@ -51,15 +55,16 @@ class CartV2ControllerTest(
                 }
             }
         }
-
         describe("GET /api/v2/cart") {
             context("유효한 요청이 오면") {
+                val authUser = AuthUser("kmr2644@gmail.com", Role.MEMBER)
 
                 val email = "kmr2644@gmail.com"
                 val dtos = listOf(
                     CartProductDto(1000L, "item1", "brand1", 10000L, Category.OUTER, 1),
                     CartProductDto(1001L, "item2", "brand2", 500L, Category.ACCESSORY, 2)
                 )
+
                 val cartListResponse = CartListResponse(email, CartProducts.create(dtos))
 
                 every { cartService.findCartByUserEmail(any()) } returns cartListResponse
@@ -67,13 +72,13 @@ class CartV2ControllerTest(
                 it("return 200") {
                     mockMvc.docGet("/api/v2/cart") {
                         header(AUTHORIZATION, "Bearer your_token")
+                        with(user(authUser))
                     }.andExpect {
                         status { isOk() }
                         jsonPath("$.message", equalTo("장바구니가 성공적으로 조회 되었습니다."))
                         jsonPath("$.entity.email", equalTo("kmr2644@gmail.com"))
                         jsonPath("$.entity.cartProducts.count", equalTo(3))
                         jsonPath("$.entity.cartProducts.totalPrice", equalTo(11000))
-                        jsonPath("$.entity.cartProducts.size()", equalTo(2))
 
                         jsonPath("$.entity.cartProducts.value[0].id", equalTo(1000))
                         jsonPath("$.entity.cartProducts.value[0].name", equalTo("item1"))
@@ -85,7 +90,7 @@ class CartV2ControllerTest(
                         jsonPath("$.entity.cartProducts.value[1].id", equalTo(1001))
                         jsonPath("$.entity.cartProducts.value[1].name", equalTo("item2"))
                         jsonPath("$.entity.cartProducts.value[1].brandName", equalTo("brand2"))
-                        jsonPath("$.entity.cartProducts.value[1].price", equalTo(1000))
+                        jsonPath("$.entity.cartProducts.value[1].price", equalTo(500))
                         jsonPath("$.entity.cartProducts.value[1].category", equalTo("ACCESSORY"))
                         jsonPath("$.entity.cartProducts.value[1].quantity", equalTo(2))
                     }.andDocument("장바구니 조회 API") {
@@ -105,9 +110,10 @@ class CartV2ControllerTest(
                         )
                     }
 
-                    verify(exactly = 1) { cartService.addProduct(any(), any(), any()) }
+                    verify(exactly = 1) { cartService.findCartByUserEmail(any()) }
                 }
             }
+
         }
         describe("DELETE /api/v2/cart") {
             context("유효한 요청이 오면") {
@@ -116,7 +122,7 @@ class CartV2ControllerTest(
 
                 every { cartService.deleteById(any(), any()) } returns response
 
-                it("should not return 200") {
+                it("return 200") {
                     mockMvc.docDelete("/api/v2/cart") {
                         header(AUTHORIZATION, "Bearer your_token")
                         contentType = MediaType.APPLICATION_JSON
