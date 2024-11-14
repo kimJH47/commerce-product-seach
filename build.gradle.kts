@@ -64,7 +64,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
     //Auth JWT
-    implementation("org.springframework.security:spring-security-crypto")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
 
@@ -117,8 +117,6 @@ dependencies {
 
     //ULID
     implementation("com.github.f4b6a3:ulid-creator:5.2.3")
-
-
 }
 
 //java annotationProcessor 사용
