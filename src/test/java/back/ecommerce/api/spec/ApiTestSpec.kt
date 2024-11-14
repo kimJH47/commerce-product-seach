@@ -1,6 +1,7 @@
 package back.ecommerce.api.spec
 
 import back.ecommerce.admin.repository.AdminRepository
+import back.ecommerce.api.support.TestSecurityConfig
 import back.ecommerce.auth.service.TokenExtractor
 import back.ecommerce.auth.service.TokenProvider
 import back.ecommerce.common.logging.GlobalLogger
@@ -24,7 +25,11 @@ import org.springframework.stereotype.Service
 
 @WebMvcTest
 @AutoConfigureRestDocs
-@Import(MockServiceBeanFactoryPostProcessor::class, MockConfigurationBeansPostProcessor::class)
+@Import(
+    MockServiceBeanFactoryPostProcessor::class,
+    MockConfigurationBeansPostProcessor::class,
+    TestSecurityConfig::class
+)
 abstract class ApiTestSpec(
     body: DescribeSpec.() -> Unit = {}
 ) : DescribeSpec(body) {
