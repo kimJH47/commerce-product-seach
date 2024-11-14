@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service
 @Service
 class JwtAuthenticationProvider {
     fun provide(payload: Map<String, Any>): JwtAuthentication {
-        val nickname = payload[NICKNAME_PAYLOAD] as String
-        val authUser = AuthUser(nickname, Role.MEMBER)
+        val email = payload[EMAIL_PAYLOAD_KEY] as String
+        val authUser = AuthUser(email, Role.MEMBER)
         return JwtAuthentication(authUser, true)
     }
 
     companion object {
-        private const val NICKNAME_PAYLOAD = "nickname"
+        private const val EMAIL_PAYLOAD_KEY = "email"
     }
 }
