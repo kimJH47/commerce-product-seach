@@ -5,7 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class AuthUser(
-    private val username: String,
+    private val email: String,
     private val role: Role,
 ) : UserDetails {
 
@@ -18,6 +18,6 @@ class AuthUser(
     }
 
     override fun getUsername(): String {
-        return username
+        return email
     }
 }
