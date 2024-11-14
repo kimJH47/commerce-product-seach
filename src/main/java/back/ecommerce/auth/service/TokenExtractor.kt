@@ -29,6 +29,23 @@ class TokenExtractor(
             }
         }
     }
+
+    fun validateAndGetPayload(token: String): Map<String, Any> {
+        return kotlin.runCatching {
+            parser.setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .body
+                .toMap()
+        }.getAndNullDefaultOrElse(emptyMap()) {
+            when (it) {
+                is SignatureException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_INVALID)
+                is UnsupportedJwtException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_INVALID)
+                is MalformedJwtException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_INVALID)
+                is ExpiredJwtException -> throw AuthenticationException(ErrorCode.TOKEN_HAS_EXPIRED)
+                else -> throw AuthenticationException(ErrorCode.TOKEN_IS_EMPTY)
+            }
+        }
+    }
 }
 
 private inline fun <R, T : R> Result<T>.getAndNullDefaultOrElse(default: T, onFailure: (exception: Throwable) -> R): R {
