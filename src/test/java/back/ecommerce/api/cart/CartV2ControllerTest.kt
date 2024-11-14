@@ -39,6 +39,7 @@ class CartV2ControllerTest(
                         jsonPath("$.entity.quantity", equalTo(10))
                         jsonPath("$.entity.price", equalTo(10000))
                     }.andDocument("상품 장바구니 등록 API") {
+                        requestHeaders("Authorization" to "토큰 인증 헤더")
                         requestFields(
                             "email" type STRING means "이메일",
                             "productId" type NUMBER means "상품 ID",
