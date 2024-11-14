@@ -9,10 +9,15 @@ data class CartProducts(
 ) {
     companion object {
         fun create(list: List<CartProductDto>): CartProducts {
-            val totalPrice = Collections.unmodifiableList(list).stream()
-                .mapToLong(CartProductDto::price)
+            val unmodifiableList = Collections.unmodifiableList(list)
+            val totalPrice = unmodifiableList.stream()
+                .mapToLong { it.price * it.quantity }
                 .sum()
-            return CartProducts(list.size, totalPrice, list)
+            val totalCount = unmodifiableList.stream()
+                .mapToInt {
+                    it.quantity
+                }.sum()
+            return CartProducts(totalCount, totalPrice, list)
         }
     }
 }
