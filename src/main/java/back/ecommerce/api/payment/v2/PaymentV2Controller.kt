@@ -1,8 +1,8 @@
 package back.ecommerce.api.payment.v2
 
-import back.ecommerce.api.auth.resolver.annotation.UserEmail
 import back.ecommerce.api.dto.Response
 import back.ecommerce.api.payment.PaymentReadyResponse
+import back.ecommerce.auth.domain.AuthUser
 import back.ecommerce.client.KakaoPaymentClient
 import back.ecommerce.order.application.OrderService
 import back.ecommerce.payment.dto.request.PaymentCancelRequest
@@ -12,6 +12,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -24,19 +25,25 @@ class PaymentV2Controller(
 
     @PostMapping("/ready")
     fun paymentReady(
-        @UserEmail email: String,
+        @AuthenticationPrincipal authUser: AuthUser,
         @Valid @RequestBody request: PaymentReadyRequest
     ): ResponseEntity<Response> {
-        val createOrder = orderService.createOrder(email, request.totalPrice, request.orderProducts)
+        val createOrder = orderService.createOrder(authUser.username, request.totalPrice, request.orderProducts)
         val result = kakaoPaymentClient.ready(
-            email,
+            authUser.username,
             createOrder.orderCode,
             createOrder.totalPrice,
             createOrder.name,
             createOrder.quantity
         )
 
-        paymentService.createReadyPayment(result.transactionId, result.cid, result.orderCode, email, request.totalPrice)
+        paymentService.createReadyPayment(
+            result.transactionId,
+            result.cid,
+            result.orderCode,
+            authUser.username,
+            request.totalPrice
+        )
         return Response.createSuccessResponse(
             "결제준비가 완료 되었습니다.",
             PaymentReadyResponse(result.pcUrl, result.orderCode, result.createdAt)
