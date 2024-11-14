@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v2/api/payment")
+@RequestMapping("/api/v2/payment")
 class PaymentV2Controller(
     private val kakaoPaymentClient: KakaoPaymentClient,
     private val paymentService: PaymentService,
