@@ -56,7 +56,7 @@ class SearchConditionRequestResolverTest {
 		hashMap.put("name", new String[] {"nameData  "});
 		hashMap.put("brandName", new String[] {"BrandC"});
 		hashMap.put("maxPrice", new String[] {"  10000  "});
-		hashMap.put("minPrice", new String[] {null});
+		hashMap.put("minPrice", new String[] {""});
 		hashMap.put("page", new String[] {"13  "});
 		hashMap.put("sort", new String[] {"new" });
 
@@ -77,7 +77,7 @@ class SearchConditionRequestResolverTest {
 		assertThat(actual.getParameters().get("name")).isEqualTo("nameData");
 		assertThat(actual.getParameters().get("brandName")).isEqualTo("BrandC");
 		assertThat(actual.getParameters().get("maxPrice")).isEqualTo("10000");
-		assertThat(actual.getParameters().get("minPrice")).isEqualTo(null);
+		assertThat(actual.getParameters().get("minPrice")).isEqualTo("");
 		assertThat(actual.getParameters().get("page")).isEqualTo("13");
 		assertThat(actual.getParameters().get("sort")).isEqualTo("new");
 
