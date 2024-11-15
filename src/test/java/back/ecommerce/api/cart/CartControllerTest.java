@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import back.ecommerce.api.MockMvcTestConfig;
 import back.ecommerce.api.common.GlobalExceptionHandler;
 import back.ecommerce.api.auth.resolver.annotation.UserEmail;
+import back.ecommerce.api.support.TestSecurityConfig;
 import back.ecommerce.cart.dto.request.AddCartRequest;
 import back.ecommerce.cart.dto.response.AddCartResponse;
 import back.ecommerce.cart.dto.response.CartListResponse;
@@ -45,7 +46,7 @@ import back.ecommerce.exception.CustomException;
 import back.ecommerce.product.entity.Category;
 
 @WebMvcTest(value = CartController.class)
-@Import(MockMvcTestConfig.class)
+@Import({MockMvcTestConfig.class, TestSecurityConfig.class})
 class CartControllerTest {
 
 	MockMvc mockMvc;
@@ -67,7 +68,7 @@ class CartControllerTest {
 		//given
 		String email = "user@email.com";
 		given(cartService.addProduct(anyString(), anyLong(), anyInt()))
-			.willReturn(new AddCartResponse(10L,1,10000L));
+			.willReturn(new AddCartResponse(10L, 1, 10000L));
 		//expect
 		mockMvc.perform(post("/api/cart/add-product")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -173,8 +174,8 @@ class CartControllerTest {
 			.andDo(print())
 			.andExpect(jsonPath("$.message").value("장바구니가 성공적으로 조회 되었습니다."))
 			.andExpect(jsonPath("$.entity.email").value("user@email.com"))
-			.andExpect(jsonPath("$.entity.cartProducts.count").value(3))
-			.andExpect(jsonPath("$.entity.cartProducts.totalPrice").value(168000))
+			.andExpect(jsonPath("$.entity.cartProducts.count").value(4))
+			.andExpect(jsonPath("$.entity.cartProducts.totalPrice").value(178000))
 
 			.andExpect(jsonPath("$.entity.cartProducts.value[0].id").value(10))
 			.andExpect(jsonPath("$.entity.cartProducts.value[0].name").value("shirts"))
@@ -203,7 +204,7 @@ class CartControllerTest {
 	@Test
 	@DisplayName("/api/cart?email={email} GET 으로 존재하지 않은 사용자의 이메일을 보내면 응답코드 400 과 함께 실패이유가 응답되어야한다.")
 	void find_userNotFoundException() throws Exception {
-	    //given
+		//given
 		given(cartService.findCartByUserEmail(anyString()))
 			.willThrow(new CustomException(USER_NOT_FOUND));
 

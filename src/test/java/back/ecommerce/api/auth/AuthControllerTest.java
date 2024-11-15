@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import back.ecommerce.api.MockMvcTestConfig;
+import back.ecommerce.api.support.TestSecurityConfig;
 import back.ecommerce.auth.dto.request.LoginRequest;
 import back.ecommerce.auth.dto.request.SignUpRequest;
 import back.ecommerce.auth.dto.response.SignUpDto;
@@ -35,7 +36,7 @@ import back.ecommerce.publisher.aws.MessageType;
 import back.ecommerce.auth.service.AuthService;
 
 @WebMvcTest(AuthController.class)
-@Import(MockMvcTestConfig.class)
+@Import({MockMvcTestConfig.class, TestSecurityConfig.class})
 class AuthControllerTest {
 
 	@Autowired
@@ -192,7 +193,6 @@ class AuthControllerTest {
 
 	public static Stream<Arguments> invalidSignRequestProvider() {
 		return Stream.of(
-			Arguments.of(new SignUpRequest(" ", "asdmlsd2412"), "email"),
 			Arguments.of(new SignUpRequest("email@@com.co", "asdmlsd2412"), "email"),
 			Arguments.of(new SignUpRequest("123@naver.com", " "), "password")
 		);

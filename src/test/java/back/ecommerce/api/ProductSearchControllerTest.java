@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import back.ecommerce.api.product.ProductSearchController;
+import back.ecommerce.api.support.TestSecurityConfig;
 import back.ecommerce.product.entity.Category;
 import back.ecommerce.product.dto.response.ProductDto;
 import back.ecommerce.product.dto.response.ProductListResponse;
@@ -23,7 +24,7 @@ import back.ecommerce.exception.ErrorCode;
 import back.ecommerce.product.service.ProductService;
 
 @WebMvcTest(ProductSearchController.class)
-@Import(MockMvcTestConfig.class)
+@Import({MockMvcTestConfig.class, TestSecurityConfig.class})
 class ProductSearchControllerTest {
 
 	@Autowired
