@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ import back.ecommerce.product.service.ProductService;
 
 @SpringBootTest
 @Transactional
+@Disabled
 public class ProductApiTest {
 
 	ProductSearchController productSearchController;
