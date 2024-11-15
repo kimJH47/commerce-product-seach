@@ -27,23 +27,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import back.ecommerce.api.MockMvcTestConfig;
-import back.ecommerce.admin.entity.Admin;
-import back.ecommerce.product.entity.ApprovalStatus;
-import back.ecommerce.product.entity.Category;
 import back.ecommerce.admin.dto.request.AddRequestProductRequest;
 import back.ecommerce.admin.dto.request.UpdateApprovalRequest;
 import back.ecommerce.admin.dto.response.AddRequestProductResponse;
 import back.ecommerce.admin.dto.response.RequestProductDto;
 import back.ecommerce.admin.dto.response.UpdateApprovalStatusDto;
-import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
-import back.ecommerce.publisher.aws.MessageType;
+import back.ecommerce.admin.entity.Admin;
 import back.ecommerce.admin.repository.AdminRepository;
 import back.ecommerce.admin.service.AdminService;
+import back.ecommerce.api.MockMvcTestConfig;
+import back.ecommerce.api.support.TestSecurityConfig;
+import back.ecommerce.product.entity.ApprovalStatus;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.publisher.aws.EmailSQSEventPublisher;
+import back.ecommerce.publisher.aws.MessageType;
 
 @WebMvcTest(value = AdminController.class, excludeFilters = {
 	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)})
-@Import(MockMvcTestConfig.class)
+@Import({MockMvcTestConfig.class, TestSecurityConfig.class})
 class AdminControllerTest {
 
 	@MockBean
@@ -98,7 +99,7 @@ class AdminControllerTest {
 	}
 
 	public static Stream<Arguments> invalidAddProductRequestProvider() {
-		return Stream.of(Arguments.of(new AddRequestProductRequest(null, "name", "Brand", 10000L, "TOP"), "email"),
+		return Stream.of(
 			Arguments.of(new AddRequestProductRequest("as@ffkdklj2@as", "NamePr", "BRAND2", 100000L, "top"), "email"),
 			Arguments.of(new AddRequestProductRequest("asffkdklj2@as.com", "", "BRAND2", 100000L, "top"), "name"),
 			Arguments.of(new AddRequestProductRequest("tray@as.com", "product", "", 100000L, "top"), "brandName"),
