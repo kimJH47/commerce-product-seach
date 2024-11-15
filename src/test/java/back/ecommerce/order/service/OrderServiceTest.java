@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.github.f4b6a3.ulid.UlidCreator;
+
 import back.ecommerce.api.payment.OrderProductDto;
 import back.ecommerce.common.generator.ULIDGenerator;
 import back.ecommerce.exception.CustomException;
@@ -62,6 +64,7 @@ class OrderServiceTest {
 			.willReturn(new OrderGroup(
 				101L, orderCode, "상품1 등 2개", "user@email.com", 500000L, 2, PAYMENT_READY,
 				orderItems));
+		given(ulidGenerator.generateULIDToUUID()).willReturn(UlidCreator.getUlid().toUuid());
 
 		//when
 		OrderGroupDto order = orderService.createOrder("user@email.com", 500000L, getOrderProducts());
@@ -75,6 +78,7 @@ class OrderServiceTest {
 		then(userRepository).should(times(1)).existsByEmail(anyString());
 		then(productRepository).should(times(1)).findByIds(anyList());
 		then(orderGroupRepository).should(times(1)).save(any(OrderGroup.class));
+		then(ulidGenerator).should(times(1)).generateULIDToUUID();
 	}
 
 	@Test
