@@ -5,8 +5,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.HashMap;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +13,10 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import back.ecommerce.product.entity.Category;
-import back.ecommerce.product.dto.request.ProductSearchConditionRequest;
 import back.ecommerce.exception.CustomException;
+import back.ecommerce.product.dto.request.ProductSearchConditionRequest;
+import back.ecommerce.product.entity.Category;
+import jakarta.servlet.http.HttpServletRequest;
 
 class SearchConditionRequestResolverTest {
 
