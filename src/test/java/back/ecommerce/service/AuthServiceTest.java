@@ -132,6 +132,8 @@ class AuthServiceTest {
 		given(randomUUIDGenerator.create())
 			.willReturn("133812312");
 		given(verificationURLGenerator.generateVerificationURL(anyString())).willReturn("verificationUrl");
+		given(passwordEncoder.encode(password)).willReturn("encodePassword");
+
 
 		//when
 		SignUpDto signUpDto = authService.signUp(email, password);
@@ -142,6 +144,8 @@ class AuthServiceTest {
 		then(randomUUIDGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
 		then(verificationURLGenerator).should(times(1)).generateVerificationURL(anyString());
+		then(passwordEncoder).should(times(1)).encode(anyString());
+
 	}
 
 	@Test
@@ -153,6 +157,8 @@ class AuthServiceTest {
 
 		given(randomUUIDGenerator.create())
 			.willReturn("133812312");
+		given(passwordEncoder.encode(password)).willReturn("encodePassword");
+
 		doThrow(new CustomException(ErrorCode.DUPLICATE_USER_EMAIL)).when(signUpService)
 			.saveUserSignUpInfo(anyString(), anyString(), anyString());
 
@@ -163,6 +169,7 @@ class AuthServiceTest {
 
 		then(randomUUIDGenerator).should(times(1)).create();
 		then(signUpService).should(times(1)).saveUserSignUpInfo(anyString(), anyString(), anyString());
+		then(passwordEncoder).should(times(1)).encode(anyString());
 
 	}
 
