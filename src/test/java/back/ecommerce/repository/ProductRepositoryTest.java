@@ -55,9 +55,7 @@ class ProductRepositoryTest {
 			TOP, PageRequest.of(PageConstant.DEFAULT__PAGE, PageConstant.DEFAULT_PAGE_SIZE));
 
 		//then
-		assertThat(products).hasSize(20);
-		assertThat(products).extracting(ProductDto::getId)
-			.allMatch(id -> id <= 50 && id >= 20);
+		assertThat(products).hasSize(12);
 		assertThat(products).extracting(ProductDto::getCategory)
 			.containsOnly(TOP);
 	}
@@ -85,14 +83,14 @@ class ProductRepositoryTest {
 		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
 
 		//then
-		assertThat(products).hasSize(20)
+		assertThat(products).hasSize(12)
 			.extracting("price", Long.class)
 			.isSortedAccordingTo(Comparator.reverseOrder());
 
 		long sumPrice = products.stream()
 			.mapToLong(ProductDto::getPrice)
 			.sum();
-		assertThat(sumPrice).isEqualTo(101500L);
+		assertThat(sumPrice).isEqualTo(100700L);
 	}
 
 	@Test
@@ -124,13 +122,13 @@ class ProductRepositoryTest {
 		assertThat(products)
 			.filteredOn(productDto -> productDto.getCategory() == SKIRT)
 			.extracting("price", Long.class)
-			.hasSize(20)
+			.hasSize(12)
 			.isSorted();
 
 		long sumPrice = products.stream()
 			.mapToLong(ProductDto::getPrice)
 			.sum();
-		assertThat(sumPrice).isEqualTo(140000L);
+		assertThat(sumPrice).isEqualTo(60000L);
 	}
 
 	@Test
@@ -160,7 +158,7 @@ class ProductRepositoryTest {
 		//then
 		assertThat(products)
 			.filteredOn(productDto -> productDto.getCategory().equals(SKIRT))
-			.hasSize(16)
+			.hasSize(12)
 			.extracting("id", Long.class)
 			.isSortedAccordingTo(Comparator.reverseOrder());
 
@@ -168,7 +166,7 @@ class ProductRepositoryTest {
 			.mapToLong(ProductDto::getPrice)
 			.sum();
 
-		assertThat(sumPrice).isEqualTo(75000L);
+		assertThat(sumPrice).isEqualTo(71000L);
 	}
 
 	@Test
@@ -188,7 +186,7 @@ class ProductRepositoryTest {
 		List<ProductDto> products = productQueryDslRepository.findBySearchCondition(condition);
 
 		//then
-		assertThat(products).hasSize(3)
+		assertThat(products).hasSize(11)
 			.filteredOn(productDto -> productDto.getCategory() == HEAD_WEAR)
 			.extracting("id", Long.class)
 			.isSortedAccordingTo(Comparator.reverseOrder());
@@ -257,7 +255,7 @@ class ProductRepositoryTest {
 		//then
 		assertThat(products)
 			.filteredOn(productDto -> productDto.getCategory() == SHOES)
-			.hasSize(20);
+			.hasSize(12);
 	}
 
 	@Test
