@@ -138,8 +138,8 @@ class CartServiceTest {
 
 		//then
 		assertThat(response.getEmail()).isEqualTo(userEmail);
-		assertThat(response.getCartProducts().getCount()).isEqualTo(3);
-		assertThat(response.getCartProducts().getTotalPrice()).isEqualTo(210000L);
+		assertThat(response.getCartProducts().getCount()).isEqualTo(4);
+		assertThat(response.getCartProducts().getTotalPrice()).isEqualTo(270000L);
 		assertThat(response.getCartProducts().getValue()).hasSize(3)
 			.extracting("id", "name", "brandName", "price", "category", "quantity")
 			.containsExactlyInAnyOrder(
