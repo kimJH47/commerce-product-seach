@@ -34,6 +34,17 @@ include::{snippets}/로그인 API/http-request.adoc[]
 ===== 응답
 
 include::{snippets}/로그인 API/http-response.adoc[]
+===== Response Body
+include::{snippets}/로그인 API/response-fields.adoc[]
+==== 예시
+
+===== 요청
+
+include::{snippets}/로그인 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/로그인 API/http-response.adoc[]
 
 '''
 === 회원가입 API
@@ -53,6 +64,8 @@ include::{snippets}/회원가입 API/request-fields.adoc[]
 ===== 본문
 
 include::{snippets}/회원가입 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/회원가입 API/response-fields.adoc[]
 
 ==== 예시
 
@@ -82,6 +95,8 @@ include::{snippets}/이메일 인증 API/path-parameters.adoc[]
 ===== 본문
 
 include::{snippets}/이메일 인증 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/이메일 인증 API/response-fields.adoc[]
 
 ==== 예시
 
@@ -92,3 +107,200 @@ include::{snippets}/이메일 인증 API/http-request.adoc[]
 ===== 응답
 
 include::{snippets}/이메일 인증 API/http-response.adoc[]
+'''
+=== 카테고리 상품 조회 첫 페이지 조회 API
+==== 기본정보
+- 메서드: GET
+- URL: `/api/v2/categories/{category}`
+
+===== 요청 파라미터
+include::{snippets}/카테고리 상품 조회 첫 페이지 조회 API/path-parameters.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/카테고리 상품 조회 첫 페이지 조회 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/카테고리 상품 조회 첫 페이지 조회 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/카테고리 상품 조회 첫 페이지 조회 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/카테고리 상품 조회 첫 페이지 조회 API/http-response.adoc[]
+'''
+=== 카테고리 상품 조건 조회 API
+==== 기본정보
+- 메서드: GET
+- URL: `/api/v2/categories/{category}/detail`
+
+===== 요청 파라미터
+include::{snippets}/카테고리 상품 조건 조회 API/path-parameters.adoc[]
+===== 요청 쿼리 파라미터
+include::{snippets}/카테고리 상품 조건 조회 API/query-parameters.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/카테고리 상품 조건 조회 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/카테고리 상품 조건 조회 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/카테고리 상품 조건 조회 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/카테고리 상품 조건 조회 API/http-response.adoc[]
+
+'''
+=== 카테고리 상품 단건 조회 API
+==== 기본정보
+- 메서드: GET
+- URL: `/api/v2/product/{id}`
+
+===== 요청 파라미터
+include::{snippets}/카테고리 상품 단건 조회 API/path-parameters.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/카테고리 상품 단건 조회 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/카테고리 상품 단건 조회 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/카테고리 상품 단건 조회 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/카테고리 상품 단건 조회 API/http-response.adoc[]
+'''
+=== 장바구니 조회 API
+==== 기본정보
+- 메서드: GET
+- URL: `/api/v2/product/{id}`
+
+==== 요청
+
+===== 요청 헤더
+include::{snippets}/장바구니 조회 API/request-headers.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/장바구니 조회 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/장바구니 조회 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/장바구니 조회 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/장바구니 조회 API/http-response.adoc[]
+'''
+=== 상품 장바구니 등록 API
+==== 기본정보
+- 메서드: POST
+- URL: `/api/v2/cart/add-product`
+
+==== 요청
+===== 요청 헤더
+include::{snippets}/상품 장바구니 등록 API/request-headers.adoc[]
+===== 요청 본문
+include::{snippets}/상품 장바구니 등록 API/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/상품 장바구니 등록 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/상품 장바구니 등록 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/상품 장바구니 등록 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/상품 장바구니 등록 API/http-response.adoc[]
+'''
+=== 장바구니 상품 삭제 API
+==== 기본정보
+- 메서드: DELETE
+- URL: `/api/v2/cart`
+
+==== 요청
+===== 요청 헤더
+include::{snippets}/장바구니 상품 삭제 API/request-headers.adoc[]
+===== 요청 본문
+include::{snippets}/장바구니 상품 삭제 API/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/장바구니 상품 삭제 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/장바구니 상품 삭제 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/장바구니 상품 삭제 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/장바구니 상품 삭제 API/http-response.adoc[]
+'''
+=== PC 결제 준비 API
+==== 기본정보
+- 메서드: POST
+- URL: `/api/v2/payment/ready`
+
+==== 요청
+===== 요청 헤더
+include::{snippets}/PC 결제 준비 API/request-headers.adoc[]
+===== 요청 본문
+include::{snippets}/PC 결제 준비 API/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/PC 결제 준비 API/response-body.adoc[]
+===== Response Body
+include::{snippets}/PC 결제 준비 API/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/PC 결제 준비 API/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/PC 결제 준비 API/http-response.adoc[]
+'''
