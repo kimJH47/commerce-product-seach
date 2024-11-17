@@ -22,7 +22,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "./gradlew clean bootJar"
+                sh "./gradlew clean build"
             }
         }
 
