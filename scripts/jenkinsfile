@@ -15,7 +15,7 @@ pipeline {
                 checkout scmGit(
                         branches: [[name: 'master']],
                         extensions: [submodule(parentCredentials: true, trackingSubmodules: true)],
-                        userRemoteConfigs: [[credentialsId: 'git-account', url: 'https://github.com/kimJH47/commerce-product-seach']]
+                        userRemoteConfigs: [[credentialsId: 'git_account', url: 'https://github.com/kimJH47/commerce-product-seach']]
                 )
             }
         }
