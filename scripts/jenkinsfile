@@ -43,7 +43,6 @@ pipeline {
             post {
                 success {
                     echo '성공적으로 도커 이미지가 도커허브로 푸시되었습니다.'
-
                 }
                 failure {
                     echo '이미지 푸시 실패'
