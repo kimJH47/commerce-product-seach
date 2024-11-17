@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,18 +19,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import back.ecommerce.admin.service.AdminService;
-import back.ecommerce.product.entity.ApprovalStatus;
-import back.ecommerce.product.entity.Category;
-import back.ecommerce.product.entity.RequestProduct;
-import back.ecommerce.user.entity.User;
 import back.ecommerce.admin.dto.request.AddRequestProductRequest;
 import back.ecommerce.admin.dto.response.AddRequestProductResponse;
 import back.ecommerce.admin.dto.response.RequestProductDto;
 import back.ecommerce.admin.dto.response.UpdateApprovalStatusDto;
+import back.ecommerce.admin.service.AdminService;
 import back.ecommerce.exception.CustomException;
-import back.ecommerce.product.repository.RequestProductRepository;
+import back.ecommerce.product.entity.ApprovalStatus;
+import back.ecommerce.product.entity.Category;
+import back.ecommerce.product.entity.RequestProduct;
 import back.ecommerce.product.repository.ProductRepository;
+import back.ecommerce.product.repository.RequestProductRepository;
+import back.ecommerce.user.entity.User;
 import back.ecommerce.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -127,11 +128,12 @@ class AdminServiceTest {
 	@DisplayName("승인상태를 받아서 상태에 해당하는 등록요청 상품들이 반환되어야 한다.")
 	void findByApprovalStatus(ApprovalStatus approvalStatus) {
 		//given
+		LocalDateTime approvalTime = LocalDateTime.now();
 		List<RequestProduct> waits = List.of(
-			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", TOP, 156000L, approvalStatus),
-			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", PANTS, 156000L, approvalStatus),
-			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", ACCESSORY, 156000L, approvalStatus),
-			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", OUTER, 156000L, approvalStatus)
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", TOP, 156000L, approvalStatus,approvalTime),
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", PANTS, 156000L, approvalStatus,approvalTime),
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", ACCESSORY, 156000L, approvalStatus,approvalTime),
+			createRequestProduct(10L, "email@mail.com", "NAME", "Brand", OUTER, 156000L, approvalStatus,approvalTime)
 		);
 
 		given(requestProductRepository.findByApprovalStatus(any(ApprovalStatus.class)))
@@ -151,8 +153,10 @@ class AdminServiceTest {
 
 	public static RequestProduct createRequestProduct(long requestId, String email, String name, String brandName,
 		Category category, long price,
-		ApprovalStatus approvalStatus) {
-		return new RequestProduct(requestId, name, brandName, price, category, approvalStatus, email);
+		ApprovalStatus approvalStatus, LocalDateTime createdTime) {
+		RequestProduct request = new RequestProduct(requestId, name, brandName, price, category, approvalStatus, email);
+		request.setCreatedDate(createdTime);
+		return request;
 	}
 
 	@Test
